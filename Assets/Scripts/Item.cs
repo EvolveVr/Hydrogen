@@ -6,12 +6,14 @@ using System.Collections;
 /// </summary>
 public class Item : MonoBehaviour
 {
-    private bool _pickedUp;
+    private bool _equipped;
     private bool _colliding;
     private string _name;
     private int _weight;
     private Transform _itemTrans;
     private Rigidbody _itemRigid;
+
+    public GameObject myCollidingObj;
 
     #region GETTERS AND SETTERS
     public string itemName
@@ -25,12 +27,12 @@ public class Item : MonoBehaviour
         set { _weight = value; }
     }
 
-    public bool pickedUp
+    public bool equipped
     {
-        get { return _pickedUp; }
+        get { return _equipped; }
         set
         {
-            _pickedUp = value;
+            _equipped = value;
             highlight(false);
         }
     }
@@ -60,17 +62,20 @@ public class Item : MonoBehaviour
     #region BASE ITEM METHODS
     public virtual void pickUp(Transform parentToChild)
     {
-        pickedUp = true;
+        Debug.Log("PICKING UP");
+        equipped = true;
+        parentToChild.GetComponent<PlayerController>().weapon = this.gameObject;
         _itemRigid.isKinematic = true;
         _itemTrans.SetParent(parentToChild);
-        _itemTrans.position = new Vector3(parentToChild.position.x, parentToChild.position.y, parentToChild.position.z);
-        transform.eulerAngles = new Vector3(parentToChild.eulerAngles.x, parentToChild.eulerAngles.y, -parentToChild.eulerAngles.z);
+        _itemTrans.position = parentToChild.position;
+        _itemTrans.rotation = parentToChild.rotation;
     }
 
     public virtual void drop()
     {
-        pickedUp = false;
+        equipped = false;
         _itemRigid.isKinematic = false;
+        //parentToChild.GetComponent<PlayerController>().myWeapon = null;
         _itemTrans.SetParent(null);
     }
 
@@ -86,25 +91,41 @@ public class Item : MonoBehaviour
         {
             _itemTrans = GetComponent<Transform>();
         }
+        if(_itemRigid == null)
+        {
+            _itemRigid = GetComponent<Rigidbody>();
+        }
+        equipped = false;
+    }
+
+    public virtual void Update()
+    {
+        if (!colliding) { return; }
+        if (myCollidingObj.GetComponent<PlayerController>() != null)
+        {
+            if (myCollidingObj.GetComponent<PlayerController>().isTriggerClicked)
+            {
+                Debug.Log("TRIGGER IS CLICKED ");
+                pickUp(myCollidingObj.transform);
+            }
+        }
     }
     
     void OnTriggerEnter(Collider enteringObject)
     {
-        if (pickedUp) { return; }
-        if (enteringObject.GetComponent<PlayerController>() != null)
+        Debug.Log("ENTERED " + enteringObject.name);
+        myCollidingObj = enteringObject.gameObject;
+        if (myCollidingObj.GetComponent<PlayerController>() != null)
         {
+            Debug.Log("COLLIDING");
             colliding = true;
-            /*
-            TODO: FOR NOW, ITEMS WILL BE COLLECTED AS SOON AS YOU RUN INTO THEM
-            WE NEED TO MAKE IT SO WHEN TRIGGER CLICKED AND ITEM IS CURRENTLY COLLIDING - THEN PICK UP
-            VIBRATE CONTROLLER
-            */
-            pickUp(enteringObject.transform);
         }
     }
+
 
     void OnTriggerExit(Collider other)
     {
         colliding = false;
+        myCollidingObj = null;
     }
 }

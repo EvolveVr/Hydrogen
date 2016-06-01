@@ -6,6 +6,8 @@ public class Magazine : Item
     private int _bulletCap;     //Max amount of bullets
     private int _bulletCount;   //Current bullet count
     public Bullet bullet;
+    public GameObject bulletPrefab;
+    public Transform shootingPoint;
 
     #region GETTERS AND SETTERS
     public bool hasAmmo { get { return bulletCount > 0 ? true : false; } }
@@ -22,4 +24,17 @@ public class Magazine : Item
         set { _bulletCap = value; }
     }
     #endregion
+
+    public override void pickUp(Transform parentToChild)
+    {
+        if (!equipped)
+        {
+            base.pickUp(parentToChild);
+        }
+    }
+
+    public void MakeBullet()
+    {
+        GameObject temp = (GameObject)Instantiate(bulletPrefab, shootingPoint.position, shootingPoint.rotation);
+    }
 }
