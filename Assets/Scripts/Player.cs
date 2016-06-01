@@ -6,6 +6,7 @@ using System.Collections;
 /// </summary>
 public class Player : MonoBehaviour
 {
+    public PlayerController LeftController;
+    public PlayerController RightController;
     public Gun equippedGun;
-
 }

@@ -7,9 +7,11 @@ using System.Collections;
 public class Item : MonoBehaviour
 {
     private bool _pickedUp;
+    private bool _colliding;
     private string _name;
     private int _weight;
     private Transform _itemTrans;
+    private Rigidbody _itemRigid;
 
     #region GETTERS AND SETTERS
     public string itemName
@@ -26,7 +28,21 @@ public class Item : MonoBehaviour
     public bool pickedUp
     {
         get { return _pickedUp; }
-        set { _pickedUp = value; }
+        set
+        {
+            _pickedUp = value;
+            highlight(false);
+        }
+    }
+
+    public bool colliding
+    {
+        get { return _colliding; }
+        set
+        {
+            _colliding = value;
+            highlight(_colliding);
+        }
     }
     #endregion
 
@@ -45,6 +61,7 @@ public class Item : MonoBehaviour
     public virtual void pickUp(Transform parentToChild)
     {
         pickedUp = true;
+        _itemRigid.isKinematic = true;
         _itemTrans.SetParent(parentToChild);
         _itemTrans.position = new Vector3(parentToChild.position.x, parentToChild.position.y, parentToChild.position.z);
         transform.eulerAngles = new Vector3(parentToChild.eulerAngles.x, parentToChild.eulerAngles.y, -parentToChild.eulerAngles.z);
@@ -52,25 +69,42 @@ public class Item : MonoBehaviour
 
     public virtual void drop()
     {
+        pickedUp = false;
+        _itemRigid.isKinematic = false;
+        _itemTrans.SetParent(null);
+    }
 
+    public virtual void highlight(bool doIt)
+    {
+        //ADD THE HIGHLIGHT SHADER TO THE GAME OBJECT
     }
     #endregion
 
-    void Awake()
+    public virtual void Awake()
     {
         if (_itemTrans == null)
         {
             _itemTrans = GetComponent<Transform>();
         }
     }
-
-    //trigger event
+    
     void OnTriggerEnter(Collider enteringObject)
     {
         if (pickedUp) { return; }
         if (enteringObject.GetComponent<PlayerController>() != null)
         {
+            colliding = true;
+            /*
+            TODO: FOR NOW, ITEMS WILL BE COLLECTED AS SOON AS YOU RUN INTO THEM
+            WE NEED TO MAKE IT SO WHEN TRIGGER CLICKED AND ITEM IS CURRENTLY COLLIDING - THEN PICK UP
+            VIBRATE CONTROLLER
+            */
             pickUp(enteringObject.transform);
         }
+    }
+
+    void OnTriggerExit(Collider other)
+    {
+        colliding = false;
     }
 }

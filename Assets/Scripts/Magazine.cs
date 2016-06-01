@@ -8,6 +8,8 @@ public class Magazine : Item
     public Bullet bullet;
 
     #region GETTERS AND SETTERS
+    public bool hasAmmo { get { return bulletCount > 0 ? true : false; } }
+
     public int bulletCount
     {
         get { return _bulletCount; }

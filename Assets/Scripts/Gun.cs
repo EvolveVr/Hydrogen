@@ -32,7 +32,21 @@ public class Gun : Item
     #region GUN METHODS
     public virtual void reload()
     {
+        /*
+        TODO: REMOVE MAGAZINE ADD IN ANOTHER
+        */
+    }
 
+    public virtual void shoot()
+    {
+        if (currentMagazine.hasAmmo)
+        {
+            currentMagazine.bulletCount--;
+        }
+        else
+        {
+            Debug.Log("DOESN'T HAVE AMMO!!! SWITCH MAGAZINE AND RELOAD!");
+        }
     }
     #endregion
 }
