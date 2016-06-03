@@ -11,7 +11,7 @@ public class MagazineParent : MonoBehaviour {
             if(enteringObject.GetComponentInChildren<Magazine>() != null)
             {
                 Magazine myMag = enteringObject.GetComponentInChildren<Magazine>();
-                if (!myGunParent.isLoaded)
+                if (!myGunParent.hasMagazine)
                 {
                     Debug.Log("MAGAZINE IS TOUCHING ME");
                     myGunParent.equip(myMag);

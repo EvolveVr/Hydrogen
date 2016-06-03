@@ -25,6 +25,12 @@ public class Magazine : Item
     }
     #endregion
 
+    void Awake()
+    {
+        _bulletCap = 12;
+        _bulletCount = _bulletCap;
+    }
+
     public override void pickUp(Transform parentToChild)
     {
         if (!equipped)
@@ -35,6 +41,29 @@ public class Magazine : Item
 
     public void MakeBullet()
     {
-        GameObject temp = (GameObject)Instantiate(bulletPrefab, shootingPoint.position, shootingPoint.rotation);
+        if(bulletCount > 0)
+        {
+            Debug.LogWarning("USING BULLET NUMBER: " + bulletCount);
+            bulletCount--;
+            GameObject temp = (GameObject)Instantiate(bulletPrefab, shootingPoint.position, shootingPoint.rotation);
+        }
+        else
+        {
+          Debug.Log("MAGAZINE IS EMPTY");
+        }
+    }
+
+    public void equipMagazine(bool equip)
+    {
+        if (equip)
+        {
+            equipped = true;
+            GetComponent<BoxCollider>().enabled = false;
+        }
+        else
+        {
+            equipped = false;
+            GetComponent<BoxCollider>().enabled = true;
+        }
     }
 }

@@ -1,101 +1,104 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+/// <summary>
+/// the vr controller script
+/// </summary>
 public class PlayerController : MonoBehaviour
 {
-    private GameObject myWeapon;
-    public GameObject weapon
+    //currently held object on this controller if set to null show the vive controller
+    private Item _item;
+    public Item item
     {
-        get { return myWeapon; }
+        get { return _item; }
         set
         {
-            myWeapon = value;
-            hideViveController(false);
+            _item = value;
+            showViveModel(value == null);
         }
     }
 
-    public GameObject controllerV;
+    //refrence to the model of the controller
+    public GameObject viveModel;
 
+    //VR VARS
     private SteamVR_TrackedObject trackedObject;
     private SteamVR_Controller.Device controller { get { return SteamVR_Controller.Input((int)trackedObject.index); } }
-
-    // Buttons on controller references and booleans for when they are and are not being pressed
-    private Valve.VR.EVRButtonId gripButton = Valve.VR.EVRButtonId.k_EButton_Grip;
+    private Valve.VR.EVRButtonId gripButton = Valve.VR.EVRButtonId.k_EButton_Grip;  // Buttons on controller references and booleans for when they are and are not being pressed
     private Valve.VR.EVRButtonId triggerButton = Valve.VR.EVRButtonId.k_EButton_SteamVR_Trigger;
-
-   
+    
     // Haptic feedback
     public float hapticIntensity = 1500f;
     public float hapticTime = 0.1f;
     public float hapticStrength = 0.1f;
 
+    // clicked variables
     public bool isTriggerClicked = false;
+    public bool isGripClicked = false;
+
+    public bool hasItem
+    {
+        get { return item == null ? false : true; }
+    }
     
-	// Use this for initialization
 	void Start () {
         trackedObject = GetComponent<SteamVR_TrackedObject>();
-
-       if (trackedObject == null)
+        item = null;
+        if (trackedObject == null)
         {
             enabled = false;
         }
     }
 	
-	// Update is called once per frame
 	void Update ()
     {
         // check to see if the controller is null, and not being detected
-        if (controller == null)
-        {
-            //Debug.Log("Controller is null");
-            return;
-        }
-       
+        if (controller == null) { return; }
+        Debug.LogWarning(hasItem);
+        //TRIGGER
         if(controller.GetPressDown(triggerButton))
         {
-            //Debug.Log("Trigger Button Just presseed!");
             isTriggerClicked = true;
-            Debug.Log("TRIGGER IS CLICKED ");
-            if (weapon != null)
+            if (item != null)
             {
-                if (weapon.GetComponent<Gun>() != null)
-                {
-                    weapon.GetComponent<Gun>().shoot();
+                if (item.type == Hydrogen.ItemType.Gun) {
+                    if (((Gun)item).shoot())
+                    {
+                        RumbleController(hapticTime, hapticStrength);
+                    }
                 }
             }
         }
         if (controller.GetPress(triggerButton))
         {
-        //    Debug.Log("Trigger Button Just presseed!");
             isTriggerClicked = true;
-            
         }
         if (controller.GetPressUp(triggerButton))
         {
-           // Debug.Log("Trigger Button Just released!");
             isTriggerClicked = false;
-           // Debug.Log("CLICKED" + isTriggerClicked);
         }
+
+
+        //GRIP
         if (controller.GetPressDown(gripButton))
         {
-            //Debug.Log("Trigger Button Just presseed!");
-            if (weapon != null)
+            isGripClicked = true;
+            if (item != null)
             {
-                if(weapon.GetComponent<Gun>() != null){
-
-                    weapon.GetComponent<Gun>().dropMagazine();
+                if (item.type == Hydrogen.ItemType.Gun)
+                {
+                    ((Gun)item).dropMagazine();
                 }
             }
         }
         if (controller.GetPress(gripButton))
         {
-            //Debug.Log("Trigger Button being held!");
+            isGripClicked = true;
         }
         if (controller.GetPressUp(gripButton))
         {
-            //Debug.Log("Trigger Button Just released!");
+            isGripClicked = false;
         }
-
     }
 
     // these function are for te Rumble effect of the controller
@@ -118,24 +121,9 @@ public class PlayerController : MonoBehaviour
             yield return null;
         }
     }
-
-
-    public void hideViveController(bool hide)
+    
+    public void showViveModel(bool hide)
     {
-        controllerV.SetActive(hide);
+        viveModel.SetActive(hide);
     }
-
-    //trigger event
-    /*void OnTriggerEnter(Collider enteringObject)
-    {
-        if (controller == null)
-            return;
-
-        Debug.Log("controller entered gun");
-
-        if (enteringObject == gun.GetComponent<Collider>())
-        {
-            gun.gameObject.transform.parent = this.gameObject.transform;
-        }
-    }*/
 }

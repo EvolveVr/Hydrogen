@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using Hydrogen;
 using System.Collections;
 
 /// <summary>
@@ -6,15 +7,21 @@ using System.Collections;
 /// </summary>
 public class Item : MonoBehaviour
 {
-    private bool _equipped;
-    private bool _colliding;
+    //item variables
     private string _name;
     private int _weight;
+    private ItemType _type = new ItemType();
+
+    //item read variables
+    private bool _equipped;
+
+    //item components
     private Transform _itemTrans;
     private Rigidbody _itemRigid;
 
-    public GameObject myCollidingObj;
-
+    //the object I'm currently touching
+    public PlayerController myController;
+    
     #region GETTERS AND SETTERS
     public string itemName
     {
@@ -27,6 +34,14 @@ public class Item : MonoBehaviour
         set { _weight = value; }
     }
 
+    public bool isControllerTouching
+    {
+        get { return myController == null ? false : true; }
+    }
+
+    /// <summary>
+    /// Am I currently being held by a player controller
+    /// </summary>
     public bool equipped
     {
         get { return _equipped; }
@@ -37,13 +52,16 @@ public class Item : MonoBehaviour
         }
     }
 
-    public bool colliding
+    public ItemType type
     {
-        get { return _colliding; }
+        get
+        {
+            return _type;
+        }
+
         set
         {
-            _colliding = value;
-            highlight(_colliding);
+            _type = value;
         }
     }
     #endregion
@@ -60,33 +78,48 @@ public class Item : MonoBehaviour
     #endregion
 
     #region BASE ITEM METHODS
-    public virtual void pickUp(Transform parentToChild)
+    /// <summary>
+    /// Picking up this Item
+    /// </summary>
+    /// <param name="myNewParent"></param>
+    public virtual void pickUp(Transform myNewParent)
     {
-        Debug.Log("PICKING UP");
+        Debug.Log("PICKING UP " + itemName);
+        //equipping me
         equipped = true;
-        parentToChild.GetComponent<PlayerController>().weapon = this.gameObject;
-        _itemRigid.isKinematic = true;
-        _itemTrans.SetParent(parentToChild);
-        _itemTrans.position = parentToChild.position;
-        _itemTrans.rotation = parentToChild.rotation;
-    }
+        
+        //setting this game object to the player controllers item refrence
+        myNewParent.GetComponent<PlayerController>().item = this;
 
+        //turning off physics for me
+        _itemRigid.isKinematic = true;
+        
+        //setting me to the parent's postion and rotation
+        _itemTrans.SetParent(myNewParent);
+        _itemTrans.position = myNewParent.position;
+        _itemTrans.rotation = myNewParent.rotation;
+    }
+    /// <summary>
+    /// drop this item
+    /// </summary>
     public virtual void drop()
     {
+        //no longer equipped
         equipped = false;
+        //turning phyiscs back on
         _itemRigid.isKinematic = false;
-        //parentToChild.GetComponent<PlayerController>().myWeapon = null;
+        //unparenting me
         _itemTrans.SetParent(null);
     }
-
     public virtual void highlight(bool doIt)
     {
         //ADD THE HIGHLIGHT SHADER TO THE GAME OBJECT
     }
     #endregion
 
-    public virtual void Awake()
+    public virtual void OnEnable()
     {
+        //on enable, get components if you don't already have them
         if (_itemTrans == null)
         {
             _itemTrans = GetComponent<Transform>();
@@ -95,37 +128,51 @@ public class Item : MonoBehaviour
         {
             _itemRigid = GetComponent<Rigidbody>();
         }
+
+        //defaulting to false
         equipped = false;
     }
 
+    /// <summary>
+    /// ONLY CALL THIS UPDATE IF THE ITEM IS NOT EQUIPPED
+    /// </summary>
     public virtual void Update()
     {
-        if (!colliding) { return; }
-        if (myCollidingObj.GetComponent<PlayerController>() != null)
+        if (!isControllerTouching) { return; }
+        Debug.LogWarning("CONTROLLER IS TOUCHING AND ITEM IS NOT EQUIPPED");
+
+        if (myController.hasItem == false)
         {
-            if (myCollidingObj.GetComponent<PlayerController>().isTriggerClicked)
+            Debug.LogWarning("DOESN NOT HAVE ITEM");
+            if (myController.isTriggerClicked)
             {
-                Debug.Log("TRIGGER IS CLICKED ");
-                pickUp(myCollidingObj.transform);
+                Debug.LogWarning("TRIGGER ON MY CONTROLLER IS CLICKED");
+                pickUp(myController.transform);
             }
         }
     }
     
-    void OnTriggerEnter(Collider enteringObject)
+    /// <summary>
+    /// tracked controller entering item
+    /// </summary>
+    /// <param name="other"></param>
+    void OnTriggerEnter(Collider other)
     {
-        Debug.Log("ENTERED " + enteringObject.name);
-        myCollidingObj = enteringObject.gameObject;
-        if (myCollidingObj.GetComponent<PlayerController>() != null)
+        Debug.Log("ENTERED " + other.name);
+
+        //if the object thats touching me is a controller
+        if (other.GetComponent<PlayerController>() != null)
         {
-            Debug.Log("COLLIDING");
-            colliding = true;
+            Debug.Log("COLLIDING WITH A PLAYER CONTROLLER");
+            myController = other.GetComponent<PlayerController>();
+            highlight(true);
         }
     }
 
 
     void OnTriggerExit(Collider other)
     {
-        colliding = false;
-        myCollidingObj = null;
+        highlight(false);
+        myController = null;
     }
 }

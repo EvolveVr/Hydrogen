@@ -51,7 +51,6 @@ public class Bullet : MonoBehaviour
     void OnTriggerEnter(Collider other)
     {
         Debug.LogWarning(other.name);
-        if (other.name != "GunParent")
-        { hit(); }
+        if (other.name != "GunParent"){ hit(); }
     }
 }

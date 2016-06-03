@@ -5,9 +5,12 @@ using System.Collections;
 /// </summary>
 public class Gun : Item
 {
-    private int _baseDamage;     //the total amount of damage will be the baseDamage + the bulletDamage
-    public int damage { get { return baseDamage + currentMagazine.bullet.damage; } }
-    public Magazine currentMagazine;
+    //gun variables
+    private int _baseDamage;
+    public Magazine equippedMagazine;
+    public int damage { get { return baseDamage + equippedMagazine.bullet.damage; } }   //the total amount of damage will be the baseDamage + the bulletDamage
+    
+    //gun refrences
     public GameObject magazinePrefab;
     public Transform magazineParent;
 
@@ -18,20 +21,26 @@ public class Gun : Item
         set { _baseDamage = value; }
     }
 
-    public bool isLoaded
+    public bool hasMagazine
     {
-        get { return currentMagazine == null ? false : true; }
+        get { return equippedMagazine == null ? false : true; }
     }
     #endregion
 
     #region CONSTRUCTORS
     //empty constructor leave it
-    public Gun() { }
+    public Gun() {
+        type = Hydrogen.ItemType.Gun;
+    }
 
-    public Gun(string Name, int Weight) : base(Name, Weight) { }
+    public Gun(string Name, int Weight) : base(Name, Weight) {
+
+        type = Hydrogen.ItemType.Gun;
+    }
 
     public Gun(string Name, int Weight, int BaseDamage) : base(Name, Weight)
     {
+        type = Hydrogen.ItemType.Gun;
         baseDamage = BaseDamage;
     }
     #endregion
@@ -39,64 +48,75 @@ public class Gun : Item
     #region GUN METHODS
     public virtual void reload()
     {
-        /*
-        TODO: REMOVE MAGAZINE ADD IN ANOTHER
-        */
+        
     }
 
-    public virtual void shoot()
+    public virtual bool shoot()
     {
-        currentMagazine.MakeBullet();
+        if (hasMagazine)
+        {
+            if (equippedMagazine.bulletCount > 0)
+            {
+                equippedMagazine.MakeBullet();
+                return true;
+            }
+            return false;
+        }
+        else
+        {
+            Debug.Log("YOU DON'T HAVE A MAGAZINE");
+            return false;
+        }
     }
 
     public virtual void equip(Magazine mag)
     {
-        currentMagazine = mag;
-        mag.equipped = true;
+        equippedMagazine = mag;
+
+        equippedMagazine.equipMagazine(true);
+
+        //un parent magazine
         mag.transform.SetParent(magazineParent);
+        
+        //turn off physics for magazine
         mag.GetComponent<Rigidbody>().isKinematic = true;
         mag.GetComponent<Rigidbody>().useGravity = false;
-        currentMagazine.gameObject.GetComponent<BoxCollider>().enabled = false;
+
+        //change position
         mag.transform.position = magazineParent.position;
         mag.transform.rotation = magazineParent.rotation;
     }
 
     public virtual void dropMagazine()
     {
-        currentMagazine.gameObject.transform.SetParent(null);
-        currentMagazine.gameObject.GetComponent<Rigidbody>().isKinematic = false;
-        currentMagazine.gameObject.GetComponent<Rigidbody>().useGravity = true;
-        currentMagazine.gameObject.GetComponent<BoxCollider>().enabled = true;
-        currentMagazine.equipped = false;
+        //un parent the magazine
+        equippedMagazine.gameObject.transform.SetParent(null);
+        //turn on gravity for the magazine
+        equippedMagazine.gameObject.GetComponent<Rigidbody>().isKinematic = false;
+        equippedMagazine.gameObject.GetComponent<Rigidbody>().useGravity = true;
+
+        equippedMagazine.equipMagazine(false);
+        equippedMagazine = null;
     }
     #endregion
 
+    
+
     void Start()
     {
-        equip(currentMagazine);
+        equip(equippedMagazine);
     }
 
     public override void Update()
     {
-        base.Update();
-        if (!equipped) { return; }
-        if(myCollidingObj==null) { return; }
-        if (myCollidingObj.GetComponent<PlayerController>() != null)
+        if (!equipped)
         {
-            if (myCollidingObj.GetComponentInChildren<Magazine>() != null)
-            {
-                Magazine myMag = myCollidingObj.GetComponentInChildren<Magazine>();
-                if (!isLoaded)
-                {
-                    equip(myMag);
-                }
-            }
-
-            /*
-            TODO: FOR NOW, ITEMS WILL BE COLLECTED AS SOON AS YOU RUN INTO THEM
-            WE NEED TO MAKE IT SO WHEN TRIGGER CLICKED AND ITEM IS CURRENTLY COLLIDING - THEN PICK UP
-            VIBRATE CONTROLLER
-            */
+            Debug.LogWarning("CALLING BASE UPDATE - Listening for player controller to pick this gun up");
+            base.Update();
+        }
+        else
+        {
+            
         }
     }
 }
