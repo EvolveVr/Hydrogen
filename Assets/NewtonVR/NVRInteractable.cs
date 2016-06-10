@@ -40,7 +40,8 @@ namespace NewtonVR
                 Debug.LogError("There is no rigidbody attached to this interactable.");
             }
 
-            Colliders = this.GetComponentsInChildren<Collider>();
+            //  EDITED!!!! OG: Colliders = this.GetComponentsInChildren<Collider>(); EDITED VERSION:
+            Colliders = this.GetComponents<Collider>();
         }
 
         protected virtual void Start()

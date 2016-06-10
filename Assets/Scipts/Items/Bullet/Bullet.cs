@@ -1,14 +1,15 @@
 ﻿using UnityEngine;
 using System.Collections;
-using Hydrogen;
+using System.Collections.Generic;
 
-public abstract class Bullet : MonoBehaviour
+[RequireComponent(typeof(Rigidbody))]
+public class Bullet : MonoBehaviour
 {
-    public BulletVariation variation;
-    private int _bulletDamage;
-    public int bulletDamage
+    public GameObject bulletPreFab;
+    public float bulletForce = 100.0f;
+
+    public void addForce()
     {
-        get { return _bulletDamage; }
-        set { _bulletDamage = value; }
+        GetComponent<Rigidbody>().AddForce(transform.forward * bulletForce, ForceMode.Impulse);
     }
 }

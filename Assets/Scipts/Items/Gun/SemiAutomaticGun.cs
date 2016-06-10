@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
+using Hydrogen;
 using System.Collections;
 
-public class PM40Bullet : Bullet
+public class SemiAutomaticGun : Gun
 {
     
 }

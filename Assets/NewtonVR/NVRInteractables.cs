@@ -8,6 +8,7 @@ namespace NewtonVR
     public class NVRInteractables : MonoBehaviour
     {
         private static Dictionary<Collider, NVRInteractable> ColliderMapping;
+        //edited; make static if broken
         private static Dictionary<NVRInteractable, Collider[]> NVRInteractableMapping;
 
         private static bool Initialized = false;

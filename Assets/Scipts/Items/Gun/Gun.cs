@@ -1,66 +1,89 @@
 ﻿using UnityEngine;
 using NewtonVR;
 using System.Collections.Generic;
-using Hydrogen;
 
-[RequireComponent(typeof(Rigidbody))]
-public abstract class Gun : NVRInteractableItem
+
+namespace Hydrogen
 {
-    //This gun type
-    public GunType gunType;
-    //current magazine that's in it
-    public Magazine currentGunMagazine;
-    //the minimum damage the gun will do
-    private float _baseDamage = 10f;
-    // how much force we're applying to the bullet
-    public float _bulletForce = 300.0f;
-    // force applied to the bullet casing object after fire
-    private float _casingForce = 50.0f;
-    // does the gun have an equipped magazine
-    public bool isLoaded
+    // loaded measn there is a clip in it
+    // equipped measn that your holding the gun
+    public abstract class Gun : NVRInteractableItem
     {
-        get { return currentGunMagazine != null; }
-    }
+        // current and max number of bullets
+        public Magazine _currentMagazine;
+        public Transform firePoint;
+        public Transform magazinePosition;
 
-    #region COMPONENT REFRENCES
-    public Transform firePosition;
-    public Transform casingPosition;
-    public Transform magazinePosition;
-    #endregion
+        protected int _maxNumberOfBullets;
+        protected int _currentNumberOfBullets;
+        
 
-    protected override void Awake()
-    {
-        base.Awake();
-    }
+        // Public Methods
+        public void isEquipped() { }
+        public void isEngaged() { }
 
-    protected override void Start()
-    {
-        base.Start();
-    }
-    
-    public override void UseButtonDown()
-    {
-        base.UseButtonDown();
-        shoot();
-    }
-
-    public void shoot()
-    {
-        if (!isLoaded) { Debug.Log("DOESN'T HAVE A MAGAZINE. NOT GOING TO SHOOT"); return; }
-        if (currentGunMagazine.hasBullets)
+        bool isLoaded
         {
-            Debug.Log("Shoot");
+            get { return _currentMagazine != null; }
         }
-    }
-    
-    protected override void Update()
-    {
-        base.Update();  
-    }
 
-    // for checking if magazine is being put into thr collider
-    void OnTriggerEnter(Collider other)
-    {
+        protected void shootGun()
+        {
+            if (isLoaded)
+            {
+                if (_currentMagazine.hasBullets)
+                {
+                    GameObject bullet = _currentMagazine.getBullet;
+                    bullet.transform.position = firePoint.position;
+                    bullet.transform.rotation = firePoint.rotation;
+                    bullet.GetComponent<Bullet>().addForce();
+                }
+            }
+        }
+
+        protected void applySpreadToBullet() { }
+
+        protected void dropCurrentMagazine()
+        {
+            if(isLoaded)
+            {
+                _currentMagazine.attachMagazine(false);
+                _currentMagazine = null;
+            }
+        }
+
+        protected void reloadGun() { }
+
+        protected void updateEngageLevel() { }
+
+        protected void playGunShotSound() { }
+
+        protected void playEngageSound() { }
+
+        protected void playNonEngagedSound() { }
+
+        protected float getControllerTriggerPosition() { return 0.0f; }
+
+        protected void updateTriggerPosition() { }
+
+        public void updateEngageLeverPosition() { }
+
+        public override void UseButtonDown()
+        {
+            shootGun();
+        }
+
+        protected override void Update()
+        {
+            base.Update();
+            if (AttachedHand != null)
+            {
+                if(AttachedHand.Controller.GetPressDown(Valve.VR.EVRButtonId.k_EButton_SteamVR_Touchpad))
+                {
+                    dropCurrentMagazine();
+                }
+            }
+        }
 
     }
 }
