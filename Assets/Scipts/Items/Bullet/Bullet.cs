@@ -12,4 +12,16 @@ public class Bullet : MonoBehaviour
     {
         GetComponent<Rigidbody>().AddForce(transform.forward * bulletForce, ForceMode.Impulse);
     }
+    void OnTriggerEnter(Collider hit)
+    {
+        //Can't test this myself, but its simple and should work.
+        switch(hit.gameObject.tag)
+        {
+            case "wall":
+                gameObject.SetActive(false);
+                break;
+
+        }
+
+    }
 }
