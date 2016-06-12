@@ -42,7 +42,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 198346}
   m_LocalRotation: {x: -0.000273968, y: -0.06540234, z: -0.9978502, w: 0.0041799583}
-  m_LocalPosition: {x: -0, y: -0.3, z: 48.3}
+  m_LocalPosition: {x: 0, y: -8.1, z: -11.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 352.5, y: 0, z: 180.48}
   m_Children: []
@@ -55,7 +55,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 140596}
   m_LocalRotation: {x: -0.72716045, y: -0.0032394915, z: -0.0071280766, w: 0.68642294}
-  m_LocalPosition: {x: 202.41159, y: 0.94788957, z: 181.30133}
+  m_LocalPosition: {x: 202.3363, y: 0.9876, z: 181.1843}
   m_LocalScale: {x: 0.0014879665, y: 0.0014879672, z: 0.0014879671}
   m_LocalEulerAnglesHint: {x: -86.6837, y: 174.12709, z: -174.96759}
   m_Children:
@@ -144,6 +144,7 @@ MonoBehaviour:
   magazineType: 0
   bullet: {fileID: 11496858, guid: e8418912af3d71f4398c4e8f556f8079, type: 2}
   interactionPoint: {fileID: 427094}
+  myGun: {fileID: 0}
   secondsAfterDetach: 0.1
 --- !u!1001 &100100000
 Prefab:

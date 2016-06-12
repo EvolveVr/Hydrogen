@@ -4,5 +4,5 @@ using System.Collections;
 
 public class SemiAutomaticGun : Gun
 {
-    
+   
 }

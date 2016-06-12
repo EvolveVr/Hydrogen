@@ -1,97 +1,98 @@
 ﻿using UnityEngine;
 using NewtonVR;
-using Hydrogen;
 using System.Collections;
 
 //isEquipped from the Magazines perspective means the Magazine is inside a gun
-
-public class Magazine : NVRInteractableItem
+namespace Hydrogen
 {
-    public MagazineType magazineType;
-    public Bullet bullet;
-    public Transform interactionPoint;
-    private int _currentBulletCount;
-    private int _maxBulletCount;
-    private bool _isEquipped;
-    public Gun myGun;
-
-    public float secondsAfterDetach = 0.1f;
-
-    void Start()
+    public class Magazine : NVRInteractableItem
     {
-        base.Start();
-        if(myGun != null)
+        public MagazineType magazineType;
+        public Bullet bullet;
+        public Transform interactionPoint;
+        private int _currentBulletCount;
+        private int _maxBulletCount;
+        private bool _isEquipped;
+        public Gun myGun;
+
+        public float secondsAfterDetach = 0.1f;
+
+        protected override void Start()
         {
-            _isEquipped = true;
+            base.Start();
+            if (myGun != null)
+            {
+                _isEquipped = true;
+            }
+            _maxBulletCount = 15;
+            _currentBulletCount = _maxBulletCount;
         }
-        _maxBulletCount = 10;
-        _currentBulletCount = _maxBulletCount;
-    }
 
-    public int bulletCount
-    {
-        get { return _currentBulletCount; }
-        set { _currentBulletCount = Mathf.Clamp(value, 0, _maxBulletCount); }
-    }
-
-    public int maxBulletCount
-    {
-        get { return _maxBulletCount; }
-        set { _maxBulletCount = value; }
-    }
-    
-    public bool isEquipped
-    {
-        get { return _isEquipped; }
-        set { _isEquipped = value; }
-    }
-
-    public bool hasBullets
-    {
-        get { return _currentBulletCount > 0; }
-    }
-
-    public GameObject getBullet
-    {
-        get
+        public int bulletCount
         {
-            _currentBulletCount--;
-            return Instantiate<GameObject>(bullet.gameObject);
+            get { return _currentBulletCount; }
+            set { _currentBulletCount = Mathf.Clamp(value, 0, _maxBulletCount); }
         }
-    }
 
-    public void attachMagazine(bool attach, GameObject gun = null)
-    {
-        if (attach)
+        public int maxBulletCount
         {
-            isEquipped = true;
-            myGun = gun.GetComponent<Gun>();
-            GetComponent<BoxCollider>().isTrigger = true;
-            transform.SetParent(myGun.magazinePosition, false);
-            CanAttach = false;
-            GetComponent<Rigidbody>().isKinematic = true;
-            GetComponent<Rigidbody>().useGravity = false;
-            transform.position = myGun.magazinePosition.transform.position;
-            transform.rotation = myGun.magazinePosition.transform.rotation;
-            transform.localScale = Vector3.one;
-            myGun._currentMagazine = this;
+            get { return _maxBulletCount; }
+            set { _maxBulletCount = value; }
         }
-        else
-        {
-            transform.SetParent(null);
-            GetComponent<Rigidbody>().useGravity = true;
-            GetComponent<Rigidbody>().isKinematic = false;
-            isEquipped = false;
-            StartCoroutine(enableCollider());
-        }
-    }
 
-    public IEnumerator enableCollider()
-    {
-        yield return new WaitForSeconds(secondsAfterDetach);
-        GetComponent<BoxCollider>().isTrigger = false;
-        CanAttach = true;
-        StopCoroutine(enableCollider());
+        public bool isEquipped
+        {
+            get { return _isEquipped; }
+            set { _isEquipped = value; }
+        }
+
+        public bool hasBullets
+        {
+            get { return _currentBulletCount > 0; }
+        }
+
+        public GameObject getBullet
+        {
+            get
+            {
+                _currentBulletCount--;
+                return Instantiate<GameObject>(bullet.gameObject);
+            }
+        }
+
+        public void attachMagazine(bool attach, GameObject gun = null)
+        {
+            if (attach)
+            {
+                myGun = gun.GetComponent<Gun>();
+                if (myGun.isLoaded || !myGun.IsAttached) { Debug.Log("I ALREADY HAVE A MAGAZINE IN ME"); return; }
+                isEquipped = true;
+                GetComponent<BoxCollider>().isTrigger = true;
+                transform.SetParent(myGun.magazinePosition, false);
+                CanAttach = false;
+                GetComponent<Rigidbody>().isKinematic = true;
+                GetComponent<Rigidbody>().useGravity = false;
+                transform.position = myGun.magazinePosition.transform.position;
+                transform.rotation = myGun.magazinePosition.transform.rotation;
+                transform.localScale = Vector3.one;
+                myGun._currentMagazine = this;
+            }
+            else
+            {
+                transform.SetParent(null);
+                GetComponent<Rigidbody>().useGravity = true;
+                GetComponent<Rigidbody>().isKinematic = false;
+                isEquipped = false;
+                StartCoroutine(enableCollider());
+            }
+        }
+
+        public IEnumerator enableCollider()
+        {
+            yield return new WaitForSeconds(secondsAfterDetach);
+            GetComponent<BoxCollider>().isTrigger = false;
+            CanAttach = true;
+            StopCoroutine(enableCollider());
+        }
     }
-    
 }

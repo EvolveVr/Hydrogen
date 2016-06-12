@@ -1,17 +1,22 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class MagazineCollider : MonoBehaviour {
-
-    public GameObject parentGun;
-
-	void OnTriggerEnter(Collider other)
+namespace Hydrogen
+{
+    public class MagazineCollider : MonoBehaviour
     {
-        Magazine collidingMag = other.GetComponent<Magazine>();
-        if (collidingMag != null && !collidingMag.isEquipped)
+
+        public GameObject parentGun;
+
+        void OnTriggerEnter(Collider other)
         {
-            //means a magazine is currently touching the collider
-            collidingMag.attachMagazine(true, parentGun);
+            Magazine collidingMag = other.GetComponent<Magazine>();
+            if (collidingMag != null && !collidingMag.isEquipped)
+            {
+                //means a magazine is currently touching the collider
+                collidingMag.attachMagazine(true, parentGun);
+            }
         }
     }
 }
+
