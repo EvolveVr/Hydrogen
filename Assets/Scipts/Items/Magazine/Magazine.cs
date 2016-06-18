@@ -7,7 +7,7 @@ namespace Hydrogen
 {
     public class Magazine : NVRInteractableItem
     {
-        public MagazineType magazineType;
+        public GunType magazineType;
         public Bullet bullet;
         public Transform interactionPoint;
         private int _currentBulletCount;
@@ -66,16 +66,20 @@ namespace Hydrogen
             {
                 myGun = gun.GetComponent<Gun>();
                 if (myGun.isLoaded || !myGun.IsAttached) { Debug.Log("I ALREADY HAVE A MAGAZINE IN ME"); return; }
-                isEquipped = true;
-                GetComponent<BoxCollider>().isTrigger = true;
-                transform.SetParent(myGun.magazinePosition, false);
-                CanAttach = false;
-                GetComponent<Rigidbody>().isKinematic = true;
-                GetComponent<Rigidbody>().useGravity = false;
-                transform.position = myGun.magazinePosition.transform.position;
-                transform.rotation = myGun.magazinePosition.transform.rotation;
-                transform.localScale = Vector3.one;
-                myGun._currentMagazine = this;
+
+                if (magazineType == myGun.GunType)
+                {
+                    isEquipped = true;
+                    GetComponent<BoxCollider>().isTrigger = true;
+                    transform.SetParent(myGun.magazinePosition, false);
+                    CanAttach = false;
+                    GetComponent<Rigidbody>().isKinematic = true;
+                    GetComponent<Rigidbody>().useGravity = false;
+                    transform.position = myGun.magazinePosition.transform.position;
+                    transform.rotation = myGun.magazinePosition.transform.rotation;
+                    transform.localScale = Vector3.one;
+                    myGun._currentMagazine = this;
+                }
             }
             else
             {
@@ -86,6 +90,9 @@ namespace Hydrogen
                 StartCoroutine(enableCollider());
             }
         }
+
+        // This is for the reload animation
+        protected void reloadGunAnim() { }
 
         public IEnumerator enableCollider()
         {

@@ -36,14 +36,6 @@
         Empty
     }
 
-    public enum MagazineType
-    {
-        HandGun,
-        SubMachineGun,
-        AssultRifle,
-        SniperRifle
-    }
-
     public enum BulletVariation
     {
         normal

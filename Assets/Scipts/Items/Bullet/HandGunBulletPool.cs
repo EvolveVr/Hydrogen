@@ -1,8 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-public class HandGunBulletPool : BulletPool {
-   
+using Hydrogen;
+
+public class HandGunBulletPool : BulletPool
+{
 
    protected override void Awake()
     {

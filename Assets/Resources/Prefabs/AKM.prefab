@@ -498,10 +498,15 @@ MonoBehaviour:
   EnableGravityOnDetach: 1
   AttachedHand: {fileID: 0}
   InteractionPoint: {fileID: 476000}
+  gunType: 2
   _currentMagazine: {fileID: 0}
   firePoint: {fileID: 493756}
   magazinePosition: {fileID: 425802}
   secondsAfterDetach: 0.2
+  VibrationCount: 1
+  VibrationLength: 1000
+  VibrationStrength: 1
+  gapLength: 0.01
 --- !u!114 &11474770
 MonoBehaviour:
   m_ObjectHideFlags: 1

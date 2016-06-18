@@ -141,7 +141,7 @@ MonoBehaviour:
   EnableGravityOnDetach: 1
   AttachedHand: {fileID: 0}
   InteractionPoint: {fileID: 0}
-  magazineType: 0
+  magazineType: 2
   bullet: {fileID: 11496858, guid: e8418912af3d71f4398c4e8f556f8079, type: 2}
   interactionPoint: {fileID: 467972}
   myGun: {fileID: 0}

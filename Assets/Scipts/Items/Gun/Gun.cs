@@ -7,15 +7,18 @@ namespace Hydrogen
 {
     // loaded measn there is a clip in it
     // equipped measn that your holding the gun
+    // engaged means it is ready to fire
     public abstract class Gun : NVRInteractableItem
     {
+        //make private
+        public bool _isEngaged = false;
+
         // current and max number of bullets
+        public GunType gunType;
+
         public Magazine _currentMagazine;
         public Transform firePoint;
         public Transform magazinePosition;
-
-        protected int _maxNumberOfBullets;
-        protected int _currentNumberOfBullets;
 
         public float secondsAfterDetach = 0.2f;
 
@@ -24,8 +27,24 @@ namespace Hydrogen
         public float VibrationStrength = 1;
         public float gapLength = 0.01f;
 
+        //Properties
+
+        public GunType GunType
+        {
+            get
+            {
+                return gunType;
+            }
+
+        }
+
         // Public Methods
-        public void isEngaged() { }
+        public bool isEngaged
+        {
+            get { return _isEngaged; }
+
+            set { _isEngaged = true; }
+        }
 
         public bool isLoaded
         {
@@ -36,7 +55,7 @@ namespace Hydrogen
         {
             if (isLoaded)
             {
-                if (_currentMagazine.hasBullets)
+                if (_currentMagazine.hasBullets && isEngaged)
                 {
                     GameObject bullet = _currentMagazine.getBullet;
                     bullet.transform.position = firePoint.position;
@@ -48,8 +67,6 @@ namespace Hydrogen
             }
         }
 
-        protected void applySpreadToBullet() { }
-
         protected void dropCurrentMagazine()
         {
             if(isLoaded)
@@ -57,24 +74,9 @@ namespace Hydrogen
                 StartCoroutine(disableMagazineCollider());
                 _currentMagazine.attachMagazine(false);
                 _currentMagazine = null;
+                _isEngaged = false;
             }
         }
-
-        protected void reloadGun() { }
-
-        protected void updateEngageLevel() { }
-
-        protected void playGunShotSound() { }
-
-        protected void playEngageSound() { }
-
-        protected void playNonEngagedSound() { }
-
-        protected float getControllerTriggerPosition() { return 0.0f; }
-
-        protected void updateTriggerPosition() { }
-
-        public void updateEngageLeverPosition() { }
 
         public override void UseButtonDown()
         {
@@ -86,7 +88,7 @@ namespace Hydrogen
             base.Update();
             if (AttachedHand != null)
             {
-                if(AttachedHand.Controller.GetPressDown(Valve.VR.EVRButtonId.k_EButton_SteamVR_Touchpad))
+                if (AttachedHand.Controller.GetPressDown(Valve.VR.EVRButtonId.k_EButton_SteamVR_Touchpad))
                 {
                     dropCurrentMagazine();
                 }
@@ -121,11 +123,27 @@ namespace Hydrogen
         {
             for (float i = 0; i < length; i += Time.deltaTime)
             {
-                if(AttachedHand != null)
+                if (AttachedHand != null)
                     AttachedHand.Controller.TriggerHapticPulse((ushort)Mathf.Lerp(0, 3999, strength));
                 yield return null;
             }
         }
+
+        protected void applySpreadToBullet() { }
+
+        protected void updateEngageLevel() { }
+
+        protected void playGunShotSound() { }
+
+        protected void playEngageSound() { }
+
+        protected void playNonEngagedSound() { }
+
+        protected float getControllerTriggerPosition() { return 0.0f; }
+
+        protected void updateTriggerPosition() { }
+
+        public void updateEngageLeverPosition() { }
 
     }
 }
