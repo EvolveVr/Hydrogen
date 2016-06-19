@@ -7,7 +7,7 @@ namespace Hydrogen
 {
     public class EngageMechanism : MonoBehaviour
     {
-        public float controllerVectorMagnitude = 1.5f;
+        public float controllerVectorMagnitude = 1.0f;
 
         // the top piece of the gun updates its position
         void UpdateEngagePiecePosition()

@@ -43,7 +43,7 @@ namespace Hydrogen
         {
             get { return _isEngaged; }
 
-            set { _isEngaged = true; }
+            set { _isEngaged = value; }
         }
 
         public bool isLoaded
@@ -74,8 +74,9 @@ namespace Hydrogen
                 StartCoroutine(disableMagazineCollider());
                 _currentMagazine.attachMagazine(false);
                 _currentMagazine = null;
-                _isEngaged = false;
+                
             }
+            _isEngaged = false;
         }
 
         public override void UseButtonDown()

@@ -10,6 +10,8 @@ TagManager:
   - ControllerLeft
   - ControllerRight
   - Magazine
+  - Cannon
+  - CannonBullet
   layers:
   - Default
   - TransparentFX
