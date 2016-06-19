@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+//Class names says it all
 public class DestroyBullet : MonoBehaviour
 {
     private float numberOfSeconds = 4.0f;

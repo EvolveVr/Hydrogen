@@ -13,7 +13,8 @@ namespace Hydrogen
         private int _currentBulletCount;
         private int _maxBulletCount;
         private bool _isEquipped;
-        public Gun myGun;
+
+        public SemiAutomaticGun myGun;
 
         public float secondsAfterDetach = 0.1f;
 
@@ -64,7 +65,7 @@ namespace Hydrogen
         {
             if (attach)
             {
-                myGun = gun.GetComponent<Gun>();
+                myGun = gun.GetComponent<SemiAutomaticGun>();
                 if (myGun.isLoaded || !myGun.IsAttached) { Debug.Log("I ALREADY HAVE A MAGAZINE IN ME"); return; }
 
                 if (magazineType == myGun.GunType)

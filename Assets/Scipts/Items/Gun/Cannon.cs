@@ -2,6 +2,12 @@
 using System.Collections;
 using NewtonVR;
 
+/// <summary>
+/// This will eventually be turned into an abstract class;
+/// This repreesents all guns that the user must insert the projectile
+/// into the weapon and then it is automatically engaged
+/// </summary>
+
 public class Cannon : NVRInteractableItem
 {
     public GameObject ammoPrefab;
@@ -20,9 +26,11 @@ public class Cannon : NVRInteractableItem
 
     void OnTriggerEnter(Collider hit)
     {
+        //if it is the proper bullet type
         if (hit.gameObject.tag == "CannonBullet")
         {
             isEngaged = true;
+
         }
     }
 

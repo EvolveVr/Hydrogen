@@ -2,16 +2,16 @@
 using NewtonVR;
 using System.Collections;
 
+
+//Needs lots of work!!
 public class Grenade : NVRInteractableItem
 {
     public float _seconds = 1.0f;
 
     void OnTriggerStay(Collider other)
     {
-        Debug.Log("Something cool");
         if (other.GetComponent<NVRHand>() != null)
         {
-            Debug.Log("blah blah");
             if (other.GetComponent<NVRHand>().UseButtonDown)
             {
                 pullPin();

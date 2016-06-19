@@ -12,6 +12,7 @@ TagManager:
   - Magazine
   - Cannon
   - CannonBullet
+  - Wall
   layers:
   - Default
   - TransparentFX

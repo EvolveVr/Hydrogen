@@ -5,23 +5,18 @@ using System.Collections;
 
 namespace Hydrogen
 {
-    // loaded measn there is a clip in it
-    // equipped measn that your holding the gun
-    // engaged means it is ready to fire
+    // Loaded means there is a clip in it;
+    // Equipped means that your holding the gun;
+    // Engaged means it is ready to fire
     public abstract class Gun : NVRInteractableItem
     {
-        //make private
         public bool _isEngaged = false;
 
         // current and max number of bullets
         public GunType gunType;
-
-        public Magazine _currentMagazine;
         public Transform firePoint;
-        public Transform magazinePosition;
 
-        public float secondsAfterDetach = 0.2f;
-
+        //haptics; all guns have a haptic feedback after shooting
         public int VibrationCount = 1;
         public float VibrationLength = 1000f;
         public float VibrationStrength = 1;
@@ -35,10 +30,8 @@ namespace Hydrogen
             {
                 return gunType;
             }
-
         }
 
-        // Public Methods
         public bool isEngaged
         {
             get { return _isEngaged; }
@@ -46,63 +39,7 @@ namespace Hydrogen
             set { _isEngaged = value; }
         }
 
-        public bool isLoaded
-        {
-            get { return _currentMagazine != null; }
-        }
-
-        protected void shootGun()
-        {
-            if (isLoaded)
-            {
-                if (_currentMagazine.hasBullets && isEngaged)
-                {
-                    GameObject bullet = _currentMagazine.getBullet;
-                    bullet.transform.position = firePoint.position;
-                    bullet.transform.rotation = firePoint.rotation;
-                    StartCoroutine(LongVibration(VibrationCount, VibrationLength, gapLength, VibrationStrength));
-                    StopCoroutine(LongVibration(VibrationCount, VibrationLength, gapLength, VibrationStrength));
-                    bullet.GetComponent<Bullet>().addForce();
-                }
-            }
-        }
-
-        protected void dropCurrentMagazine()
-        {
-            if(isLoaded)
-            {
-                StartCoroutine(disableMagazineCollider());
-                _currentMagazine.attachMagazine(false);
-                _currentMagazine = null;
-                
-            }
-            _isEngaged = false;
-        }
-
-        public override void UseButtonDown()
-        {
-            shootGun();
-        }
-
-        protected override void Update()
-        {
-            base.Update();
-            if (AttachedHand != null)
-            {
-                if (AttachedHand.Controller.GetPressDown(Valve.VR.EVRButtonId.k_EButton_SteamVR_Touchpad))
-                {
-                    dropCurrentMagazine();
-                }
-            }
-        }
-
-        public IEnumerator disableMagazineCollider()
-        {
-            magazinePosition.gameObject.GetComponent<BoxCollider>().enabled = false;
-            yield return new WaitForSeconds(secondsAfterDetach);
-            magazinePosition.gameObject.GetComponent<BoxCollider>().enabled = true;
-            StopCoroutine(disableMagazineCollider());
-        }
+        protected abstract void shootGun();
 
         //vibrationCount is how many vibrations
         //vibrationLength is how long each vibration should go for
@@ -118,8 +55,6 @@ namespace Hydrogen
             }
         }
 
-        //length is how long the vibration should go for
-        //strength is vibration strength from 0-1
         IEnumerator LongVibration(float length, float strength)
         {
             for (float i = 0; i < length; i += Time.deltaTime)
@@ -130,21 +65,12 @@ namespace Hydrogen
             }
         }
 
-        protected void applySpreadToBullet() { }
 
-        protected void updateEngageLevel() { }
+        // All unimplemented methods
 
         protected void playGunShotSound() { }
 
-        protected void playEngageSound() { }
-
-        protected void playNonEngagedSound() { }
-
-        protected float getControllerTriggerPosition() { return 0.0f; }
-
-        protected void updateTriggerPosition() { }
-
-        public void updateEngageLeverPosition() { }
-
+        //protected float getControllerTriggerPosition() { return 0.0f; } // might be for all guns
+        // protected void updateTriggerPosition() { } // might be for all guns
     }
 }
