@@ -82,7 +82,7 @@ GameObject:
   - 114: {fileID: 11433866}
   m_Layer: 0
   m_Name: Model
-  m_TagString: Untagged
+  m_TagString: ControllerLeft
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -118,7 +118,7 @@ GameObject:
   - 114: {fileID: 11480408}
   m_Layer: 0
   m_Name: Model
-  m_TagString: Untagged
+  m_TagString: ControllerRight
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -150,6 +150,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 458492}
   m_Father: {fileID: 478642}
@@ -163,6 +164,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 449252}
   m_RootOrder: 0
@@ -175,6 +177,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 431292}
   m_Father: {fileID: 478642}
@@ -188,6 +191,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 485686}
   - {fileID: 491726}
@@ -202,6 +206,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 403292}
   m_RootOrder: 0
@@ -211,9 +216,10 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 140386}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: 0.0002586297, y: 0.74788344, z: -0.00000003726757, w: 0.6638301}
+  m_LocalPosition: {x: 201.588, y: -0.057, z: 180.464}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0.0197, y: 96.8147, z: 0.0222}
   m_Children:
   - {fileID: 449252}
   - {fileID: 403292}
@@ -229,6 +235,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 455908}
   m_RootOrder: 0
@@ -241,6 +248,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 455908}
   m_RootOrder: 1
@@ -422,6 +430,7 @@ MonoBehaviour:
   CustomModel: {fileID: 0}
   CustomPhysicalColliders: {fileID: 0}
   CurrentlyInteracting: {fileID: 0}
+  PhysicalController: {fileID: 0}
 --- !u!114 &11421904
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -528,6 +537,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PhysicalHands: 1
+  MakeControllerInvisibleOnInteraction: 1
   Head: {fileID: 11408836}
   LeftHand: {fileID: 11419036}
   RightHand: {fileID: 11464396}
@@ -558,6 +568,7 @@ MonoBehaviour:
   CustomModel: {fileID: 0}
   CustomPhysicalColliders: {fileID: 0}
   CurrentlyInteracting: {fileID: 0}
+  PhysicalController: {fileID: 0}
 --- !u!114 &11480408
 MonoBehaviour:
   m_ObjectHideFlags: 1

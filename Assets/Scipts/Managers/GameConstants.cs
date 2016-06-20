@@ -26,7 +26,8 @@
         HandGun,
         SubMachineGun,
         AssultRifle,
-        SniperRifle
+        SniperRifle,
+        Cannon
     }
 
     public enum GunState

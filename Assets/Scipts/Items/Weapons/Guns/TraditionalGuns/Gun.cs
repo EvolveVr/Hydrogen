@@ -2,12 +2,16 @@
 using NewtonVR;
 using System.Collections;
 
-
 namespace Hydrogen
 {
+    /// <summary>
+    /// Abstract class Gun will hold all the methods, properties and Fields that 
+    /// are general to ALL guns in the game
+    /// </summary>
+
     // Loaded means there is a clip in it;
     // Equipped means that your holding the gun;
-    // Engaged means it is ready to fire
+    // Engaged means it is ready to fire;
     public abstract class Gun : NVRInteractableItem
     {
         public bool _isEngaged = false;
@@ -39,6 +43,7 @@ namespace Hydrogen
             set { _isEngaged = value; }
         }
 
+        //All guns need to shoot, but some of them shoot in very different ways;
         protected abstract void shootGun();
 
         //vibrationCount is how many vibrations
