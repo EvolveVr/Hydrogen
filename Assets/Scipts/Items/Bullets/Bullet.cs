@@ -11,7 +11,7 @@ public class Bullet : MonoBehaviour
     private float _secondsUntilDestroy = 5.0f;
 
     //All bullets need to add there own force
-    public void addForce()
+    public void initialize()
     {
         GetComponent<Rigidbody>().AddForce(transform.forward * bulletForce, ForceMode.Impulse);
 

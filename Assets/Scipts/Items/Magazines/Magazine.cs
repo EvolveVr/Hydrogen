@@ -7,69 +7,72 @@ namespace Hydrogen
 {
     public class Magazine : NVRInteractableItem
     {
-        public GunType magazineType;
-        public Bullet bullet;
         public Transform interactionPoint;
-        private int _currentBulletCount;
-        private int _maxBulletCount;
-        private bool _isEquipped;
+        
+        //the correct corresponding bullet to this magazine
+        public Bullet bullet;
+        
+        //can the gun shoot continuously or not
+        public bool hasBulletCount = false;
 
-        public SemiAutomaticGun myGun;
+        //the current number of bullets inside the magazine
+        public int currentBulletCount;
 
+        //the max amount of bullets that fit inside that magazine
+        public int maxBulletCount;
+
+        //is the magazine currently in a gun
+        public bool isEquipped;
+
+        //the gun this magazine is equipped to
+        public Gun myGun;
+
+        //the seconds after detatching to turn on the magazine collider
         public float secondsAfterDetach = 0.1f;
-
-        protected override void Start()
-        {
-            base.Start();
-            if (myGun != null)
-            {
-                _isEquipped = true;
-            }
-            _maxBulletCount = 15;
-            _currentBulletCount = _maxBulletCount;
-        }
-
+        
+        #region PROPERTIES
         public int bulletCount
         {
-            get { return _currentBulletCount; }
-            set { _currentBulletCount = Mathf.Clamp(value, 0, _maxBulletCount); }
+            get { return currentBulletCount; }
+            set { currentBulletCount = Mathf.Clamp(value, 0, maxBulletCount); }
         }
-
-        public int maxBulletCount
-        {
-            get { return _maxBulletCount; }
-            set { _maxBulletCount = value; }
-        }
-
-        public bool isEquipped
-        {
-            get { return _isEquipped; }
-            set { _isEquipped = value; }
-        }
-
+        
         public bool hasBullets
         {
-            get { return _currentBulletCount > 0; }
+            get { return currentBulletCount > 0; }
         }
 
         public GameObject getBullet
         {
             get
             {
-                _currentBulletCount--;
-                return Instantiate<GameObject>(bullet.gameObject);
+                if (hasBulletCount) { bulletCount--; }
+                return Instantiate(bullet.gameObject);
             }
         }
+        #endregion
 
+        protected override void Start()
+        {
+            base.Start();
+            if (myGun != null)
+            {
+                isEquipped = true;
+            }
+            currentBulletCount = maxBulletCount;
+        }
+
+        #region MAGAZINE METHODS
         public void attachMagazine(bool attach, GameObject gun = null)
         {
-            if (attach)
+            if (hasBulletCount)
             {
-                myGun = gun.GetComponent<SemiAutomaticGun>();
-                if (myGun.isLoaded || !myGun.IsAttached) { Debug.Log("I ALREADY HAVE A MAGAZINE IN ME"); return; }
-
-                if (magazineType == myGun.GunType)
+                if (attach)
                 {
+                    myGun = gun.GetComponent<Gun>();
+                    if (myGun.isLoaded || !myGun.IsAttached) { return; }
+
+                    //TODO: ADD IN A CHECK TO SEE IF IT'S THE PROPER MAGAZINE FOR THE CURRENT GUN                
                     isEquipped = true;
                     GetComponent<BoxCollider>().isTrigger = true;
                     transform.SetParent(myGun.magazinePosition, false);
@@ -79,16 +82,17 @@ namespace Hydrogen
                     transform.position = myGun.magazinePosition.transform.position;
                     transform.rotation = myGun.magazinePosition.transform.rotation;
                     transform.localScale = Vector3.one;
-                    myGun._currentMagazine = this;
+                    myGun.currentMagazine = this;
+
                 }
-            }
-            else
-            {
-                transform.SetParent(null);
-                GetComponent<Rigidbody>().useGravity = true;
-                GetComponent<Rigidbody>().isKinematic = false;
-                isEquipped = false;
-                StartCoroutine(enableCollider());
+                else
+                {
+                    transform.SetParent(null);
+                    GetComponent<Rigidbody>().useGravity = true;
+                    GetComponent<Rigidbody>().isKinematic = false;
+                    isEquipped = false;
+                    StartCoroutine(enableCollider());
+                }
             }
         }
 
@@ -102,5 +106,6 @@ namespace Hydrogen
             CanAttach = true;
             StopCoroutine(enableCollider());
         }
+        #endregion
     }
 }

@@ -16,7 +16,7 @@ public class BulletManager : MonoBehaviour
 	void Start ()
     {
      //We'll add in the other types of bulletPools in here 
-       allBulletPools.Add(GameObject.Find("PM-40").GetComponent<SemiAutomaticGun>(),gameObject.GetComponent<HandGunBulletPool>().getPool);
+      // allBulletPools.Add(GameObject.Find("PM-40").GetComponent<SemiAutomaticGun>(),gameObject.GetComponent<HandGunBulletPool>().getPool);
 
         //This was testing to make sure different derived gun types worked as keys and they did.
    //  allBulletPools.Add(GameObject.Find("tempgun").GetComponent<AutomaticGun>(), gameObject.GetComponent<HandGunBulletPool>().getPool);

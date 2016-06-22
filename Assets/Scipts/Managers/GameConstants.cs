@@ -12,36 +12,7 @@
         Hard,
         Extreme
     }
-
-    public enum ItemType
-    {
-        Gun,
-        Magazine,
-        Bullet,
-        ItemObject
-    }
-
-    public enum GunType
-    {
-        HandGun,
-        SubMachineGun,
-        AssultRifle,
-        SniperRifle,
-        Cannon
-    }
-
-    public enum GunState
-    {
-        Loaded,
-        Engaged,
-        Empty
-    }
-
-    public enum BulletVariation
-    {
-        normal
-    }
-
+    
     public static class GameConstants
     {
         
