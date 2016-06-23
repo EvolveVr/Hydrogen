@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using Hydrogen;
 
+//this class will be implemented later
+/*
 public class HandGunBulletPool : BulletPool
 {
 
@@ -18,3 +20,4 @@ public class HandGunBulletPool : BulletPool
         initialize();
     }
 }
+*/

@@ -12,8 +12,8 @@ GameObject:
   - 135: {fileID: 13513502}
   - 23: {fileID: 2391604}
   - 54: {fileID: 5414594}
-  - 114: {fileID: 11496858}
   - 96: {fileID: 9618786}
+  - 114: {fileID: 11428382}
   m_Layer: 0
   m_Name: Bullet
   m_TagString: Untagged
@@ -27,10 +27,10 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 160380}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 201.5587, y: 1.2, z: 176.911}
+  m_LocalRotation: {x: 0.115843594, y: 0.7456461, z: 0.013904764, w: 0.65604794}
+  m_LocalPosition: {x: 202.08426, y: 1.0656823, z: 180.8417}
   m_LocalScale: {x: 0.011652544, y: 0.011652542, z: 0.011652542}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: -4.0509, y: 132.00319, z: 2.0628}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -129,7 +129,7 @@ TrailRenderer:
       rgba: 16777215
   m_MinVertexDistance: 0.1
   m_Autodestruct: 0
---- !u!114 &11496858
+--- !u!114 &11428382
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -140,7 +140,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e5db0c7102e286241815eb566aff91c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bulletPreFab: {fileID: 160380}
   bulletForce: 100
 --- !u!135 &13513502
 SphereCollider:

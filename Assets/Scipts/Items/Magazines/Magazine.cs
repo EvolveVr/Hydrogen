@@ -5,6 +5,8 @@ using System.Collections;
 //isEquipped from the Magazines perspective means the Magazine is inside a gun
 namespace Hydrogen
 {
+    // This class will be implemented later
+    /*
     public class Magazine : NVRInteractableItem
     {
         public Transform interactionPoint;
@@ -108,4 +110,5 @@ namespace Hydrogen
         }
         #endregion
     }
+    */
 }

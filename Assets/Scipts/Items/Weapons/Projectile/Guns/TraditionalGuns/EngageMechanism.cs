@@ -5,6 +5,7 @@ using NewtonVR;
 
 namespace Hydrogen
 {
+    /*
     public class EngageMechanism : MonoBehaviour
     {
         public float controllerVectorMagnitude = 1.0f;
@@ -39,4 +40,5 @@ namespace Hydrogen
         }
 
     }
+    */
 }

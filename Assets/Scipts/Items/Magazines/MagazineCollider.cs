@@ -3,6 +3,8 @@ using System.Collections;
 
 namespace Hydrogen
 {
+    //this class will be implemented later
+    /*
     public class MagazineCollider : MonoBehaviour
     {
 
@@ -18,5 +20,6 @@ namespace Hydrogen
             }
         }
     }
+    */
 }
 

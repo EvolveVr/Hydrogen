@@ -20,8 +20,6 @@ namespace NewtonVR
 
         public static void SetTransparent(Material material, Color? newcolor = null)
         {
-            if (material.shader != StandardShader)
-                Debug.LogWarning("Trying to set transparent mode on non-standard shader. Please use the Standard Shader instead or modify this method.");
 
             material.SetOverrideTag("RenderType", "Transparent");
             material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
@@ -43,8 +41,6 @@ namespace NewtonVR
         
         public static void SetOpaque(Material material)
         {
-            if (material.shader != StandardShader)
-                Debug.LogWarning("Trying to set opaque mode on non-standard shader. Please use the Standard Shader instead or modify this method.");
 
             material.SetOverrideTag("RenderType", "");
             material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.One);

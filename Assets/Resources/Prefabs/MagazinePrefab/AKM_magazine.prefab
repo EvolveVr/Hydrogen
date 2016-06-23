@@ -140,10 +140,19 @@ MonoBehaviour:
   DropDistance: 1
   EnableGravityOnDetach: 1
   AttachedHand: {fileID: 0}
+  Colliders: []
+  ClosestHeldPoint: {x: 0, y: 0, z: 0}
   InteractionPoint: {fileID: 0}
-  magazineType: 2
-  bullet: {fileID: 11496858, guid: e8418912af3d71f4398c4e8f556f8079, type: 2}
+  AttachedRotationMagic: 20
+  AttachedPositionMagic: 3000
+  PickupTransform: {fileID: 0}
+  LastVelocityAddition: {x: 0, y: 0, z: 0}
   interactionPoint: {fileID: 467972}
+  bullet: {fileID: 11496858, guid: e8418912af3d71f4398c4e8f556f8079, type: 2}
+  hasBulletCount: 0
+  currentBulletCount: 0
+  maxBulletCount: 0
+  isEquipped: 0
   myGun: {fileID: 0}
   secondsAfterDetach: 0.1
 --- !u!1001 &100100000
