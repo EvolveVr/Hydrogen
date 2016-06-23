@@ -15,10 +15,10 @@ public class Bullet : MonoBehaviour
     {
         GetComponent<Rigidbody>().AddForce(transform.forward * bulletForce, ForceMode.Impulse);
 
-        //if (gameObject.activeSelf)
-        //{
-        //    StartCoroutine(destroyBullet(_secondsUntilDestroy));
-        //}
+        if (gameObject.activeSelf)
+        {
+            StartCoroutine(destroyBullet(_secondsUntilDestroy));
+        }
     }
 
     void OnTriggerEnter(Collider hit)

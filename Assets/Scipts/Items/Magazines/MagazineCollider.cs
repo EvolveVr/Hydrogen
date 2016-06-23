@@ -3,11 +3,8 @@ using System.Collections;
 
 namespace Hydrogen
 {
-    //this class will be implemented later
-    /*
     public class MagazineCollider : MonoBehaviour
     {
-
         public GameObject parentGun;
 
         void OnTriggerEnter(Collider other)
@@ -20,6 +17,5 @@ namespace Hydrogen
             }
         }
     }
-    */
 }
 

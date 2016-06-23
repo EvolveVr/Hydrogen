@@ -85,134 +85,81 @@ NavMeshSettings:
     cellSize: 0.16666667
     manualCellSize: 0
   m_NavMeshData: {fileID: 0}
---- !u!43 &268571027
-Mesh:
+--- !u!1 &69335354 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 160160, guid: 0c2f636bd3d3a9745922f612b80fb14d, type: 2}
+  m_PrefabInternal: {fileID: 529052374}
+--- !u!114 &69335357
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 69335354}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4ed1e54a1e47b34aafa2b7ef9c51a8e, type: 3}
   m_Name: 
-  serializedVersion: 8
-  m_SubMeshes:
-  - serializedVersion: 2
-    firstByte: 0
-    indexCount: 24
-    topology: 0
-    firstVertex: 0
-    vertexCount: 8
-    localAABB:
-      m_Center: {x: 0, y: 0.01, z: 0}
-      m_Extent: {x: 1.65, y: 0, z: 1.275}
-  m_Shapes:
-    vertices: []
-    shapes: []
-    channels: []
-    fullWeights: []
-  m_BindPose: []
-  m_BoneNameHashes: 
-  m_RootBoneNameHash: 0
-  m_MeshCompression: 0
-  m_IsReadable: 1
-  m_KeepVertices: 1
-  m_KeepIndices: 1
-  m_IndexBuffer: 000001000400010005000400010002000500020006000500020003000600030007000600030000000700000004000700
-  m_Skin: []
-  m_VertexData:
-    m_CurrentChannels: 13
-    m_VertexCount: 8
-    m_Channels:
-    - stream: 0
-      offset: 0
-      format: 0
-      dimension: 3
-    - stream: 0
-      offset: 0
-      format: 0
-      dimension: 0
-    - stream: 0
-      offset: 12
-      format: 0
-      dimension: 4
-    - stream: 0
-      offset: 28
-      format: 0
-      dimension: 2
-    - stream: 0
-      offset: 0
-      format: 0
-      dimension: 0
-    - stream: 0
-      offset: 0
-      format: 0
-      dimension: 0
-    - stream: 0
-      offset: 0
-      format: 0
-      dimension: 0
-    - stream: 0
-      offset: 0
-      format: 0
-      dimension: 0
-    m_DataSize: 288
-    _typelessdata: 0000c03f0ad7233c0000903f000000000000803f0000803f0000803f00000000000000000000c03f0ad7233c000090bf000000000000803f0000803f0000803f0000803f000000000000c0bf0ad7233c000090bf000000000000803f0000803f0000803f00000000000000000000c0bf0ad7233c0000903f000000000000803f0000803f0000803f0000803f000000003333d33f0ad7233c3333a33f000000000000803f0000803f00000000000000000000803f3333d33f0ad7233c3333a3bf000000000000803f0000803f000000000000803f0000803f3333d3bf0ad7233c3333a3bf000000000000803f0000803f00000000000000000000803f3333d3bf0ad7233c3333a33f000000000000803f0000803f000000000000803f0000803f
-  m_CompressedMesh:
-    m_Vertices:
-      m_NumItems: 0
-      m_Range: 0
-      m_Start: 0
-      m_Data: 
-      m_BitSize: 0
-    m_UV:
-      m_NumItems: 0
-      m_Range: 0
-      m_Start: 0
-      m_Data: 
-      m_BitSize: 0
-    m_Normals:
-      m_NumItems: 0
-      m_Range: 0
-      m_Start: 0
-      m_Data: 
-      m_BitSize: 0
-    m_Tangents:
-      m_NumItems: 0
-      m_Range: 0
-      m_Start: 0
-      m_Data: 
-      m_BitSize: 0
-    m_Weights:
-      m_NumItems: 0
-      m_Data: 
-      m_BitSize: 0
-    m_NormalSigns:
-      m_NumItems: 0
-      m_Data: 
-      m_BitSize: 0
-    m_TangentSigns:
-      m_NumItems: 0
-      m_Data: 
-      m_BitSize: 0
-    m_FloatColors:
-      m_NumItems: 0
-      m_Range: 0
-      m_Start: 0
-      m_Data: 
-      m_BitSize: 0
-    m_BoneIndices:
-      m_NumItems: 0
-      m_Data: 
-      m_BitSize: 0
-    m_Triangles:
-      m_NumItems: 0
-      m_Data: 
-      m_BitSize: 0
-    m_UVInfo: 0
-  m_LocalAABB:
-    m_Center: {x: 0, y: 0.01, z: 0}
-    m_Extent: {x: 1.65, y: 0, z: 1.275}
-  m_MeshUsageFlags: 0
-  m_BakedConvexCollisionMesh: 
-  m_BakedTriangleCollisionMesh: 
-  m_MeshOptimized: 0
+  m_EditorClassIdentifier: 
+  Rigidbody: {fileID: 0}
+  CanAttach: 1
+  DisableKinematicOnAttach: 1
+  EnableKinematicOnDetach: 0
+  DropDistance: 1
+  EnableGravityOnDetach: 1
+  AttachedHand: {fileID: 0}
+  InteractionPoint: {fileID: 0}
+  weaponName: AKM
+  weaponDescription: A semi-automatic assult rifle
+  projectileWeapon: 1
+  drawableGun: 0
+  isInfinite: 0
+  needsEngagment: 0
+  isAutomatic: 1
+  timeBetweenShots: 0.3
+  timeSinceLastShot: 0
+  isEngaged: 0
+  firePoint: {fileID: 896885208}
+  currentMagazine: {fileID: 212363843}
+  secondsAfterDetach: 0.2
+  magazinePosition: {fileID: 1150118868}
+  VibrationCount: 1
+  VibrationLength: 1000
+  VibrationStrength: 1
+  gapLength: 0.01
+--- !u!1 &212363837 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 199514, guid: f297f2b7a52b2f846b03a7a8f02ce2a6, type: 2}
+  m_PrefabInternal: {fileID: 365433431}
+--- !u!114 &212363843
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 212363837}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ee2c8cdefe60f54da0bf84ab101a277, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Rigidbody: {fileID: 0}
+  CanAttach: 0
+  DisableKinematicOnAttach: 1
+  EnableKinematicOnDetach: 0
+  DropDistance: 1
+  EnableGravityOnDetach: 1
+  AttachedHand: {fileID: 0}
+  InteractionPoint: {fileID: 315476587}
+  bullet: {fileID: 11428382, guid: e8418912af3d71f4398c4e8f556f8079, type: 2}
+  hasBulletCount: 1
+  currentBulletCount: 0
+  maxBulletCount: 15
+  isEquipped: 1
+  myGun: {fileID: 69335357}
+  secondsAfterDetach: 0.1
+--- !u!4 &315476587 stripped
+Transform:
+  m_PrefabParentObject: {fileID: 467972, guid: f297f2b7a52b2f846b03a7a8f02ce2a6, type: 2}
+  m_PrefabInternal: {fileID: 365433431}
 --- !u!1001 &330979940
 Prefab:
   m_ObjectHideFlags: 0
@@ -530,6 +477,22 @@ Prefab:
     - {fileID: 9500000, guid: bc47d6d03a2cd0b4ab4297dfd2edfe5f, type: 3}
   m_ParentPrefab: {fileID: 100100000, guid: bc47d6d03a2cd0b4ab4297dfd2edfe5f, type: 3}
   m_IsPrefabParent: 0
+--- !u!1 &475570840 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 148250, guid: 0c2f636bd3d3a9745922f612b80fb14d, type: 2}
+  m_PrefabInternal: {fileID: 529052374}
+--- !u!114 &475570842
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 475570840}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 647edc77ecfa7db44947f0db1d8dcbec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  parentGun: {fileID: 69335354}
 --- !u!1001 &529052374
 Prefab:
   m_ObjectHideFlags: 0
@@ -647,7 +610,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 160160, guid: 0c2f636bd3d3a9745922f612b80fb14d, type: 2}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 11474770, guid: 0c2f636bd3d3a9745922f612b80fb14d, type: 2}
@@ -719,6 +682,36 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 613354516}
   m_Mesh: {fileID: 4300008, guid: 45b08677cbcfc414f937226fbf703901, type: 3}
+--- !u!1 &720486305 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 199514, guid: f297f2b7a52b2f846b03a7a8f02ce2a6, type: 2}
+  m_PrefabInternal: {fileID: 2125751750}
+--- !u!114 &720486306
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 720486305}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ee2c8cdefe60f54da0bf84ab101a277, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Rigidbody: {fileID: 0}
+  CanAttach: 1
+  DisableKinematicOnAttach: 1
+  EnableKinematicOnDetach: 0
+  DropDistance: 1
+  EnableGravityOnDetach: 1
+  AttachedHand: {fileID: 0}
+  InteractionPoint: {fileID: 1944355846}
+  bullet: {fileID: 11428382, guid: e8418912af3d71f4398c4e8f556f8079, type: 2}
+  hasBulletCount: 1
+  currentBulletCount: 0
+  maxBulletCount: 100
+  isEquipped: 0
+  myGun: {fileID: 0}
+  secondsAfterDetach: 0.1
 --- !u!1001 &864982521
 Prefab:
   m_ObjectHideFlags: 0
@@ -761,7 +754,7 @@ Prefab:
     - target: {fileID: 3392232, guid: b0047dd65ff208349bf3a5aaaeae24d0, type: 2}
       propertyPath: m_Mesh
       value: 
-      objectReference: {fileID: 268571027}
+      objectReference: {fileID: 1543487599}
     - target: {fileID: 478642, guid: b0047dd65ff208349bf3a5aaaeae24d0, type: 2}
       propertyPath: m_LocalEulerAnglesHint.y
       value: 90
@@ -777,6 +770,10 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: b0047dd65ff208349bf3a5aaaeae24d0, type: 2}
   m_IsPrefabParent: 0
+--- !u!4 &896885208 stripped
+Transform:
+  m_PrefabParentObject: {fileID: 493756, guid: 0c2f636bd3d3a9745922f612b80fb14d, type: 2}
+  m_PrefabInternal: {fileID: 529052374}
 --- !u!1 &934491213 stripped
 GameObject:
   m_PrefabParentObject: {fileID: 100000, guid: bc47d6d03a2cd0b4ab4297dfd2edfe5f, type: 3}
@@ -874,10 +871,18 @@ MonoBehaviour:
   InteractionPoint: {fileID: 1384931092}
   weaponName: PM40
   weaponDescription: Automatic Pistol
-  projectileWeapon: 0
+  projectileWeapon: 1
   drawableGun: 0
+  isInfinite: 0
+  needsEngagment: 0
+  isAutomatic: 0
+  timeBetweenShots: 0.1
+  timeSinceLastShot: 0
+  isEngaged: 0
   firePoint: {fileID: 1384931093}
-  bulletPrefab: {fileID: 11428382, guid: e8418912af3d71f4398c4e8f556f8079, type: 2}
+  currentMagazine: {fileID: 1058543252}
+  secondsAfterDetach: 0.2
+  magazinePosition: {fileID: 1384931091}
   VibrationCount: 1
   VibrationLength: 1000
   VibrationStrength: 1
@@ -907,7 +912,7 @@ Rigidbody:
   m_Drag: 0
   m_AngularDrag: 0.05
   m_UseGravity: 1
-  m_IsKinematic: 1
+  m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
@@ -965,6 +970,36 @@ Transform:
   - {fileID: 1384931091}
   m_Father: {fileID: 0}
   m_RootOrder: 5
+--- !u!1 &1058543247 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 140596, guid: a03d89569a24a454990e69254a659b92, type: 2}
+  m_PrefabInternal: {fileID: 2067869988}
+--- !u!114 &1058543252
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1058543247}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ee2c8cdefe60f54da0bf84ab101a277, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Rigidbody: {fileID: 0}
+  CanAttach: 0
+  DisableKinematicOnAttach: 1
+  EnableKinematicOnDetach: 0
+  DropDistance: 1
+  EnableGravityOnDetach: 1
+  AttachedHand: {fileID: 0}
+  InteractionPoint: {fileID: 0}
+  bullet: {fileID: 11428382, guid: e8418912af3d71f4398c4e8f556f8079, type: 2}
+  hasBulletCount: 1
+  currentBulletCount: 0
+  maxBulletCount: 15
+  isEquipped: 1
+  myGun: {fileID: 939988209}
+  secondsAfterDetach: 0.1
 --- !u!4 &1150118868 stripped
 Transform:
   m_PrefabParentObject: {fileID: 425802, guid: 0c2f636bd3d3a9745922f612b80fb14d, type: 2}
@@ -1059,6 +1094,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 1384931091}
   - 65: {fileID: 1384931090}
+  - 114: {fileID: 1384931089}
   m_Layer: 0
   m_Name: MagazinePosition
   m_TagString: Untagged
@@ -1066,6 +1102,18 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &1384931089
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1384931088}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 647edc77ecfa7db44947f0db1d8dcbec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  parentGun: {fileID: 939988208}
 --- !u!65 &1384931090
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1074,7 +1122,7 @@ BoxCollider:
   m_GameObject: {fileID: 1384931088}
   m_Material: {fileID: 0}
   m_IsTrigger: 1
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 35.03985, y: 47.323265, z: 5.736214}
   m_Center: {x: -0.8747932, y: -6.7793527, z: -5.406736}
@@ -1151,6 +1199,134 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.013550348, y: 0.03699216, z: 0.03671344}
   m_Center: {x: -6.984919e-10, y: -1.02427347e-16, z: 0.000015261583}
+--- !u!43 &1543487599
+Mesh:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_Name: 
+  serializedVersion: 8
+  m_SubMeshes:
+  - serializedVersion: 2
+    firstByte: 0
+    indexCount: 24
+    topology: 0
+    firstVertex: 0
+    vertexCount: 8
+    localAABB:
+      m_Center: {x: 0, y: 0.01, z: 0}
+      m_Extent: {x: 1.65, y: 0, z: 1.275}
+  m_Shapes:
+    vertices: []
+    shapes: []
+    channels: []
+    fullWeights: []
+  m_BindPose: []
+  m_BoneNameHashes: 
+  m_RootBoneNameHash: 0
+  m_MeshCompression: 0
+  m_IsReadable: 1
+  m_KeepVertices: 1
+  m_KeepIndices: 1
+  m_IndexBuffer: 000001000400010005000400010002000500020006000500020003000600030007000600030000000700000004000700
+  m_Skin: []
+  m_VertexData:
+    m_CurrentChannels: 13
+    m_VertexCount: 8
+    m_Channels:
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 3
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 12
+      format: 0
+      dimension: 4
+    - stream: 0
+      offset: 28
+      format: 0
+      dimension: 2
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    m_DataSize: 288
+    _typelessdata: 0000c03f0ad7233c0000903f000000000000803f0000803f0000803f00000000000000000000c03f0ad7233c000090bf000000000000803f0000803f0000803f0000803f000000000000c0bf0ad7233c000090bf000000000000803f0000803f0000803f00000000000000000000c0bf0ad7233c0000903f000000000000803f0000803f0000803f0000803f000000003333d33f0ad7233c3333a33f000000000000803f0000803f00000000000000000000803f3333d33f0ad7233c3333a3bf000000000000803f0000803f000000000000803f0000803f3333d3bf0ad7233c3333a3bf000000000000803f0000803f00000000000000000000803f3333d3bf0ad7233c3333a33f000000000000803f0000803f000000000000803f0000803f
+  m_CompressedMesh:
+    m_Vertices:
+      m_NumItems: 0
+      m_Range: 0
+      m_Start: 0
+      m_Data: 
+      m_BitSize: 0
+    m_UV:
+      m_NumItems: 0
+      m_Range: 0
+      m_Start: 0
+      m_Data: 
+      m_BitSize: 0
+    m_Normals:
+      m_NumItems: 0
+      m_Range: 0
+      m_Start: 0
+      m_Data: 
+      m_BitSize: 0
+    m_Tangents:
+      m_NumItems: 0
+      m_Range: 0
+      m_Start: 0
+      m_Data: 
+      m_BitSize: 0
+    m_Weights:
+      m_NumItems: 0
+      m_Data: 
+      m_BitSize: 0
+    m_NormalSigns:
+      m_NumItems: 0
+      m_Data: 
+      m_BitSize: 0
+    m_TangentSigns:
+      m_NumItems: 0
+      m_Data: 
+      m_BitSize: 0
+    m_FloatColors:
+      m_NumItems: 0
+      m_Range: 0
+      m_Start: 0
+      m_Data: 
+      m_BitSize: 0
+    m_BoneIndices:
+      m_NumItems: 0
+      m_Data: 
+      m_BitSize: 0
+    m_Triangles:
+      m_NumItems: 0
+      m_Data: 
+      m_BitSize: 0
+    m_UVInfo: 0
+  m_LocalAABB:
+    m_Center: {x: 0, y: 0.01, z: 0}
+    m_Extent: {x: 1.65, y: 0, z: 1.275}
+  m_MeshUsageFlags: 0
+  m_BakedConvexCollisionMesh: 
+  m_BakedTriangleCollisionMesh: 
+  m_MeshOptimized: 0
 --- !u!54 &1567863349 stripped
 Rigidbody:
   m_PrefabParentObject: {fileID: 5479062, guid: 0c2f636bd3d3a9745922f612b80fb14d,
@@ -1236,6 +1412,10 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!4 &1944355846 stripped
+Transform:
+  m_PrefabParentObject: {fileID: 467972, guid: f297f2b7a52b2f846b03a7a8f02ce2a6, type: 2}
+  m_PrefabInternal: {fileID: 2125751750}
 --- !u!1 &1973797552
 GameObject:
   m_ObjectHideFlags: 0
@@ -1430,7 +1610,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 6512870, guid: a03d89569a24a454990e69254a659b92, type: 2}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 11495060, guid: a03d89569a24a454990e69254a659b92, type: 2}
@@ -1481,7 +1661,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 199514, guid: f297f2b7a52b2f846b03a7a8f02ce2a6, type: 2}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 11437264, guid: f297f2b7a52b2f846b03a7a8f02ce2a6, type: 2}

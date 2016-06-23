@@ -6,16 +6,10 @@ using System.Collections;
 namespace Hydrogen
 {
     // This class will be implemented later
-    /*
     public class Magazine : NVRInteractableItem
-    {
-        public Transform interactionPoint;
-        
+    {        
         //the correct corresponding bullet to this magazine
         public Bullet bullet;
-        
-        //can the gun shoot continuously or not
-        public bool hasBulletCount = false;
 
         //the current number of bullets inside the magazine
         public int currentBulletCount;
@@ -48,7 +42,7 @@ namespace Hydrogen
         {
             get
             {
-                if (hasBulletCount) { bulletCount--; }
+                if (!myGun.isInfinite) { bulletCount--; }
                 return Instantiate(bullet.gameObject);
             }
         }
@@ -66,35 +60,37 @@ namespace Hydrogen
 
         #region MAGAZINE METHODS
         public void attachMagazine(bool attach, GameObject gun = null)
-        {
-            if (hasBulletCount)
+        {   
+            if (attach)
             {
-                if (attach)
-                {
-                    myGun = gun.GetComponent<Gun>();
-                    if (myGun.isLoaded || !myGun.IsAttached) { return; }
+                myGun = gun.GetComponent<Gun>();
+                if (myGun.isLoaded || !myGun.IsAttached) { return; }
 
-                    //TODO: ADD IN A CHECK TO SEE IF IT'S THE PROPER MAGAZINE FOR THE CURRENT GUN                
-                    isEquipped = true;
-                    GetComponent<BoxCollider>().isTrigger = true;
-                    transform.SetParent(myGun.magazinePosition, false);
-                    CanAttach = false;
-                    GetComponent<Rigidbody>().isKinematic = true;
-                    GetComponent<Rigidbody>().useGravity = false;
-                    transform.position = myGun.magazinePosition.transform.position;
-                    transform.rotation = myGun.magazinePosition.transform.rotation;
-                    transform.localScale = Vector3.one;
-                    myGun.currentMagazine = this;
+                //TODO: ADD IN A CHECK TO SEE IF IT'S THE PROPER MAGAZINE FOR THE CURRENT GUN                
+                isEquipped = true;
+                GetComponent<BoxCollider>().isTrigger = true;
+                transform.SetParent(myGun.magazinePosition, false);
+                CanAttach = false;
+                GetComponent<Rigidbody>().isKinematic = true;
+                GetComponent<Rigidbody>().useGravity = false;
+                transform.position = myGun.magazinePosition.transform.position;
+                transform.rotation = myGun.magazinePosition.transform.rotation;
+                transform.localScale = Vector3.one;
+                myGun.currentMagazine = this;
 
-                }
-                else
+            }
+            else
+            {
+                if (!myGun.isInfinite)
                 {
                     transform.SetParent(null);
                     GetComponent<Rigidbody>().useGravity = true;
                     GetComponent<Rigidbody>().isKinematic = false;
                     isEquipped = false;
                     StartCoroutine(enableCollider());
+                    myGun = null;
                 }
+                    
             }
         }
 
@@ -110,5 +106,4 @@ namespace Hydrogen
         }
         #endregion
     }
-    */
 }

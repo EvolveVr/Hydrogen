@@ -108,6 +108,13 @@ namespace NewtonVR
             {
                 UseButtonDown();
             }
+
+            //EDITED: CRISTIAN
+            if (hand.UseButtonPressed)
+            {
+                UseButtonPressed();
+            }
+            //END EDIT
         }
 
         public void ForceDetach()
@@ -149,6 +156,13 @@ namespace NewtonVR
         {
 
         }
+
+        //EDITED: CRISTIAN
+        public virtual void UseButtonPressed()
+        {
+
+        }
+        //END EDIT
 
         protected virtual void OnDestroy()
         {

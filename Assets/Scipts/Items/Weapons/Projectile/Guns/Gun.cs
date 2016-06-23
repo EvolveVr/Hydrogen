@@ -8,22 +8,31 @@ namespace Hydrogen
     /// Abstract class Gun will hold all the methods, properties and Fields that 
     /// are general to ALL guns in the game
     /// </summary>
-    
     public class Gun : ProjectileWeapon
     {
-        // Leave this out for now
-        /*
-        //public Magazine currentMagazine;
-        //public float secondsAfterDetach = 0.2f;
-        //public Transform magazinePosition;
-        */
+        #region GUN
+        //can continuously shoot bullets without reload
+        public bool isInfinite;
+        //whether the gun needs to be engaged AFTER reloading only
+        public bool needsEngagment;
+        //true if the gun is automatic false if the gun is semi automatic
+        public bool isAutomatic;
+        #endregion
 
-        //The gun is ready to fire; all guns need some sort of engagement whether it happens
-        // automatically or it needs user interaction
-        private bool _isEngaged = false;
+        #region AUTOMATIC VARIABLES
+        public float timeBetweenShots = 0.5f;
+        public float timeSinceLastShot = 0;
+        #endregion
+
+        public bool isEngaged = false;
         public Transform firePoint;
-        public Bullet bulletPrefab;
-        
+
+        #region MAGAZINE VARIABLES
+        public Magazine currentMagazine;
+        public float secondsAfterDetach = 0.2f;
+        public Transform magazinePosition;
+        #endregion
+
         #region HAPTIC FEEDBACK VARS
         //In general, all the Guns will have some sort of haptic feedback at fire'
         [HideInInspector]
@@ -34,82 +43,108 @@ namespace Hydrogen
         public float VibrationStrength = 1;
         [HideInInspector]
         public float gapLength = 0.01f;
-
         #endregion
 
         #region Properties
-        
-        /*
         public bool isLoaded
         {
             get { return currentMagazine != null; }
         }
-        */
-
-        public bool isEnggaed
-        {
-            get { return _isEngaged; }
-            set { _isEngaged = value; }
-        }
-
         #endregion
 
         #region Methods
-
         protected override void Update()
         {
             base.Update();
-
-
-
-            /*
-             * This commented region of code was used for dropping clips when touch pad was pressed
-             * This is commented because future guns may not necessarily have clips;
-                if (AttachedHand != null)
+            
+            //only drop magazine if the gun currently has a magazine and does not shoot infinitly
+            if (AttachedHand != null && !isInfinite)
+            {
+                if (AttachedHand.Controller.GetPressDown(Valve.VR.EVRButtonId.k_EButton_SteamVR_Touchpad))
                 {
-                    if (AttachedHand.Controller.GetPressDown(Valve.VR.EVRButtonId.k_EButton_SteamVR_Touchpad))
-                    {
-                        dropCurrentMagazine();
-                    }
+                    dropCurrentMagazine();
                 }
-            */
+            }        
+        }
+        
+        protected void dropCurrentMagazine()
+        {
+            if (isLoaded)
+            {
+                StartCoroutine(disableMagazineCollider());
+                currentMagazine.attachMagazine(false);
+                currentMagazine = null;
+            }
+            isEngaged = false;
         }
 
-        // Commented region of code for droping magazines
-        //protected void dropCurrentMagazine()
-        //{
-        //    if (isLoaded)
-        //    {
-        //        StartCoroutine(disableMagazineCollider());
-        //        currentMagazine.attachMagazine(false);
-        //        currentMagazine = null;
-
-        //    }
-
-        //    isEngaged = false;
-        //}
+        public override void UseButtonPressed()
+        {
+            if (isAutomatic && isLoaded)
+            {
+                if (needsEngagment)
+                {
+                    if (isEngaged)
+                    {
+                        if(timeSinceLastShot >= timeBetweenShots)
+                        {
+                            shootGun();
+                            timeSinceLastShot = 0;
+                        }
+                        timeSinceLastShot += Time.deltaTime;
+                    }
+                }
+                else
+                {
+                    if (timeSinceLastShot >= timeBetweenShots)
+                    {
+                        shootGun();
+                        timeSinceLastShot = 0;
+                    }
+                    timeSinceLastShot += Time.deltaTime;
+                }
+            }
+        }
 
         public override void UseButtonDown()
         {
-            shootGun();
+            if (isLoaded)
+            {
+                if (needsEngagment)
+                {
+                    if (isEngaged)
+                    {
+                        shootGun();
+                    }
+                }
+                else
+                {
+                    shootGun();
+                }
+            }
         }
 
-        //All guns need to shoot;
+        public override void UseButtonUp()
+        {
+            if (isAutomatic)
+            {
+                timeSinceLastShot = 0;
+            }
+        }
+
         protected void shootGun()
         {
-            bulletPrefab = Instantiate(bulletPrefab);
-            bulletPrefab.transform.position = firePoint.position;
-            bulletPrefab.transform.rotation = firePoint.rotation;
-            bulletPrefab.GetComponent<Bullet>().initialize();
-
-            /*
-            StartCoroutine(LongVibration(VibrationCount, VibrationLength, gapLength, VibrationStrength));
-            StopCoroutine(LongVibration(VibrationCount, VibrationLength, gapLength, VibrationStrength));
-            */
+            if (currentMagazine.hasBullets)
+            {
+                GameObject tempBullet = currentMagazine.getBullet;
+                tempBullet.transform.position = firePoint.position;
+                tempBullet.transform.rotation = firePoint.rotation;
+                tempBullet.GetComponent<Bullet>().initialize();
+                tempBullet = null;
+            }
         }
         
         // This is for guns with magazines
-        /*
         public IEnumerator disableMagazineCollider()
         {
             magazinePosition.gameObject.GetComponent<BoxCollider>().enabled = false;
@@ -117,13 +152,14 @@ namespace Hydrogen
             magazinePosition.gameObject.GetComponent<BoxCollider>().enabled = true;
             StopCoroutine(disableMagazineCollider());
         }
-        */
-
+        
+        /*
         //All guns will have some sort of haptics
         //vibrationCount is how many vibrations
         //vibrationLength is how long each vibration should go for
         //gapLength is how long to wait between vibrations
         //strength is vibration strength from 0-1
+        */
         public IEnumerator LongVibration(int vibrationCount, float vibrationLength, float gapLength, float strength)
         {
             strength = Mathf.Clamp01(strength);
