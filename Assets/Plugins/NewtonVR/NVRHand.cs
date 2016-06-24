@@ -221,18 +221,18 @@ namespace NewtonVR
             }
         }
 
-        public void LongHapticPulse(float seconds, EVRButtonId buttonId = EVRButtonId.k_EButton_SteamVR_Touchpad)
+        public void LongHapticPulse(float seconds, ushort hapticIntensity = 200, EVRButtonId buttonId = EVRButtonId.k_EButton_SteamVR_Touchpad)
         {
-            StartCoroutine(DoLongHapticPulse(seconds, buttonId));
+            StartCoroutine(DoLongHapticPulse(seconds, hapticIntensity, buttonId));
         }
 
-        private IEnumerator DoLongHapticPulse(float seconds, EVRButtonId buttonId = EVRButtonId.k_EButton_SteamVR_Touchpad)
+        private IEnumerator DoLongHapticPulse(float seconds, ushort hapticIntensity = 200, EVRButtonId buttonId = EVRButtonId.k_EButton_SteamVR_Touchpad)
         {
             float startTime = Time.time;
             float endTime = startTime + seconds;
             while (Time.time < endTime)
             {
-                Controller.TriggerHapticPulse(100, buttonId);
+                Controller.TriggerHapticPulse(hapticIntensity, buttonId);
                 yield return null;
             }
         }

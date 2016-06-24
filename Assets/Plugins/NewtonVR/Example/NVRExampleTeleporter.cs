@@ -34,6 +34,12 @@ namespace NewtonVR.Example
 
         private void LateUpdate()
         {
+            //Edited...
+            if(Hand.IsInteracting)
+            {
+                return;
+            }
+
             Line.enabled = (Hand != null && Hand.Inputs[Valve.VR.EVRButtonId.k_EButton_SteamVR_Trigger].SingleAxis > 0.01f);
 
             if (Line.enabled == true)

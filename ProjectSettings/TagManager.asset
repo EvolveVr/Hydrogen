@@ -13,6 +13,10 @@ TagManager:
   - Cannon
   - CannonBullet
   - Wall
+  - bullet
+  - left
+  - right
+  - bottom
   layers:
   - Default
   - TransparentFX

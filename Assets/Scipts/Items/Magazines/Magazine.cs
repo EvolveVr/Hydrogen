@@ -7,7 +7,10 @@ namespace Hydrogen
 {
     // This class will be implemented later
     public class Magazine : NVRInteractableItem
-    {        
+    {
+        //the name of the magazine
+        public string MagazineName;
+
         //the correct corresponding bullet to this magazine
         public Bullet bullet;
 
@@ -67,17 +70,20 @@ namespace Hydrogen
                 myGun = gun.GetComponent<Gun>();
                 if (myGun.isLoaded || !myGun.IsAttached) { return; }
 
-                //TODO: ADD IN A CHECK TO SEE IF IT'S THE PROPER MAGAZINE FOR THE CURRENT GUN                
-                isEquipped = true;
-                GetComponent<BoxCollider>().isTrigger = true;
-                transform.SetParent(myGun.magazinePosition, false);
-                CanAttach = false;
-                GetComponent<Rigidbody>().isKinematic = true;
-                GetComponent<Rigidbody>().useGravity = false;
-                transform.position = myGun.magazinePosition.transform.position;
-                transform.rotation = myGun.magazinePosition.transform.rotation;
-                transform.localScale = Vector3.one;
-                myGun.currentMagazine = this;
+                if (myGun.weaponName + GameConstants.MAGAZINE == MagazineName)
+                {
+                    //TODO: ADD IN A CHECK TO SEE IF IT'S THE PROPER MAGAZINE FOR THE CURRENT GUN                
+                    isEquipped = true;
+                    GetComponent<BoxCollider>().isTrigger = true;
+                    transform.SetParent(myGun.magazinePosition, false);
+                    CanAttach = false;
+                    GetComponent<Rigidbody>().isKinematic = true;
+                    GetComponent<Rigidbody>().useGravity = false;
+                    transform.position = myGun.magazinePosition.transform.position;
+                    transform.rotation = myGun.magazinePosition.transform.rotation;
+                    transform.localScale = Vector3.one;
+                    myGun.currentMagazine = this;
+                }
             }
             else
             {

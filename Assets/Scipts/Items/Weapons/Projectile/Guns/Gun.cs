@@ -12,11 +12,13 @@ namespace Hydrogen
     {
         #region GUN
         //can continuously shoot bullets without reload
-        public bool isInfinite;
+        public bool isInfinite = true;
         //whether the gun needs to be engaged AFTER reloading only
         public bool needsEngagment = false;
         //true if the gun is automatic false if the gun is semi automatic
         public bool isAutomatic;
+        //true if the gun needs to re-engage after every shot false otherwise
+        public bool isRepeater = false;
         #endregion
 
         #region AUTOMATIC VARIABLES
@@ -34,15 +36,8 @@ namespace Hydrogen
         #endregion
 
         #region HAPTIC FEEDBACK VARS
-        //In general, all the Guns will have some sort of haptic feedback at fire'
-        [HideInInspector]
-        public int VibrationCount = 1;
-        [HideInInspector]
-        public float VibrationLength = 1000f;
-        [HideInInspector]
-        public float VibrationStrength = 1;
-        [HideInInspector]
-        public float gapLength = 0.01f;
+        float VibrationLength = 0.1f;
+        ushort VibrationIntensity = 2000;
         #endregion
 
         #region Properties
@@ -78,19 +73,25 @@ namespace Hydrogen
             base.Update();
 
             //only drop magazine if the gun currently has a magazine and does not shoot infinitly
-            if (AttachedHand != null && !isInfinite)
+            if (AttachedHand != null)
             {
                 if (rightPadButtonDown)
                 {
-                    dropCurrentMagazine();
+                    if (!isInfinite)
+                    {
+                        dropCurrentMagazine();
+                    }
                 }
 
                 //The gun needs to be loaded, and needs to have bullets and should not already be engaged to engage it
                 if (leftPadButtonDown)
                 {
-                    if (isLoaded && currentMagazine.hasBullets && !isEngaged)
+                    if (needsEngagment)
                     {
-                        isEngaged = true;
+                        if (isLoaded && !isEngaged)
+                        {
+                            isEngaged = true;
+                        }
                     }
                 }
             }        
@@ -174,10 +175,15 @@ namespace Hydrogen
                 tempBullet.transform.rotation = firePoint.rotation;
                 tempBullet.GetComponent<Bullet>().initialize();
                 tempBullet = null;
+                AttachedHand.LongHapticPulse(VibrationLength, VibrationIntensity);
+
+                if (isRepeater)
+                {
+                    isEngaged = false;
+                }
             }
         }
         
-        // This is for guns with magazines
         public IEnumerator disableMagazineCollider()
         {
             magazinePosition.gameObject.GetComponent<BoxCollider>().enabled = false;
@@ -185,34 +191,6 @@ namespace Hydrogen
             magazinePosition.gameObject.GetComponent<BoxCollider>().enabled = true;
             StopCoroutine(disableMagazineCollider());
         }
-        
-        /*
-        //All guns will have some sort of haptics
-        //vibrationCount is how many vibrations
-        //vibrationLength is how long each vibration should go for
-        //gapLength is how long to wait between vibrations
-        //strength is vibration strength from 0-1
-        */
-        public IEnumerator LongVibration(int vibrationCount, float vibrationLength, float gapLength, float strength)
-        {
-            strength = Mathf.Clamp01(strength);
-            for (int i = 0; i < vibrationCount; i++)
-            {
-                if (i != 0) yield return new WaitForSeconds(gapLength);
-                yield return StartCoroutine(LongVibration(vibrationLength, strength));
-            }
-        }
-
-        IEnumerator LongVibration(float length, float strength)
-        {
-            for (float i = 0; i < length; i += Time.deltaTime)
-            {
-                if (AttachedHand != null)
-                    AttachedHand.Controller.TriggerHapticPulse((ushort)Mathf.Lerp(0, 3999, strength));
-                yield return null;
-            }
-        }
-
         #endregion
     }
 }
