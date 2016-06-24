@@ -109,11 +109,14 @@ namespace NewtonVR
                 UseButtonDown();
             }
 
-            //EDITED: CRISTIAN
+            //EDITED: CRISTIAN, Tyler
             if (hand.UseButtonPressed)
             {
                 UseButtonPressed();
             }
+
+
+
             //END EDIT
         }
 

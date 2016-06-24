@@ -22,7 +22,6 @@ namespace NewtonVR
         public bool UseButtonPressed = false;
         public float UseButtonAxis = 0f;
 
-
         public Dictionary<EVRButtonId, NVRButtonInputs> Inputs;
 
         [SerializeField]

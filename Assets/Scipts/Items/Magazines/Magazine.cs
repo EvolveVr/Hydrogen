@@ -60,7 +60,8 @@ namespace Hydrogen
 
         #region MAGAZINE METHODS
         public void attachMagazine(bool attach, GameObject gun = null)
-        {   
+        {  
+            //If we are trying to attach a magazine this is true
             if (attach)
             {
                 myGun = gun.GetComponent<Gun>();
@@ -77,7 +78,6 @@ namespace Hydrogen
                 transform.rotation = myGun.magazinePosition.transform.rotation;
                 transform.localScale = Vector3.one;
                 myGun.currentMagazine = this;
-
             }
             else
             {

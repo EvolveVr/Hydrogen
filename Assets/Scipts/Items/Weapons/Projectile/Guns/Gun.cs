@@ -14,7 +14,7 @@ namespace Hydrogen
         //can continuously shoot bullets without reload
         public bool isInfinite;
         //whether the gun needs to be engaged AFTER reloading only
-        public bool needsEngagment;
+        public bool needsEngagment = false;
         //true if the gun is automatic false if the gun is semi automatic
         public bool isAutomatic;
         #endregion
@@ -46,27 +46,57 @@ namespace Hydrogen
         #endregion
 
         #region Properties
+        // isLoaded means there is a magazine
         public bool isLoaded
         {
             get { return currentMagazine != null; }
         }
+
+        // Below are properties for whther the user is pressing the left or right pad buttons
+        public bool rightPadButtonDown
+        {
+            get
+            { return  AttachedHand.Controller.GetPressDown(Valve.VR.EVRButtonId.k_EButton_SteamVR_Touchpad) &&
+                          (AttachedHand.Controller.GetAxis(Valve.VR.EVRButtonId.k_EButton_SteamVR_Touchpad)[0] > 0.05f);
+            }
+        }
+
+        public bool leftPadButtonDown
+        {
+            get
+            {
+                return AttachedHand.Controller.GetPressDown(Valve.VR.EVRButtonId.k_EButton_SteamVR_Touchpad) &&
+                            (AttachedHand.Controller.GetAxis(Valve.VR.EVRButtonId.k_EButton_SteamVR_Touchpad)[0] < 0.05f);
+            }
+        }
+
         #endregion
 
         #region Methods
         protected override void Update()
         {
             base.Update();
-            
+
             //only drop magazine if the gun currently has a magazine and does not shoot infinitly
             if (AttachedHand != null && !isInfinite)
             {
-                if (AttachedHand.Controller.GetPressDown(Valve.VR.EVRButtonId.k_EButton_SteamVR_Touchpad))
+                if (rightPadButtonDown)
                 {
                     dropCurrentMagazine();
+                }
+
+                //The gun needs to be loaded, and needs to have bullets and should not already be engaged to engage it
+                if (leftPadButtonDown)
+                {
+                    if (isLoaded && currentMagazine.hasBullets && !isEngaged)
+                    {
+                        isEngaged = true;
+                    }
                 }
             }        
         }
         
+
         protected void dropCurrentMagazine()
         {
             if (isLoaded)
@@ -75,6 +105,7 @@ namespace Hydrogen
                 currentMagazine.attachMagazine(false);
                 currentMagazine = null;
             }
+
             isEngaged = false;
         }
 
@@ -94,6 +125,7 @@ namespace Hydrogen
                         timeSinceLastShot += Time.deltaTime;
                     }
                 }
+
                 else
                 {
                     if (timeSinceLastShot >= timeBetweenShots)
@@ -101,6 +133,7 @@ namespace Hydrogen
                         shootGun();
                         timeSinceLastShot = 0;
                     }
+
                     timeSinceLastShot += Time.deltaTime;
                 }
             }
