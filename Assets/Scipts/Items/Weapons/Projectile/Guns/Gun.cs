@@ -26,8 +26,11 @@ namespace Hydrogen
         public float timeSinceLastShot = 0;
         #endregion
 
+        
         public bool isEngaged = false;
+        public Engage engageMechanism;
         public Transform firePoint;
+
 
         #region MAGAZINE VARIABLES
         public Magazine currentMagazine;
@@ -68,6 +71,24 @@ namespace Hydrogen
         #endregion
 
         #region Methods
+        protected override void Start()
+        {
+            base.Start();
+            if (needsEngagment)
+            {
+                engageMechanism = GetComponentInChildren<Engage>();
+                if(engageMechanism!= null)
+                    engageMechanism.setEngage(engageGun);
+            }
+        }
+
+        //Temporary
+        private void engageGun()
+        {
+            isEngaged = true;
+        }
+
+
         protected override void Update()
         {
             base.Update();
