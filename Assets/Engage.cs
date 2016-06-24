@@ -8,6 +8,9 @@ public class Engage : MonoBehaviour {
     public Vector3 engageEnd;
     public bool engageHitEnd;
     public bool engaged = false;
+    public bool isHeld = false;
+    public float holdStartPosition;
+    public float holdChangePosition;
 
     public delegate void callback();
     callback onEngage;
@@ -37,7 +40,13 @@ public class Engage : MonoBehaviour {
                 //*/
                 //*Cristian's idea
                 Vector3 temp = transform.InverseTransformPoint(myHand.transform.position);
-                transform.localPosition = new Vector3(transform.localPosition.x, transform.localPosition.y, -temp.x);
+                if (!isHeld)
+                {
+                    isHeld = true;
+                    holdStartPosition = transform.localPosition.z;
+                    holdChangePosition = temp.x;
+                }
+                transform.localPosition = new Vector3(transform.localPosition.x, transform.localPosition.y, holdStartPosition+holdChangePosition-temp.x);
                 //*/
                 if (transform.localPosition.z < engageEnd.z)
                 {
@@ -61,6 +70,14 @@ public class Engage : MonoBehaviour {
                     transform.localPosition = engageStart;
                 }
             }
+            else
+            {
+                isHeld = false;
+            }
+        }
+        else
+        {
+            isHeld = false;
         }
     }
 
