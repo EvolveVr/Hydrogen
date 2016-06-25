@@ -28,7 +28,7 @@ namespace Hydrogen
 
         
         public bool isEngaged = false;
-        public Engage engageMechanism;
+        public SlideEngage SlideEngage;
         public Transform firePoint;
 
 
@@ -76,9 +76,9 @@ namespace Hydrogen
             base.Start();
             if (needsEngagment)
             {
-                engageMechanism = GetComponentInChildren<Engage>();
-                if(engageMechanism!= null)
-                    engageMechanism.setEngage(engageGun);
+                SlideEngage = GetComponentInChildren<SlideEngage>();
+                if(SlideEngage!= null)
+                    SlideEngage.setEngage(engageGun);
             }
         }
 
@@ -131,52 +131,15 @@ namespace Hydrogen
             isEngaged = false;
         }
 
-        public override void UseButtonPressed()
-        {
-            if (isAutomatic && isLoaded)
-            {
-                if (needsEngagment)
-                {
-                    if (isEngaged)
-                    {
-                        if(timeSinceLastShot >= timeBetweenShots)
-                        {
-                            shootGun();
-                            timeSinceLastShot = 0;
-                        }
-                        timeSinceLastShot += Time.deltaTime;
-                    }
-                }
-
-                else
-                {
-                    if (timeSinceLastShot >= timeBetweenShots)
-                    {
-                        shootGun();
-                        timeSinceLastShot = 0;
-                    }
-
-                    timeSinceLastShot += Time.deltaTime;
-                }
-            }
-        }
 
         public override void UseButtonDown()
         {
-            if (isLoaded)
-            {
-                if (needsEngagment)
-                {
-                    if (isEngaged)
-                    {
-                        shootGun();
-                    }
-                }
-                else
-                {
-                    shootGun();
-                }
-            }
+            gunMechanics();
+        }
+
+        public override void UseButtonPressed()
+        {
+            if (isAutomatic) autoGunMechanics();
         }
 
         public override void UseButtonUp()
@@ -213,5 +176,55 @@ namespace Hydrogen
             StopCoroutine(disableMagazineCollider());
         }
         #endregion
-    }
+
+        void autoGunMechanics()
+        {
+            if (isLoaded)
+            {
+                if (needsEngagment)
+                {
+                    if (isEngaged)
+                    {
+                        if (timeSinceLastShot >= timeBetweenShots)
+                        {
+                            shootGun();
+                            timeSinceLastShot = 0;
+                        }
+                        timeSinceLastShot += Time.deltaTime;
+                    }
+                }
+
+                else
+                {
+                    if (timeSinceLastShot >= timeBetweenShots)
+                    {
+                        shootGun();
+                        timeSinceLastShot = 0;
+                    }
+
+                    timeSinceLastShot += Time.deltaTime;
+                }
+            }
+        }
+        void gunMechanics()
+        {
+            if (isLoaded)
+            {
+                if (needsEngagment)
+                {
+                    if (isEngaged)
+                    {
+                        shootGun();
+                    }
+                }
+
+                else
+                {
+                        shootGun();
+                }
+            }
+        }// gun gun mechanics
+
+
+    } // End of gun class
 }

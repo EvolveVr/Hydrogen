@@ -197,7 +197,6 @@ public class moveTargets : MonoBehaviour
     }
     void OnTriggerEnter(Collider hit)
     {
-        Debug.Log(hit.gameObject.name);
         switch(hit.gameObject.tag)
         {
            

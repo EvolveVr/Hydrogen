@@ -38,22 +38,17 @@ public class TargetReaction : MonoBehaviour {
             double distance = Mathf.Sqrt(Mathf.Pow(hit.transform.position.x - transform.position.x, 2) + Mathf.Pow(hit.transform.position.y - transform.position.y, 2));
           
             //Depending on distance from origin, it will take away certain amout of health and give certain amount of points.
-            Debug.Log(distance);
             if (distance <= 0.7f)
             {
-                Debug.Log("bullseye");
                 currentHealth = 0;
             }
             else if (distance > 0.7f && distance <= 1.2f)
             {
                 currentHealth -= 5;
-                Debug.Log("cowseye");
             }
             else
             {
                 currentHealth -= 3;
-               
-                Debug.Log("youreye");
             }
 
             //Sets the bullet to inactive
