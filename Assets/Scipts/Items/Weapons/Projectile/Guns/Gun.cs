@@ -17,6 +17,8 @@ namespace Hydrogen
         public bool needsEngagment = false;
         //true if the gun is automatic false if the gun is semi automatic
         public bool isAutomatic;
+        // is the gun a charge type weapon
+        public bool isCharge = false;
         //true if the gun needs to re-engage after every shot false otherwise
         public bool isRepeater = false;
         #endregion
@@ -26,11 +28,9 @@ namespace Hydrogen
         public float timeSinceLastShot = 0;
         #endregion
 
-        
         public bool isEngaged = false;
         public SlideEngage SlideEngage;
         public Transform firePoint;
-
 
         #region MAGAZINE VARIABLES
         public Magazine currentMagazine;
@@ -118,7 +118,6 @@ namespace Hydrogen
             }        
         }
         
-
         protected void dropCurrentMagazine()
         {
             if (isLoaded)
@@ -134,7 +133,11 @@ namespace Hydrogen
 
         public override void UseButtonDown()
         {
-            gunMechanics();
+            // do not do this if the gun uses a charging mechanism instead
+            if (!isCharge)
+            {
+                gunMechanics();
+            }
         }
 
         public override void UseButtonPressed()
@@ -150,7 +153,7 @@ namespace Hydrogen
             }
         }
 
-        protected void shootGun()
+        virtual protected void shootGun()
         {
             if (currentMagazine.hasBullets)
             {
@@ -177,6 +180,7 @@ namespace Hydrogen
         }
         #endregion
 
+        // the mechanics for the automatic guns
         void autoGunMechanics()
         {
             if (isLoaded)
@@ -205,7 +209,9 @@ namespace Hydrogen
                     timeSinceLastShot += Time.deltaTime;
                 }
             }
-        }
+        } //for automatic guns only
+
+        //the mechanics for non-autmatic guns
         void gunMechanics()
         {
             if (isLoaded)
@@ -217,10 +223,9 @@ namespace Hydrogen
                         shootGun();
                     }
                 }
-
                 else
                 {
-                        shootGun();
+                    shootGun();
                 }
             }
         }// gun gun mechanics

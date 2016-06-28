@@ -46,6 +46,7 @@ namespace Hydrogen
             get
             {
                 if (!myGun.isInfinite) { bulletCount--; }
+                    
                 return Instantiate(bullet.gameObject);
             }
         }
