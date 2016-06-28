@@ -3,10 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 
 [RequireComponent(typeof(Rigidbody))]
-public class Bullet : MonoBehaviour
+public class Bullet : MonoBehaviour , Projectile
 {
     //public BulletType bulletType;
     public float bulletForce = 100.0f;
+    private float _penetration;
 
     private float _secondsUntilDestroy = 5.0f;
 
@@ -14,12 +15,38 @@ public class Bullet : MonoBehaviour
     public void initialize()
     {
         GetComponent<Rigidbody>().AddForce(transform.forward * bulletForce, ForceMode.Impulse);
-
+        _penetration = 0;
         if (gameObject.activeSelf)
         {
             StartCoroutine(destroyBullet(_secondsUntilDestroy));
         }
     }
+
+    //To make a bullet able to destroy more than one target
+    public void initialize(float penetration)
+    {
+        initialize();
+        _penetration = penetration;
+    }
+
+
+    public float penetration
+    {
+        set
+        {
+            _penetration -= value;
+            if (_penetration < 0) Destroy(gameObject);
+        }
+    }
+
+    public Vector3 position
+    {
+        get
+        {
+            return transform.position;
+        }
+    }
+
 
     void OnTriggerEnter(Collider hit)
     {
