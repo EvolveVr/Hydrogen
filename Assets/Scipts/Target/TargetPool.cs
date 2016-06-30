@@ -3,65 +3,83 @@ using System.Collections;
 using System.Collections.Generic;
 public class TargetPool : MonoBehaviour
 {
+    #region Variables used to create target pool.
     public GameObject targetPrefab;
-    public GameObject parent;
-  
-    List<GameObject> targetPool;
-    int _currentWave;
-    int _amountToSpawn;
-    void Awake()
-    {
+    //The object holding all the targets, so it doesn't clog heirarchy
+    public Transform poolHolder;
+    //List for the instantiated targets
+    private List<GameObject> _targetPool;
+    //The amount of objects we're pooling
+    private int _amountReadyToSpawn;
+    #endregion
 
-        // I think wave should be moved elsewhere, not Targetmanager, prob gamemanager whenever we make one, don't want in TargetManager because it has a refernce to
-        //this script and that's circular dependancy.
-        //But it works here, just mean if it makes logical sense to have it in here or not.
-        _currentWave = 1;
-        parent = GameObject.Find("GameObject");
-        targetPool = new List<GameObject>();
-     
-    }
-    void Start()
-    {
-      
-        switch (_currentWave)
-        {
-            case 1:
-                _amountToSpawn = 3;
-                break;
-
-        }
-        for (int i = 0; i < _amountToSpawn; i++)
-        {
-            targetPool.Add(Instantiate(targetPrefab));
-            targetPool[i].SetActive(false);
-            targetPool[i].transform.parent = parent.transform;
-
-        }
-
-
-    }
-
+    /// <summary>
+    /// This function checks all of pool to see if any are
+    /// still inactive, and if any are then it will return that object.
+    /// If not it will create a new object and return that instead.
+    /// </summary>
+    /// <returns> Target object that was instantiated from prefab</returns>
     public GameObject getTarget()
     {
-        for (int i = 0; i < targetPool.Count; i++)
-        {
-            //If inactive target then return that target.
-            if(!targetPool[i].activeInHierarchy)
-            {
-                //Well this is perfect for bullets and reusing but since we have specifications on targets, should leave as is
-
-                
-                return targetPool[i];
-            }
+        foreach (var x in _targetPool)
+        { 
+            if (!x.activeInHierarchy)
+                return x;
+      
         }
-        /*if all targets currently active and need to spawn more then return new one, but for targets this is unnecessary, since assuming we're going to have set number targets per wave, and not spawn new targets if they haven't killed all the ones spawned in current wave, but since not 100% sure just leaving here for now, no big deal.*/
-        return Instantiate(targetPrefab);
+     
+        GameObject bullet = Instantiate(targetPrefab);
+        bullet.transform.parent = poolHolder;
+        if (bullet == null)
+        {
+            Debug.Log("bullet was never instanced");
+        }
+        return bullet;
     }
-    public int CurrentWave
+
+    /// <summary>
+    /// This will be called when round timer hits zero, it will look for all objects in scene
+    /// with the tag target and despawns them. If within pool, set inactive for reuse in later rounds,
+    /// else, destroy them
+    /// </summary>
+    public void despawnAllTargets()
     {
-        get { return _currentWave; }
-        //set mainly for testing to do it while scene playing
-        //if keeping in here could just update this when all targets killed or something.
-        set { _currentWave = value; }
+        GameObject[] targetsSpawned = GameObject.FindGameObjectsWithTag("target");
+        foreach (var x in targetsSpawned)
+        {
+            //Destroys objects that aren't inside the pool
+            if (x.transform.parent != poolHolder)
+                Destroy(x);
+            else
+                x.SetActive(false);
+
+        }
     }
+
+    //This intantiates the list of gameobjects
+    private void Awake()
+    {
+        _targetPool = new List<GameObject>();
+     
+    }
+
+    /// <summary>
+    /// initializes the pool with instances of prefab
+    /// and sets the parent for each object to empty game object in scene
+    /// </summary>
+    private void Start()
+    {
+        _amountReadyToSpawn = 20;
+            
+        for (int i = 0; i < _amountReadyToSpawn; i++)
+        {
+            _targetPool.Add(Instantiate(targetPrefab));
+            _targetPool[i].SetActive(false);
+            _targetPool[i].transform.parent = poolHolder.transform;
+
+        }
+
+
+    }
+
 }

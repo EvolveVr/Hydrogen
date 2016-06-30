@@ -10,6 +10,15 @@ TagManager:
   - ControllerLeft
   - ControllerRight
   - Magazine
+  - Cannon
+  - CannonBullet
+  - Wall
+  - bullet
+  - left
+  - right
+  - bottom
+  - TargetSpawnPoint
+  - target
   layers:
   - Default
   - TransparentFX
