@@ -1,6 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+/// <summary>
+/// This script is for creating a list of targets at run time.
+/// This way when it creates alot of targets, it won't lag out cause of dynamically allocating a bunch of memory at once.
+/// Instead we allocate a bunch of memory at start, then just reuse those same instances, setting active to false instead of destroying targets.
+/// </summary>
 public class TargetPool : MonoBehaviour
 {
     #region Variables used to create target pool.

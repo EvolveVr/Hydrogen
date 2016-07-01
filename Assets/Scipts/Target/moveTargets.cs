@@ -1,6 +1,9 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-//Class for moving the targets
+/// <summary>
+/// This script is for moving the unkillable targets while the killable targets are
+/// orbiting around it.
+/// </summary>
 public class MoveTargets : MonoBehaviour
 {   
     #region Variables for movement
@@ -172,4 +175,11 @@ public class MoveTargets : MonoBehaviour
 
     }
     #endregion
+
+    //Checks to see if bullet hit it, if did: destroy bullet
+    private void OnTriggerEnter(Collider hit)
+    {
+        if (hit.gameObject.tag == "bullet")
+            Destroy(hit.gameObject);
+    }
 }
