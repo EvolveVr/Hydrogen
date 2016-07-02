@@ -1,223 +1,187 @@
-using System.Collections.Generic;
+
+﻿using System.Collections.Generic;
 using UnityEngine;
-public class moveTargets : MonoBehaviour
-{
-
-
-    //Temporary to make hitting targets easier
-    private float _changeInterval = 0.5f;
-    private float _timeBeforeChange;
-    /*Variables for checking conditions to move*/
-  
-    private Dictionary<string, Vector3> _angledRays;
-    
-    //These are values used to test where bullet landed
-    private float _close;
-    private float _kindaClose;
-    private float _playerBlind;
-
-    //Variables for movement algorithims
+/// <summary>
+/// This script is for moving the unkillable targets while the killable targets are
+/// orbiting around it.
+/// </summary>
+public class MoveTargets : MonoBehaviour
+{   
+    #region Variables for movement
     public delegate Vector3 moveFunction();//Delegate that will take in movement functions
-    Dictionary<string, moveFunction> _movementAlgorithims;//Will store movement functions in here
-    float _speedTarget; //speed of object
-    float _waveLength;//how wide the wave is
-    float _speedWave;//the time it takes to complete a wave
-    Vector3 _directionMovement;//The direction the target is moving
-    string _nextMovement;//This will be assigned keys to dictionary depending on current position of target and get the next move algorithm
-    Vector3 _axis;//the axis the wave is happening on
-    Vector3 _pos;//the current position of the target
+    List<moveFunction> _movementAlgorithims;//Will store movement functions in here
+    //Current index of array, this variable is how I will switch between movements
+    private int _currentMovementIndex;
+    //speed of object
+    private float _speedTarget; 
+    //how wide the wave is, magnitude
+    private float _waveLength;
+    //the time it takes to complete a wave
+    private float _speedWave;
+    //The direction and axis the target will be moving towards and on
+    private Vector3 _directionMovement;
+    private Vector3[] _axisMoving;
+    //the axis the wave is happening on
+    private Vector3 _axisOfWave;
+    //the initial position of the target, used as offset
+    Vector3 _initialPos;
+    #endregion
+
+    #region Variables for checking conditions to move
+    public float _changeMovementInterval = 6.0f;
+    public float _timeLeftToChangeMovement;
+    public float _changeDirectionInterval = 4.0f;
+    public float _timeLeftToChangeDirection;
+    public float _changeMovementAxisInterval = 20.0f;
+    public float _timeLeftToChangeAxis;
+    #endregion
     
-    //Raycasting will make this sooo much easier in tracking position relative to other colliders, better than manual method had before with loop
-    //and trying to be precise with increments
-    
-     
-    void Awake()
+ 
+    //This instantiates the the arrays
+    private void Awake()
     {
-        _angledRays = new Dictionary<string, Vector3> ();
-        _movementAlgorithims = new Dictionary<string, moveFunction> ();
-    }
-    //To avoid clogging the start function, should probably seperate this 
-    void initializeAnglesOfRays()
-    {
-        //will store vector 3s in _angledRays
 
-    }
-    //Adds in lambdas that return move algorithm to list
-    void initializeMovementAlogirithms()
-    {
-        _movementAlgorithims["MoveDown"] = () =>
-        {
-            //_directionMovement = -transform.up;
-            _waveLength = 6.5f;
-            _speedWave = 3.0f;
-            _axis = transform.forward;
-
-            return _pos + _axis * Mathf.Cos(Time.time * _speedWave) * _waveLength;
-
-        };
-        _movementAlgorithims["MoveLeft"] = () =>
-        {
-            //The current scene has z axis for left and right
-           // _directionMovement = -transform.forward;
-            _waveLength = 8.5f;
-            _speedWave = 4.0f;
-            _axis = transform.up;
-            return _pos + _axis * Mathf.Sin(Time.time * _speedWave) * _waveLength;
-        };
-        _movementAlgorithims["MoveRight"] = () =>
-        {
-            //_directionMovement = transform.forward;
-            _waveLength = 3.5f;
-            _speedWave = 2.0f;
-            _axis = transform.up;
-            return _pos + _axis * Mathf.Cos(Time.time * _speedWave) * _waveLength;
-        };
-        _movementAlgorithims["MoveUp"] = () =>
-        {
-           // _directionMovement = transform.up + transform.right;
-            _waveLength = 3.5f;
-            _speedWave = 2.0f;
-            _axis = transform.up;
-            return _pos + _axis * Mathf.Sin(Time.time * _speedWave) * _waveLength;
-        };
-
-    }
-
-    void Start()
-    {
-        _timeBeforeChange = _changeInterval;
-        _close = 3.0f;
-        _kindaClose = 5.0f;
-        _playerBlind = 7.0f;
-
-        _speedTarget = 0.5f;
-        initializeMovementAlogirithms();
-        _pos = transform.position;
-
-        //This checks for what time target was spawned to assign initial movement
-        if (Time.time < 0.4f)
-        {
-            _nextMovement = "MoveLeft";
-            _directionMovement = transform.forward;
-        }
-        else if (Time.time > 0.4f && Time.time < 0.8f)
-        {
-            _directionMovement = transform.right;
-            _nextMovement = "MoveRight";
-        }
-        else
-        {
-            _directionMovement = transform.up;
-            _nextMovement = "MoveDown";
-        }
-    }
-    //Function the lambdas are passed to
-	void SetMovement(moveFunction pattern)
-    {
        
-        //Updates initial position with direction currently going
-        _pos += _directionMovement * Time.deltaTime * _speedTarget;
+        _axisMoving = new Vector3[3];
+        _movementAlgorithims = new List<moveFunction>();
+    }
+ 
+    //This initializes the list of movement Functions
+    private void initializeMovementAlogirithms()
+    {
+        //Sin wave function
+       _movementAlgorithims.Add( () =>
+           {
+
+               //Might need to add conditions for both length and wave too, honestly.
+               if (_directionMovement == transform.right)
+                   _axisOfWave = transform.up;
+               else if (_directionMovement == transform.up)
+                   _axisOfWave = transform.right;
+               _waveLength = 2.5f;
+               
+
+               return _initialPos + _axisOfWave * Mathf.Sin(Time.time * _speedWave) * _waveLength;
+           });
+        //Cosine wave function
+        _movementAlgorithims.Add( () =>
+        {
+
+            _waveLength = 3.5f;
+            if (_directionMovement == transform.right)
+                _axisOfWave = transform.up;
+            else if (_directionMovement == transform.up)
+                _axisOfWave = transform.right;
+
+            return _initialPos + _axisOfWave * Mathf.Cos(Time.time * _speedWave) * _waveLength;
+        });
+        //Spiral function
+        _movementAlgorithims.Add( () =>
+        {
+            _waveLength = 5.0f;
+            if (_directionMovement == transform.right || _directionMovement == -transform.right)
+                _axisOfWave = transform.up;
+            else if (_directionMovement == transform.up || _directionMovement == -transform.up)
+                _axisOfWave = transform.right;
+            Vector3 spiral = new Vector3();
+            spiral.x = Mathf.Cos(Time.time * _speedWave) * _waveLength;
+            spiral.y = Mathf.Sin(Time.time * _speedWave) * _waveLength; 
+            //Can barely tell it's spiraling forward in back, visually, unless look up, butprob just better to leave like this,for now
+            //spiral.z = Mathf.Sin(Time.time * _speedWave) * _waveLength;
+            return _initialPos + spiral;
+
+        });
+
+    }
+    
+    private void Start()
+    {
+        #region Timers being set
+        _timeLeftToChangeMovement = _changeMovementInterval;
+        _timeLeftToChangeDirection = _changeDirectionInterval;
+        _timeLeftToChangeAxis = _changeMovementAxisInterval;
+        #endregion
+
+        #region Setting speed variables
+        _speedTarget = 2.0f;
+        _speedWave = 2.0f;
+        #endregion
+
+        #region Setting the variables to be ready for movement
+        _axisMoving[0] = transform.right;
+        _axisMoving[1] = transform.up;
+        initializeMovementAlogirithms();
+        _initialPos = transform.position;
+
+        _currentMovementIndex = Random.Range(0, _movementAlgorithims.Count);
+        _directionMovement = _axisMoving[Random.Range(0, 1)];
+        #endregion
+
+    }
+    
+    /// <summary>
+    /// This function decreases all of the timers
+    /// and executes what they need to depending on total timer interval
+    /// differentiating what the timer is for.
+    /// </summary>
+    /// <sidenote>
+    /// Similar function is in targetmanager, I could make that public and call it instead of remaking in here
+    /// but since this one is dependant on variables within class, I would need to make hooks to get them from targetManager
+    /// for no other reason then for the timer, which seems pretty pointless, even if it gets rid of duplicate code
+    /// it will be replaced with same amount of lines of code
+    /// </sidenote>
+    /// <param name="currentTime">The timer that will be decrementing</param>
+    /// <param name="maxTime">The total time it starts from and will reset to</param>
+    private void decreaseTime(ref float timeLeft,float maxTime)
+    {
+        if(timeLeft > 0)
+        {
+            timeLeft -= Time.deltaTime;
+        }
+        if(timeLeft <= 0)
+        {
+            if (maxTime == _changeDirectionInterval)
+                _directionMovement *= -1;
+            else if (maxTime == _changeMovementInterval)
+                _currentMovementIndex = Random.Range(0, _movementAlgorithims.Count);
+            else if (maxTime == _changeMovementAxisInterval)
+                _directionMovement = _axisMoving[Random.Range(0, 1)];
+            timeLeft = maxTime;            
+        }
+    }
+    
+
+    private void Update()
+    {
+        decreaseTime(ref _timeLeftToChangeDirection, _changeDirectionInterval);
+       // decreaseTime(ref _timeLeftToChangeMovement, _changeMovementInterval);
+        decreaseTime(ref _timeLeftToChangeAxis, _changeMovementAxisInterval);
+
+        setMovement(_movementAlgorithims[_currentMovementIndex]);
+    }
+
+    #region setMovement function and its description.
+    /// <summary>
+    /// This function updates the offset.
+    /// And updates current position with vector3 returned by delegate.
+    /// </summary>
+    /// <param name="pattern">The parameter is a delegate that will take in lambdas stored in _movementAlgorithims</param>
+    private void setMovement(moveFunction pattern)
+    {
+        //Updates initial position with direction currently going, the offset
+        _initialPos += _directionMovement * Time.deltaTime * _speedTarget;
 
         //Updates current position
         transform.position = pattern();
-    }
-	
-	void checkTargetPosition(double distance, string direction)
-    {
-     
-        if (distance <= _close && distance > 0)
-        {
-            switch (direction)
-            {
-                //The next movements will change, this is just layout of how I'll handle updating move algorithim once get into actual level
-                //It will depend on distance between colliders and current direction of the target, just used same to test and it works
-                case "right":
-                    _nextMovement = "MoveRight";
-                    break;
-                case "left":
-                    _nextMovement = "MoveLeft";
-                    break;
-                case "down":
-                    _nextMovement = "MoveDown";
-                    break;
-
-            }
-        }         
-        else if (distance > _close && distance < _kindaClose)
-        { }
-        else if (distance > _kindaClose && distance < _playerBlind)
-        { }
 
     }
-	
-    void FixedUpdate()
+    #endregion
+
+    //Checks to see if bullet hit it, if did: destroy bullet
+    private void OnTriggerEnter(Collider hit)
     {
-
-       
-
-        RaycastHit distanceFromWalls = new RaycastHit();
-        //Right now just calling same as the trigger enter thing, mainly cause don't have exact distances for what level itself will be like
-        //to compare, and haven't decided movement patterns cause going to make them based off level so it doesn't clip through shit and can use
-        //obstacles in there to take advantage of with obstacles.
-        /*Commented out cause testing speeds for simple movements first*/
-        if (Physics.Raycast(transform.position, transform.up, out distanceFromWalls))
-        {
-            checkTargetPosition(distanceFromWalls.distance, "down");        
-        }
-        else if (Physics.Raycast(transform.position,-transform.right, out distanceFromWalls))
-        {
-            checkTargetPosition(distanceFromWalls.distance, "right");
-        }
-        if (Physics.Raycast(transform.position, transform.right+ transform.up, out distanceFromWalls))
-        {
-           
-            if (distanceFromWalls.transform.gameObject.tag == "right" && (distanceFromWalls.distance >= 8.0f && distanceFromWalls.distance < 9.0f))
-            {
-                _nextMovement = "MoveLeft";
-            }
-        }
-        //This updates the targets next movement
-        if (_nextMovement != null)
-        {
-          
-            SetMovement(_movementAlgorithims[_nextMovement]);
-
-        }
-        if( _timeBeforeChange > 0)
-        {
-            _timeBeforeChange -= Time.deltaTime;
-        }
-        if (_timeBeforeChange <= 0)
-        {
-            _directionMovement *= -1;
-            _timeBeforeChange = _changeInterval;
-        }
-            
-        
-    }
-    void OnTriggerEnter(Collider hit)
-    {
-        switch(hit.gameObject.tag)
-        {
-           
-            //This works, honestly could delete this, and just check this for when raycast distance is == 0
-            case "left":
-                //If wall is to left target will start moving in opposite direction
-                _nextMovement = "MoveRight";
-                break;
-            case "right":
-                //viceversa
-                _nextMovement = "MoveLeft";
-                break;
-            case "ceiling":
-                //If target is nearing the ceiling, start doing a pattern downwards, or whatever, this is just template
-                _nextMovement = "MoveDown";
-                break;
-                //If target getting too low;
-            case "bottom":
-                _nextMovement = "MoveUp";
-                break;
-        }
+        if (hit.gameObject.tag == "bullet")
+            Destroy(hit.gameObject);
     }
    
 }

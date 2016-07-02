@@ -15,7 +15,7 @@ public class Bullet : MonoBehaviour , Projectile
     public void initialize()
     {
         GetComponent<Rigidbody>().AddForce(transform.forward * bulletForce, ForceMode.Impulse);
-        _penetration = 0;
+        _penetration = 5;
         if (gameObject.activeSelf)
         {
             StartCoroutine(destroyBullet(_secondsUntilDestroy));
@@ -35,7 +35,7 @@ public class Bullet : MonoBehaviour , Projectile
         set
         {
             _penetration -= value;
-            if (_penetration < 0) Destroy(gameObject);
+            if (_penetration <= 0) Destroy(gameObject);
         }
     }
 
