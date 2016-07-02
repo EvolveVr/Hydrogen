@@ -3,22 +3,7 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags:
-  - Handgun
-  - SubmachineGun
-  - AssaultRifle
-  - ControllerLeft
-  - ControllerRight
-  - Magazine
-  - Cannon
-  - CannonBullet
-  - Wall
-  - bullet
-  - left
-  - right
-  - bottom
-  - TargetSpawnPoint
-  - target
+  tags: []
   layers:
   - Default
   - TransparentFX
@@ -28,8 +13,8 @@ TagManager:
   - UI
   - 
   - 
-  - PlayerHand
-  - InteractableTrigger
+  - 
+  - 
   - 
   - 
   - 

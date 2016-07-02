@@ -1,3 +1,4 @@
+
 ﻿using System.Collections.Generic;
 using UnityEngine;
 /// <summary>
@@ -182,4 +183,5 @@ public class MoveTargets : MonoBehaviour
         if (hit.gameObject.tag == "bullet")
             Destroy(hit.gameObject);
     }
+   
 }

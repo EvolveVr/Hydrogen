@@ -29,7 +29,12 @@ Transform:
   m_GameObject: {fileID: 160380}
   m_LocalRotation: {x: 0.115843594, y: 0.7456461, z: 0.013904764, w: 0.65604794}
   m_LocalPosition: {x: 202.08426, y: 1.0656823, z: 180.8417}
+<<<<<<< HEAD:Assets/Resources/Prefabs/BulletPrefabs/Bullet.prefab
   m_LocalScale: {x: 1, y: 1, z: 1}
+=======
+  m_LocalScale: {x: 0.011652544, y: 0.011652542, z: 0.011652542}
+  m_LocalEulerAnglesHint: {x: 7.5425, y: 98.0494, z: 11.1085}
+>>>>>>> mainDevelop:Assets/Resources/Prefabs/BulletPrefabs/Bullet.prefab
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
