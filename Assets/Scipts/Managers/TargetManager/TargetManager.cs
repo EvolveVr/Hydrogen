@@ -114,7 +114,7 @@ public class TargetManager : MonoBehaviour
 
         if (!roundOver)
         {
-            decreaseTimer(ref _leftOnRound, _roundTimer);
+            //decreaseTimer(ref _leftOnRound, _roundTimer);
             decreaseTimer(ref _leftTillWaveSpawns, _timeTillNextWaveSpawns);
         }
     }

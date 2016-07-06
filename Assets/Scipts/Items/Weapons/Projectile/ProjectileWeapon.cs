@@ -8,6 +8,8 @@ namespace Hydrogen
     /// </summary>
     public abstract class ProjectileWeapon : Weapon
     {
+        [Header("Field below from ProjectileWeapon class")]
+        [Space(15)]
         public bool drawableGun;
     }
 }

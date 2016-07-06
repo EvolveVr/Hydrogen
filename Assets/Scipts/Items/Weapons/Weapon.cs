@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 using NewtonVR;
 
 namespace Hydrogen
@@ -9,6 +8,8 @@ namespace Hydrogen
     /// </summary>
     public abstract class Weapon : NVRInteractableItem
     {
+        [Header("Fields below are from Weapon Class")]
+        [Space(15)]
         public string weaponName;
         public string weaponDescription;
         public bool projectileWeapon;

@@ -82,7 +82,6 @@ public class TargetPool : MonoBehaviour
             _targetPool.Add(Instantiate(targetPrefab));
             _targetPool[i].SetActive(false);
             _targetPool[i].transform.parent = poolHolder.transform;
-
         }
 
 

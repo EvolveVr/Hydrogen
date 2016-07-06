@@ -6,7 +6,9 @@ namespace Hydrogen
     public class ChargeGun : Gun
     {
         //A gun that charges needs 1) max charge time, 2) and the current charge time
-        public float maxChargeTime = 5.0f;
+        [Header("Fields below from ChargeGun class")]
+        [Space(15)]
+        public float maxChargeTime = 2.0f;
         private float _chargeTime = 0f;
 
         protected override void Update()

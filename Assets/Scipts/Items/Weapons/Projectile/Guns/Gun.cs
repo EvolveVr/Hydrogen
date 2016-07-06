@@ -11,6 +11,9 @@ namespace Hydrogen
     public class Gun : ProjectileWeapon
     {
         #region GUN
+
+        [Header("Fields below from Gun class")]
+        [Space(15)]
         //can continuously shoot bullets without reload
         public bool isInfinite = true;
         //whether the gun needs to be engaged AFTER reloading only
