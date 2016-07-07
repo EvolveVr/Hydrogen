@@ -34,7 +34,7 @@ public class TargetManager : MonoBehaviour
     /// all of their properties before setting them to active
     /// </summary>
     /// <returns>A short timer between each individual spawn</returns>
-    public IEnumerator spawnTarget()
+    public IEnumerator spawnPointTarget()
     {
         //Grabs object from pool
         for (int i = 0; i < _amountToSpawn; i++)
