@@ -28,6 +28,7 @@ namespace Hydrogen
         #endregion
 
         #region Overloaded NVR Methods
+
         // Overload the NVR Button pressed. WHen button is being ressed we need to add to the time and keep it in a certain range
         public override void UseButtonPressed()
         {
