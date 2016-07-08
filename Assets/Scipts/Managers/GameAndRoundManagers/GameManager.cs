@@ -7,28 +7,30 @@ using System.Collections;
 public class GameManager : MonoBehaviour
 {
     public static GameManager gameManager;
-    //This variable will be used to set amount to spawn and call the spawnPointTarget function
     private TargetManager _manageTargets;
+    //This variable will be used to set amount to spawn and call the spawnTarget function
+    protected Vector3 spawnPosition;
+    protected int _maxSpawnAtATime;
+
+    #region Variables managing the round
+    private float _roundTimer = 60.0f;
+    public float _timeLeftInRound;
+    private bool roundOver;
+    #endregion
 
     private int _playerPoints;
-    private int _currentWave;
     
-    //This function changes spawn count depending on wave
-    private void changeSpawnCount()
+    //  public abstract IEnumerator spawnPointTarget(int amountToSpawn);
+    public float timeLeftInRound
     {
-        switch (_currentWave)
-        {
-            //Set to 0 so only spawns wave 1 for now, was to test orbiting
-            case 2:
-                _manageTargets.amountToSpawn = 1;
-                break;
-            case 3:
-                _manageTargets.amountToSpawn = 1;
-                break;
-            default:
-                _manageTargets.amountToSpawn = 0;
-                break;
-        }
+        set { _timeLeftInRound -= value; }
+        //return time left to keep track of in UI
+        get { return _timeLeftInRound; }
+    }
+    public float roundTimer
+    {
+        set { _roundTimer = value; }
+        get { return _roundTimer; }
     }
 
     /// <summary>
@@ -40,24 +42,16 @@ public class GameManager : MonoBehaviour
         get { return _playerPoints; }//Returning for UI
     }
 
-    /// <summary>
-    /// This gets updates to current wave and calls the
-    /// changeSpawnCount() function to set amount to spawn then calls
-    /// spawnPointTarget() function to spawn the targets
-    /// </summary>
-    public int currentWave
+    //Adds time left in round when player kills TimeTarget
+    public float addTimeLeftInRound
     {
-        set
-        {
-            _currentWave += value;
-            changeSpawnCount();
-            StartCoroutine(_manageTargets.spawnPointTarget());
-        }
+        set { _timeLeftInRound += value; }
+      
     }
 
     private void Awake()
     {
-        if(gameManager == null)
+        if (gameManager == null)
         {
             gameManager = this;
         }
@@ -65,17 +59,32 @@ public class GameManager : MonoBehaviour
         {
             Destroy(this);
         }
-        _manageTargets = gameObject.GetComponent<TargetManager>();
+        _manageTargets = GetComponent<TargetManager>();
+        //Okay, it's not going to call spawn at start, I have to make it so it waits for user input for anchors being spawned first, or rather amount of anchors, not doing anchors right now so, first test that it works
     }
- 
+    //Instead of doing it on start, it will do when player clicks start button, just start for now
     private void Start()
     {
-        //waves in this case, isn't end of round, just next wave of enemies spawned in time intervals
-        _currentWave = 1;
-        _manageTargets.amountToSpawn = 1;
-        StartCoroutine(_manageTargets.spawnPointTarget());
+        //Assigning to private variable directly here, because do not want to start coroutine to spawn, before player picks amountready to spawn
+        
+        _timeLeftInRound = _roundTimer;
+    //    GameObject dfds = Instantiate(Resources.Load("Prefabs/TargetPrefabs/orbTarget") as GameObject);
     }
-    
+    private void Update()
+    {
 
-
+        if (timeLeftInRound > 0)
+        {
+            timeLeftInRound = Time.deltaTime;
+        }
+        if (timeLeftInRound == _roundTimer / 2)
+        {
+            StartCoroutine(_manageTargets.spawnTimeTarget(10.0f, false));
+        }
+        if (timeLeftInRound == _roundTimer / 4)
+        {
+            
+        }
+    }
+   
 }

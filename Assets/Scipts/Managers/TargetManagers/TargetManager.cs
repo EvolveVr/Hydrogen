@@ -3,6 +3,22 @@ using System.Collections;
 using System.Collections.Generic;
 public class TargetManager : MonoBehaviour
 {
+    #region variables for handling movements
+    /// <summary>
+    /// This is a delegate that will take in functions that will return specific movement
+    /// </summary>
+    /// <param name="direction">This is the direction the targets are moving in, left,right,up,down etc.</param>
+    /// <param name="offset">This is the initial local position of the target, that we will be updating with current direction, time, and speed we want it to be changing position.</param>
+    /// <param name="axisOfMovement"> The axis the pattern will be moving on, like sin wave left right, forward back etc.</param>
+    /// <param name="magnitude">This will be how big or small the waves will be</param>
+    /// <param name="speedTarget">speed of the translation of the target</param>
+    /// <param name ="speedMovement">speed that the target is going through the entire movement. eg: Time it takes to complete an entire sinwave
+    /// </param>
+    /// <returns>This returns the resulting vector3 that the targets will translate on. </returns>
+    public delegate Vector3 moveFunction(Vector3 direction, Vector3 offSet, Vector3 axisOfMovement, float magnitude, float speedTarget, float speedMovement);
+    private List<moveFunction> _storageMovementFunctions;
+    #endregion
+    //Might put move algorithims in here since moving is managing the targets, then both scrips will just have reference to this
     #region Variables managing the round
     private float _roundTimer = 30.0f;
     private float _leftOnRound;
@@ -11,112 +27,142 @@ public class TargetManager : MonoBehaviour
 
     #region Variables managing spawn of enemies in round
 
-    private GameManager _manageSpawnCount;
     private TargetPool _targetPool;
-    private float _timeTillNextWaveSpawns = 5.0f;
-    private float _leftTillWaveSpawns;
-    private int _amountToSpawn;
-    private float _spawnTimeInterval;
+    private int _totalAmountSpawnedAtATime;
+   
     #endregion
 
-    /// <summary>
-    /// Sets the amount of targets to spawn
-    /// Returns the amount set
-    /// </summary>
-    public int amountToSpawn
+    //Dictionary of movement algorithims and movefunction will be in here, but variables will be passed into arguments of those lamdas, instead of how it was before.
+    public void initializeMovementFunctions()
     {
-        get { return _amountToSpawn; }
-        set { _amountToSpawn = value; }
-    }
-   
-    /// <summary>
-    /// This spawns the targets and handles
-    /// all of their properties before setting them to active
-    /// </summary>
-    /// <returns>A short timer between each individual spawn</returns>
-    public IEnumerator spawnPointTarget()
-    {
-        //Grabs object from pool
-        for (int i = 0; i < _amountToSpawn; i++)
+        Vector3 movement = new Vector3();
+        _storageMovementFunctions.Add((Vector3 direction, Vector3 offSet, Vector3 axisOfMovement, float magnitude, float speedTarget, float speedMovement) =>
         {
-            //Gets pooled object
-            GameObject target = _targetPool.getTarget();
-            //Sets position to spawn point
-            target.transform.position = GameObject.FindGameObjectWithTag("TargetSpawnPoint").GetComponent<Transform>().position;
-            target.transform.localScale = new Vector3(2, 2, 2);
-            target.SetActive(true);
-            //waits for spawnTimeInterval
-            yield return new WaitForSeconds(_spawnTimeInterval);
+            movement = offSet + axisOfMovement * Mathf.Sin(Time.time * speedMovement) * magnitude;
+
+            return movement;
+
+        });
+        _storageMovementFunctions.Add((Vector3 direction, Vector3 offSet, Vector3 axisOfMovement, float magnitude, float speedTarget, float speedMovement) =>
+        {
+            movement.x =  Mathf.Sin(Time.time * speedMovement) * magnitude;
+            movement.y =  Mathf.Cos(Time.time * speedMovement) * magnitude;
+
+            return movement;
+                
+        });
+
+
+    }
+    public moveFunction getMovement()
+    {
+
+        //Movement they start with will be random but they will keep that movement
+        int index = Random.Range(0, _storageMovementFunctions.Count);
+
+        moveFunction movementIndexed = _storageMovementFunctions[index];
+        
+        if (movementIndexed == null)
+        {
+            return _storageMovementFunctions[index - 1];
         }
+
+        return movementIndexed;
     }
 
-    private void Awake()
-    { 
+
+    public int totalAmountSpawnedAtATime
+    {
+        get { return _totalAmountSpawnedAtATime;
+        }
+        set { _totalAmountSpawnedAtATime = value; }
+    }
+
+    public void checkNumberCurrentlySpawned()
+    {
+        //This delay is to make sure target is inactive before checking for all active
+
+        int amountCurrentlySpawned = _targetPool.getNumberTargetsSpawned();
+        Debug.Log(amountCurrentlySpawned);
+        int difference = totalAmountSpawnedAtATime - amountCurrentlySpawned;
+        Debug.Log(difference);
+        if (difference > 0)
+        {
+            StartCoroutine(spawnPointTarget(difference));
+        }
         
-        _manageSpawnCount = gameObject.GetComponent<GameManager>();
+    }
+    public IEnumerator spawnPointTarget(int amountToSpawn)
+    {
+        
+        for (int i = 0; i < amountToSpawn; i++)
+        {
+           
+            GameObject target = _targetPool.getObject();
+            //Sets position to spawn point
+            //This will be initial spawn point, then local position relative to parent anchor will change on the PointTarget script attached to 
+            //target object.
+            float lowerRange = 0.1f;
+            float endRange = 5.7f;
+            target.transform.localPosition = new Vector3(Random.Range(lowerRange, endRange), Random.Range(lowerRange, endRange), Random.Range(lowerRange, endRange));
+            target.transform.localScale = new Vector3(2, 2, 2);
+            target.AddComponent<PointTarget>();
+            target.SetActive(true);
+            yield return new WaitForSeconds(0.1f);
+        
+        }
+        
+    }
+   
+    public IEnumerator spawnTimeTarget(float timeTillDeath, bool obstacle)
+    {
+        //This seperate thread so spawn time target will auto kill the spawned timetarget after a given certain amount of time
+        //Or unless it is shot, which will be handled on TimeTarget script attached to timeTarget Object
+        GameObject target;
+
+        if (obstacle)
+        {
+            //So if obstacle == true then the the target will be the anchor
+            GameObject anchorPrefab = Resources.Load("Prefabs/TargetPrefabs/Anchor") as GameObject;
+            target = Instantiate(anchorPrefab);
+            target.tag = "Obstacle";
+
+
+        }
+        else
+        {
+            target = _targetPool.getObject();
+        }
+        target.transform.localPosition = new Vector3(0, 0, 0);
+        target.AddComponent<TimeTarget>();
+
+        //   target.GetComponent<TimeTarget>().timeGainedFromTarget = timeTillDeath;
+        target.SetActive(true);
+        yield return new WaitForSeconds(timeTillDeath);
+        TimeTarget component = target.GetComponent<TimeTarget>();
+        Destroy(component);
+        target.SetActive(false);
+
+    }
+    
+
+    private void Awake()
+    {
+        _storageMovementFunctions = new List<moveFunction>();
         _targetPool = gameObject.GetComponentInChildren<TargetPool>();
     }
 
-    /// <summary>
-    /// Sets the round being over to false.
-    /// Sets all of the timers.
-    /// </summary>
+ 
 	private void Start()
     {
-         roundOver = false;
-
-        _leftOnRound = _roundTimer;
-        _leftTillWaveSpawns = _timeTillNextWaveSpawns;
-        _spawnTimeInterval = 0.3f;
+        totalAmountSpawnedAtATime = 5;
+        initializeMovementFunctions();
+        _targetPool.initialize(totalAmountSpawnedAtATime);
+        StartCoroutine(spawnPointTarget(totalAmountSpawnedAtATime));
+        StartCoroutine(spawnTimeTarget(10.0f, false));
+        StartCoroutine(spawnTimeTarget(40.0f, true));
     }
-    
-    /// <summary>
-    /// This function just decreases all of the timers
-    /// and executes what they need to depending on total timer interval
-    /// differentiating what the timer is for.
-    /// </summary>
-    /// <param name="currentTime">The timer that will be decrementing</param>
-    /// <param name="maxTime">The total time it starts from and will reset to</param>
-    private void decreaseTimer(ref float currentTime, float maxTime)
-    {
-        if (currentTime > 0)
-        {
-            currentTime -= Time.deltaTime;
-        }
-        else if (currentTime <= 0)
-        {
-            if (maxTime == _timeTillNextWaveSpawns)
-            {
-                _manageSpawnCount.currentWave = 1;
 
-                currentTime = maxTime;
-            }
-            else if (maxTime == _roundTimer)
-            {
-                _targetPool.despawnAllTargets();
-                Debug.Log("You've earned " + _manageSpawnCount.playerPoints + " points");
 
-                roundOver = true;
-            }
-        }
 
-    } 
-
-    private void Update()
-    {
-        //Debugging purposes
-        if (Input.GetKeyDown(KeyCode.A))
-        {
-
-            _manageSpawnCount.currentWave = 1;
-
-        }
-
-        if (!roundOver)
-        {
-            //decreaseTimer(ref _leftOnRound, _roundTimer);
-            decreaseTimer(ref _leftTillWaveSpawns, _timeTillNextWaveSpawns);
-        }
-    }
-   
 }
