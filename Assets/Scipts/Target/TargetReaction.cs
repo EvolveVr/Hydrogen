@@ -1,6 +1,7 @@
 
 ﻿using UnityEngine;
 using System.Collections;
+using Hydrogen;
 /// <summary>
 /// This script is for handling what happens when targets are hit
 /// </summary>

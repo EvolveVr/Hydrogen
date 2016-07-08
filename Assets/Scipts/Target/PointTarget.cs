@@ -1,33 +1,38 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class PointTarget : Target
+namespace Hydrogen
 {
-  
-    protected override void Awake()
+    public class PointTarget : Target
     {
-        base.Awake();
-    }
 
-    protected override void Start()
-    {
-        base.Start();
-    }
-
-    protected override void OnTriggerEnter(Collider hit)
-    {
-        
-        if (hit.gameObject.tag == "Bullet") 
+        protected override void Awake()
         {
-            //Spawns a point target to replace one lost, and checks to see if need to replace more to get amountSpawnedAtATime
-            _manageTargets.checkNumberCurrentlySpawned();
-            _gainedFromTarget.playerPoints = 5;
-            //Okay I was worried that destroying this script would auto cut it off and not execute next line of code which is base, but it did so WOO.
-            Destroy(this);
-            base.OnTriggerEnter(hit);
+            base.Awake();
         }
-        //Actually since disabling this script then it won't call this first.
-        //Destroy(this);
-        
+
+        protected override void Start()
+        {
+            base.Start();
+        }
+
+        protected override void OnTriggerEnter(Collider hit)
+        {
+
+            if (hit.gameObject.tag == "Bullet")
+            {
+
+                //Spawns a point target to replace one lost, and checks to see if need to replace more to get amountSpawnedAtATime
+                //I hate constantly checking but since coroutine not working for whatever reason.
+             //   _manageTargets.callSpawner("point", 1);
+                _gainedFromTarget.playerPoints = 5;
+                //Okay I was worried that destroying this script would auto cut it off and not execute next line of code which is base, but it did so WOO.
+                Destroy(this);
+                base.OnTriggerEnter(hit);
+            }
+            //Actually since disabling this script then it won't call this first.
+            //Destroy(this);
+
+        }
     }
 }

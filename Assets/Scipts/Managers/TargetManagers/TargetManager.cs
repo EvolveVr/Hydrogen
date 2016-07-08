@@ -1,8 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+namespace Hydrogen
+{
 public class TargetManager : MonoBehaviour
 {
+       
     #region variables for handling movements
     /// <summary>
     /// This is a delegate that will take in functions that will return specific movement
@@ -27,8 +30,10 @@ public class TargetManager : MonoBehaviour
 
     #region Variables managing spawn of enemies in round
 
-    private TargetPool _targetPool;
-    private int _totalAmountSpawnedAtATime;
+        private TargetPool _targetPool;
+        private int _totalAmountSpawnedAtATime;
+        //The time until time targets leave field.
+        private float _timeTillDeath;
    
     #endregion
 
@@ -78,23 +83,23 @@ public class TargetManager : MonoBehaviour
         set { _totalAmountSpawnedAtATime = value; }
     }
 
-    public void checkNumberCurrentlySpawned()
+   
+    
+    public void callSpawner(string spawnType, int amountToSpawn = 0, bool obstacle = false)
     {
-        //This delay is to make sure target is inactive before checking for all active
-
-        int amountCurrentlySpawned = _targetPool.getNumberTargetsSpawned();
-        Debug.Log(amountCurrentlySpawned);
-        int difference = totalAmountSpawnedAtATime - amountCurrentlySpawned;
-        Debug.Log(difference);
-        if (difference > 0)
-        {
-            StartCoroutine(spawnPointTarget(difference));
-        }
-        
+                switch (spawnType)
+                {
+                    case "point":
+                        StartCoroutine(spawnPointTarget(amountToSpawn));
+                        break;
+                    case "time":
+                        StartCoroutine(spawnTimeTarget(obstacle));
+                        break;
+                }
     }
-    public IEnumerator spawnPointTarget(int amountToSpawn)
+    private IEnumerator spawnPointTarget(int amountToSpawn)
     {
-        
+        yield return new WaitForSeconds(0.1f);
         for (int i = 0; i < amountToSpawn; i++)
         {
            
@@ -104,17 +109,16 @@ public class TargetManager : MonoBehaviour
             //target object.
             float lowerRange = 0.1f;
             float endRange = 5.7f;
-            target.transform.localPosition = new Vector3(Random.Range(lowerRange, endRange), Random.Range(lowerRange, endRange), Random.Range(lowerRange, endRange));
-            target.transform.localScale = new Vector3(2, 2, 2);
+            target.transform.localPosition = new Vector3(0, 0, 0);
             target.AddComponent<PointTarget>();
             target.SetActive(true);
-            yield return new WaitForSeconds(0.1f);
+           
         
         }
         
     }
    
-    public IEnumerator spawnTimeTarget(float timeTillDeath, bool obstacle)
+    private IEnumerator spawnTimeTarget(bool obstacle)
     {
         //This seperate thread so spawn time target will auto kill the spawned timetarget after a given certain amount of time
         //Or unless it is shot, which will be handled on TimeTarget script attached to timeTarget Object
@@ -138,7 +142,7 @@ public class TargetManager : MonoBehaviour
 
         //   target.GetComponent<TimeTarget>().timeGainedFromTarget = timeTillDeath;
         target.SetActive(true);
-        yield return new WaitForSeconds(timeTillDeath);
+        yield return new WaitForSeconds(_timeTillDeath);
         TimeTarget component = target.GetComponent<TimeTarget>();
         Destroy(component);
         target.SetActive(false);
@@ -155,14 +159,15 @@ public class TargetManager : MonoBehaviour
  
 	private void Start()
     {
-        totalAmountSpawnedAtATime = 5;
+        
+        _timeTillDeath = 5.0f;
         initializeMovementFunctions();
         _targetPool.initialize(totalAmountSpawnedAtATime);
-        StartCoroutine(spawnPointTarget(totalAmountSpawnedAtATime));
-        StartCoroutine(spawnTimeTarget(10.0f, false));
-        StartCoroutine(spawnTimeTarget(40.0f, true));
+        StartCoroutine(spawnPointTarget(totalAmountSpawnedAtATime/2));
+      
     }
 
 
 
+}
 }
