@@ -8,6 +8,12 @@ TagManager:
   - target
   - Magazine
   - bullet
+  - Handgun
+  - ControllerRight
+  - ControllerLeft
+  - MainCanvasElement
+  - GunCanvasElement
+  - OptionsCanvasElement
   layers:
   - Default
   - TransparentFX
