@@ -62,5 +62,12 @@ namespace Hydrogen
                 gameObject.SetActive(false);
             }
         }
+
+
+        public void setInitial(Transform initialPosition, Vector3 initialMovement, Movement movementPattern)
+        {
+
+        }
+
     }
 }
