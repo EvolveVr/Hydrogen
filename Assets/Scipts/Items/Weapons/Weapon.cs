@@ -13,15 +13,23 @@ namespace Hydrogen
         [Space(15)]
         public string WeaponName;
         private string _weaponDescription;
-        private Sprite _weaponSprite;
+        private Image _weaponImage;
         public GameConstants.WeaponType weaponType;
         
 
         public string weaponDescription { get { return _weaponDescription; } }
 
-        public Sprite weaponSprite { get { return _weaponSprite;} }
+        public Image weaponImage
+        {
+            get { return _weaponImage; }
+            set { _weaponImage = value; }
+        }
 
         public string weaponName { get { return WeaponName; } }
 
+        public void initWeaponImage()
+        {
+            _weaponImage = GetComponent<Image>();
+        }
     }
 }

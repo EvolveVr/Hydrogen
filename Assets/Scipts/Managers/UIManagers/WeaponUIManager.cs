@@ -12,28 +12,23 @@ namespace Hydrogen
  ///
     public class WeaponUIManager : MonoBehaviour
     {
-        private Weapon[] _weapons;
         private WeaponPanel[] _weaponPanels;
+        private Weapon[] _weapons;
 
         void Awake()
         {
+            _weaponPanels = GameObject.FindObjectsOfType<WeaponPanel>();
             _weapons = GameObject.FindObjectsOfType<Weapon>();
 
-            if(_weapons != null)
+            if (_weaponPanels != null && _weapons != null)
             {
-                foreach(var weapon in _weapons)
+                for (int i = 0; i < _weaponPanels.Length; i++)
                 {
-                    Debug.Log(weapon.name);
+                    Image myGunImage = _weapons[i].GetComponent<Image>();
+                    _weaponPanels[i].gunImage.sprite = myGunImage.sprite;
+                    _weaponPanels[i].gunTitle.text = _weapons[i].weaponName;
                 }
             }
-
-            _weaponPanels = GameObject.FindObjectsOfType<WeaponPanel>();
-
-            if (_weaponPanels != null)
-            {
-                
-            }
         }
-
     }
 }

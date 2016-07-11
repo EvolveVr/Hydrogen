@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using NewtonVR;
 using System.Collections;
+using System;
 
 namespace Hydrogen
 {
@@ -8,6 +10,7 @@ namespace Hydrogen
     /// Abstract class Gun will hold all the methods, properties and Fields that 
     /// are general to ALL guns in the game
     /// </summary>
+    [RequireComponent(typeof(Image))]
     public class Gun : ProjectileWeapon
     {
         #region GUN
@@ -83,6 +86,8 @@ namespace Hydrogen
                 if(SlideEngage!= null)
                     SlideEngage.setEngage(engageGun);
             }
+
+            initWeaponImage();
         }
 
         //Temporary

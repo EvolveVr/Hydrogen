@@ -11,5 +11,6 @@ namespace Hydrogen
     public class WeaponPanel : MonoBehaviour
     {
         public Image gunImage;
+        public Text gunTitle;
     }
 }
