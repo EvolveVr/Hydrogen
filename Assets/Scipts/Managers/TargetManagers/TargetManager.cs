@@ -1,173 +1,136 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+
 namespace Hydrogen
 {
-public class TargetManager : MonoBehaviour
-{
-       
-    #region variables for handling movements
     /// <summary>
-    /// This is a delegate that will take in functions that will return specific movement
+    /// This will handle spawning anchors and time targets 
     /// </summary>
-    /// <param name="direction">This is the direction the targets are moving in, left,right,up,down etc.</param>
-    /// <param name="offset">This is the initial local position of the target, that we will be updating with current direction, time, and speed we want it to be changing position.</param>
-    /// <param name="axisOfMovement"> The axis the pattern will be moving on, like sin wave left right, forward back etc.</param>
-    /// <param name="magnitude">This will be how big or small the waves will be</param>
-    /// <param name="speedTarget">speed of the translation of the target</param>
-    /// <param name ="speedMovement">speed that the target is going through the entire movement. eg: Time it takes to complete an entire sinwave
-    /// </param>
-    /// <returns>This returns the resulting vector3 that the targets will translate on. </returns>
-    public delegate Vector3 moveFunction(Vector3 direction, Vector3 offSet, Vector3 axisOfMovement, float magnitude, float speedTarget, float speedMovement);
-    private List<moveFunction> _storageMovementFunctions;
-    #endregion
-    //Might put move algorithims in here since moving is managing the targets, then both scrips will just have reference to this
-    #region Variables managing the round
-    private float _roundTimer = 30.0f;
-    private float _leftOnRound;
-    private bool roundOver;
-    #endregion
+    public class TargetManager : MonoBehaviour
+    {
 
-    #region Variables managing spawn of enemies in round
+        #region Variables managing spawn of enemies in round
 
+        private AnchorPool _anchorPool;
         private TargetPool _targetPool;
         private int _totalAmountSpawnedAtATime;
-        //The time until time targets leave field.
-        private float _timeTillDeath;
-   
-    #endregion
+       
 
-    //Dictionary of movement algorithims and movefunction will be in here, but variables will be passed into arguments of those lamdas, instead of how it was before.
-    public void initializeMovementFunctions()
-    {
-        Vector3 movement = new Vector3();
-        _storageMovementFunctions.Add((Vector3 direction, Vector3 offSet, Vector3 axisOfMovement, float magnitude, float speedTarget, float speedMovement) =>
+        #endregion
+
+
+        //When round is over GameManager will call this to despawn all of the enemies
+        public void despawnAllAnchors()
         {
-            movement = offSet + axisOfMovement * Mathf.Sin(Time.time * speedMovement) * magnitude;
+            _anchorPool.despawnAllObjects();
 
-            return movement;
-
-        });
-        _storageMovementFunctions.Add((Vector3 direction, Vector3 offSet, Vector3 axisOfMovement, float magnitude, float speedTarget, float speedMovement) =>
-        {
-            movement.x =  Mathf.Sin(Time.time * speedMovement) * magnitude;
-            movement.y =  Mathf.Cos(Time.time * speedMovement) * magnitude;
-
-            return movement;
-                
-        });
-
-
-    }
-    public moveFunction getMovement()
-    {
-
-        //Movement they start with will be random but they will keep that movement
-        int index = Random.Range(0, _storageMovementFunctions.Count);
-
-        moveFunction movementIndexed = _storageMovementFunctions[index];
-        
-        if (movementIndexed == null)
-        {
-            return _storageMovementFunctions[index - 1];
         }
 
-        return movementIndexed;
-    }
-
-
-    public int totalAmountSpawnedAtATime
-    {
-        get { return _totalAmountSpawnedAtATime;
-        }
-        set { _totalAmountSpawnedAtATime = value; }
-    }
-
-   
-    
-    public void callSpawner(string spawnType, int amountToSpawn = 0, bool obstacle = false)
-    {
-                switch (spawnType)
-                {
-                    case "point":
-                        StartCoroutine(spawnPointTarget(amountToSpawn));
-                        break;
-                    case "time":
-                        StartCoroutine(spawnTimeTarget(obstacle));
-                        break;
-                }
-    }
-    private IEnumerator spawnPointTarget(int amountToSpawn)
-    {
-        yield return new WaitForSeconds(0.1f);
-        for (int i = 0; i < amountToSpawn; i++)
+        /// <summary>
+        /// This represents total amount of anchors spawed at a time, which will be chosen by the player at the start of the game.
+        /// </summary>
+        public int totalAmountSpawnedAtATime
         {
-           
+            get
+            {
+                return _totalAmountSpawnedAtATime;
+            }
+            set { _totalAmountSpawnedAtATime = value; }
+        }
+   
+        /// <summary>
+        /// In here is to set the position of the targets randomly but within vicinity of respective anchor
+        /// </summary>
+        /// <param name="endPoint">What will be passed in is radius and - and postive versions will be end points of the Random.Range</param>
+        /// <returns></returns>
+        public Vector3 getSpawnPoint(float endPoint)
+        {
+            //Thought about having two arguments, so it's more general but really only need for spawn points and within radius is best so this is fine
+            Vector3 spawnPoint = new Vector3(Random.Range(-endPoint, endPoint), Random.Range(-endPoint, endPoint), Random.Range(-endPoint, endPoint));
+
+            return spawnPoint;
+        }
+     
+        /// <summary>
+        /// This function spawns the time target where anchor is target and targets around it are now obstacles
+        /// </summary>
+        public void spawnTimeTargetAnchor()
+        {
+
+            GameObject targetAnchor = _anchorPool.getObject();
+            targetAnchor.tag = "Target";
+            Anchor component = targetAnchor.GetComponent<Anchor>();
+          //Destroy(component);
+            targetAnchor.SetActive(true);
+            targetAnchor.AddComponent<TimeTarget>();
+        }
+
+        /// <summary>
+        /// This is called at time points in round timer to spawn target that disappears after certain amount of time
+        /// and if killed via being shot, the player wll add time to the round timer.
+        /// </summary>
+        public void spawnTimeTarget()
+        {
             GameObject target = _targetPool.getObject();
-            //Sets position to spawn point
-            //This will be initial spawn point, then local position relative to parent anchor will change on the PointTarget script attached to 
-            //target object.
-            float lowerRange = 0.1f;
-            float endRange = 5.7f;
-            target.transform.localPosition = new Vector3(0, 0, 0);
-            target.AddComponent<PointTarget>();
+        
+            //This returns all anchors in the scene into an array
+            GameObject[] allAnchors = GameObject.FindGameObjectsWithTag("Anchor");
+            //This randomizes which anchor we will parent this target to
+            int randomIndex = Random.Range(0, allAnchors.Length);
+            //Checks if anchor is active before setting the parent of this target to it,
+            if (allAnchors[randomIndex].activeInHierarchy)
+                target.transform.parent = allAnchors[randomIndex].transform;
+            //This gets the radius of the anchor.
+            float anchorRadius = allAnchors[randomIndex].GetComponent<SphereCollider>().radius;
+            target.transform.localPosition = getSpawnPoint(anchorRadius);
+        
+            //This adds the TimeTarget script to the target.
+            target.AddComponent<TimeTarget>();
+            //This sets the target to active.
             target.SetActive(true);
-           
-        
-        }
-        
-    }
-   
-    private IEnumerator spawnTimeTarget(bool obstacle)
-    {
-        //This seperate thread so spawn time target will auto kill the spawned timetarget after a given certain amount of time
-        //Or unless it is shot, which will be handled on TimeTarget script attached to timeTarget Object
-        GameObject target;
 
-        if (obstacle)
+
+        }
+
+        /// <summary>
+        /// This spawns the anchors from their pool
+        /// </summary>
+        /// <param name="amountToSpawn">The initial value passed in will be player choice of how many anchors they want at a time and all other times will be to replace when an
+        /// anchor dies </param>
+        public void spawnAnchor(int amountToSpawn)
         {
-            //So if obstacle == true then the the target will be the anchor
-            GameObject anchorPrefab = Resources.Load("Prefabs/TargetPrefabs/Anchor") as GameObject;
-            target = Instantiate(anchorPrefab);
-            target.tag = "Obstacle";
-
+            for (int i = 0; i < amountToSpawn; i++)
+            {
+                GameObject anchor = _anchorPool.getObject();
+                anchor.SetActive(true);
+            }
 
         }
-        else
+
+        //Gets references to anchor and target pools
+        private void Awake()
         {
-            target = _targetPool.getObject();
+
+            _targetPool = gameObject.GetComponentInChildren<TargetPool>();
+            _anchorPool = gameObject.GetComponentInChildren<AnchorPool>();
         }
-        target.transform.localPosition = new Vector3(0, 0, 0);
-        target.AddComponent<TimeTarget>();
 
-        //   target.GetComponent<TimeTarget>().timeGainedFromTarget = timeTillDeath;
-        target.SetActive(true);
-        yield return new WaitForSeconds(_timeTillDeath);
-        TimeTarget component = target.GetComponent<TimeTarget>();
-        Destroy(component);
-        target.SetActive(false);
+        private void Start()
+        {
+            //All of this is only temporarily on start will be on initialize function that GameManager will call during actual game because need to wait for player input for
+            //totalAmountSpawnedAtATime
+
+            //It should be set up so that it waits for UI input
+            totalAmountSpawnedAtATime = 5;
+            //This initializes pool to hold 6 anchors inactive, 6th is the anchor that is a timed target.
+            _anchorPool.initialize(totalAmountSpawnedAtATime+1);
+            spawnAnchor(totalAmountSpawnedAtATime);
+            //This initializes pool to hold the amount of total anchors on at once * 6 because 6 will be max per anchor, maybe more
+            //But if less then can take less, but this makes it so atleast 6 each will be possible.
+            _targetPool.initialize(totalAmountSpawnedAtATime * 6);
+
+        }
 
     }
-    
-
-    private void Awake()
-    {
-        _storageMovementFunctions = new List<moveFunction>();
-        _targetPool = gameObject.GetComponentInChildren<TargetPool>();
-    }
-
- 
-	private void Start()
-    {
-        
-        _timeTillDeath = 5.0f;
-        initializeMovementFunctions();
-        _targetPool.initialize(totalAmountSpawnedAtATime);
-        StartCoroutine(spawnPointTarget(totalAmountSpawnedAtATime/2));
-      
-    }
-
-
-
-}
 }

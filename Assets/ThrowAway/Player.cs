@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using Hydrogen;
 /// <summary>
 /// THROW AWAY
 /// This class was for me to practice shooting the targets
@@ -9,11 +10,16 @@ public class Player : MonoBehaviour
 {
     public GameObject bulletPrefab;
     public Transform firePoint;
+    Target sfsd;
     Bullet shoot;
     // Use this for initialization
+
+    void Awake()
+    {
+    }
     void Start()
     {
-    
+     
     
     }
 

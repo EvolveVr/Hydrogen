@@ -6,68 +6,94 @@ namespace Hydrogen
 {
     public class Target : MonoBehaviour
     {
-        //For time targets, it will add to player points, for point targets it will add to current time left in round
+        //For point targets, it will add to player points, for Time targets it will add to current time left in round
         protected GameManager _gainedFromTarget;
         protected TargetManager _manageTargets;
-        //These variables will change depending on difficulty, except for movementDirection, that will change based on
-        //distance 
-        //This vector holds, _magnitude, _targetSpeed, _waveSpeed in that order.
-        protected Vector4 _movementVariables;
-        private float _magnitude;
-        private float _targetSpeed;
-        private float _waveSpeed;
+        protected MovementManager _setMovement;
+        protected float _penetrationThreshHold;
+        protected Vector3 _directionMovement;
+        int speed = 2;
+        float step;
+        protected static int[] sfsdf = { 34, 34, 34 };
+        protected static Movement[] targetMovementList = new Movement[] {
 
-        protected Vector3 _movementDirection;
-        protected Vector3 _axisOfMovement;
-        protected Vector3 _offSetPosition;
+      /*      (Vector3 d, Vector3 a, float m, float ws) =>
+            {
+                Vector3 movement = new Vector3();
+                movement.y = Mathf.Sin(Time.time * ws) * m;
+             return movement;
+            },
+
+            (Vector3 a,Vector3 b, float m ,float ws) =>
+            {
+                Vector3 movement = new Vector3();
+                movement.y = m * Mathf.Sin(Time.time * ws) + m;
+                return a + b + movement;
+
+            }
+
+
+    */
+        };
+            
+        protected Vector3 _initialPosition;
+
+
+        //I can still use my method but just slapping it into anchor so setting spawn point is same time actually spawning it.
+        //Pattern will be equation itself like pass in resulting number of sin wave.
+        public void setInitial(Vector3 initPosition, Vector3 initDirection, float pattern)
+        {
+
+
+        }
 
         protected virtual void Awake()
         {
-
+            _setMovement = new MovementManager();
             _manageTargets = GameObject.Find("GameManager").GetComponent<TargetManager>();
             _gainedFromTarget = GameObject.Find("GameManager").GetComponent<GameManager>();
+            
         }
         protected virtual void Start()
         {
-            _magnitude = 0.5f;
-            _targetSpeed = 0.5f;
-            _waveSpeed = 1.5f;
-            _axisOfMovement = transform.up;
-            _movementDirection = transform.right;
-            _offSetPosition = transform.position;
-            _movementVariables[0] = _magnitude;
-            _movementVariables[1] = _targetSpeed;
-            _movementVariables[2] = _waveSpeed;
-
-            //Okay comment out any errors, otherwise it'll stop here and not do rest of lines of code after it.
-            //I'm dumb, wasted so much time on this
-
-
+            _penetrationThreshHold = 5.0f;
+           
         }
-
-        protected void setMovement(TargetManager.moveFunction movement)
+        
+      
+        protected virtual void Update()
         {
-            _offSetPosition += _movementDirection * Time.deltaTime * _targetSpeed;
+           // _initialPosition += _directionMovement * Time.deltaTime * speed;
+            transform.Translate(Vector3.right * speed * Time.deltaTime);
+         //   transform.position = targetMovementList[0](_initialPosition, transform.u, 0.5f, 2.5f);
+        }
 
-             transform.position = movement(_movementDirection, _offSetPosition, _axisOfMovement, _magnitude, _targetSpeed, _waveSpeed);
-        }
-        protected void Update()
-        {
-            setMovement(_manageTargets.getMovement());
-        }
         protected virtual void OnTriggerEnter(Collider hit)
         {
             if (hit.gameObject.tag == "Bullet")
             {
+                //Adds to player points
+                _gainedFromTarget.playerPoints = 5;
+                //Puts it back into inactive list of targets.
+                transform.parent = GameObject.Find("PooledTargets").transform;
+                hit.GetComponent<Bullet>().penetration = _penetrationThreshHold;
+                //Destroys the script so the object is a clean slate and can be reused as either time or normal target.
+                Destroy(this);
+                //Sets target active to false for reuse
                 gameObject.SetActive(false);
             }
         }
-
-
-        public void setInitial(Transform initialPosition, Vector3 initialMovement, Movement movementPattern)
+        protected void OnTriggerExit(Collider other)
         {
-
+            if (other.tag == "Vicinity")
+            {
+                int speed = 4;
+                _directionMovement = _setMovement.generateTargetMovement(0.2f, 0.7f, speed, 45.0f)(transform, other.transform, _directionMovement);
+            
+                //When it hits viciinity it wont just bounce back, but it will instead curve in opposite direction
+                //So this will call function inside movementmanager to generate target movement based on last movement, so I know it hit vicinity because of trigger
+                //and I'll know from movement passed in, what direction it was coming from, my way did this but  needed if statements and I'm all for alternatives.
+            }
         }
-
     }
 }

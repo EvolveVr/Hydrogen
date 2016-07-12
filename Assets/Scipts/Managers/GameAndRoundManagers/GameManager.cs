@@ -8,22 +8,25 @@ namespace Hydrogen
 {
     public class GameManager : MonoBehaviour
     {
-        public static GameManager gameManager;
-        private TargetManager _manageTargets;
        
-        #region These variables will be bools to see if it's spawned the timeTarget at specfic time, that way it won't continously do it. It'll still check and checks are expensive, but fuck.
+        #region All of the managers
+        public static GameManager gameManager;
+        private TargetManager _manageAnchors;
+        private Anchor _manageTargets;
+        #endregion
+
+        #region Bools that check whether time target at certain time points have already been spawned
 
         bool halfTimeSpawnTarget;
         bool quarterTimeSpawnTarget;
         bool quarterTimeLeftSpawnTarget;
-        
+
         #endregion
-            
-        protected Vector3 spawnPosition;
-        protected int _maxSpawnAtATime;
 
         #region Variables managing the round
-        private float _roundTimer = 30.0f;
+        private Difficulty _currentDifficulty;
+        private string _curentDifficulty;
+        private float _roundTimer = 40.0f;
         public float _timeLeftInRound;
         private bool roundOver;
         #endregion
@@ -31,6 +34,11 @@ namespace Hydrogen
         private int _playerPoints;
 
         //  public abstract IEnumerator spawnPointTarget(int amountToSpawn);
+        public string currentDifficulty
+        {
+            set { if (value == "Easy") _currentDifficulty = Difficulty.Easy; }
+            get { return currentDifficulty; }
+        }
         public float timeLeftInRound
         {
             set { _timeLeftInRound -= value; }
@@ -63,35 +71,35 @@ namespace Hydrogen
             {
                 Destroy(this);
             }
-            _manageTargets = GetComponent<TargetManager>();
+            _manageAnchors = GetComponent<TargetManager>();
+            _manageTargets = GetComponent<Anchor>();
         }
         //Instead of doing it on start, it will do when player clicks start button, just start for now
         private void Start()
         {
-     
-  
             _timeLeftInRound = _roundTimer;
-        
         }
         private void Update()
         {
-
             if (timeLeftInRound > 0)
             {
                 timeLeftInRound = Time.deltaTime;
             }
+            if (timeLeftInRound == 0)
+            {
+                _manageAnchors.despawnAllAnchors();       
+            }
+            
             if (timeLeftInRound <= _roundTimer / 2 && !halfTimeSpawnTarget)
             {
                 halfTimeSpawnTarget = true;
-                _manageTargets.callSpawner("time");
+                _manageAnchors.spawnTimeTarget();
             }
             if (timeLeftInRound <= _roundTimer / 4 && !quarterTimeSpawnTarget)
             {
                 quarterTimeSpawnTarget = true;
-                _manageTargets.callSpawner("time", 0, true);
+                _manageAnchors.spawnTimeTargetAnchor();
             }
-       
         }
-
     }
 }
