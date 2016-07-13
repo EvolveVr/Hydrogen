@@ -12,11 +12,11 @@ namespace Hydrogen
         [Header("Fields below are from Weapon Class")]
         [Space(15)]
         public string WeaponName;
-        private string _weaponDescription;
+        public string _weaponDescription;               //change to private later
         private Image _weaponImage;
         public GameConstants.WeaponType weaponType;
-        
 
+        #region Properties
         public string weaponDescription { get { return _weaponDescription; } }
 
         public Image weaponImage
@@ -26,6 +26,8 @@ namespace Hydrogen
         }
 
         public string weaponName { get { return WeaponName; } }
+
+        #endregion
 
         public void initWeaponImage()
         {
