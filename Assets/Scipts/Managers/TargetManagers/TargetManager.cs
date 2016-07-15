@@ -3,171 +3,138 @@ using System.Collections;
 using System.Collections.Generic;
 namespace Hydrogen
 {
-public class TargetManager : MonoBehaviour
-{
-       
-    #region variables for handling movements
-    /// <summary>
-    /// This is a delegate that will take in functions that will return specific movement
-    /// </summary>
-    /// <param name="direction">This is the direction the targets are moving in, left,right,up,down etc.</param>
-    /// <param name="offset">This is the initial local position of the target, that we will be updating with current direction, time, and speed we want it to be changing position.</param>
-    /// <param name="axisOfMovement"> The axis the pattern will be moving on, like sin wave left right, forward back etc.</param>
-    /// <param name="magnitude">This will be how big or small the waves will be</param>
-    /// <param name="speedTarget">speed of the translation of the target</param>
-    /// <param name ="speedMovement">speed that the target is going through the entire movement. eg: Time it takes to complete an entire sinwave
-    /// </param>
-    /// <returns>This returns the resulting vector3 that the targets will translate on. </returns>
-    public delegate Vector3 moveFunction(Vector3 direction, Vector3 offSet, Vector3 axisOfMovement, float magnitude, float speedTarget, float speedMovement);
-    private List<moveFunction> _storageMovementFunctions;
-    #endregion
-    //Might put move algorithims in here since moving is managing the targets, then both scrips will just have reference to this
-    #region Variables managing the round
-    private float _roundTimer = 30.0f;
-    private float _leftOnRound;
-    private bool roundOver;
-    #endregion
-
-    #region Variables managing spawn of enemies in round
-
-        private TargetPool _targetPool;
-        private int _totalAmountSpawnedAtATime;
-        //The time until time targets leave field.
-        private float _timeTillDeath;
-   
-    #endregion
-
-    //Dictionary of movement algorithims and movefunction will be in here, but variables will be passed into arguments of those lamdas, instead of how it was before.
-    public void initializeMovementFunctions()
+    public class TargetManager : MonoBehaviour
     {
-        Vector3 movement = new Vector3();
-        _storageMovementFunctions.Add((Vector3 direction, Vector3 offSet, Vector3 axisOfMovement, float magnitude, float speedTarget, float speedMovement) =>
+        MovementManager temp = new MovementManager();
+        private float SCALECONSTANT = 5;
+        private Anchor[] _anchorList;
+        private GameObject[] _activeAnchor;
+        [SerializeField]
+        private GameObject anchorPrefab;
+        [SerializeField]
+        private GameObject targetPrefab;
+
+        private IEnumerator<Anchor> anchorList()
         {
-            movement = offSet + axisOfMovement * Mathf.Sin(Time.time * speedMovement) * magnitude;
-
-            return movement;
-
-        });
-        _storageMovementFunctions.Add((Vector3 direction, Vector3 offSet, Vector3 axisOfMovement, float magnitude, float speedTarget, float speedMovement) =>
-        {
-            movement.x =  Mathf.Sin(Time.time * speedMovement) * magnitude;
-            movement.y =  Mathf.Cos(Time.time * speedMovement) * magnitude;
-
-            return movement;
-                
-        });
-
-
-    }
-    public moveFunction getMovement()
-    {
-
-        //Movement they start with will be random but they will keep that movement
-        int index = Random.Range(0, _storageMovementFunctions.Count);
-
-        moveFunction movementIndexed = _storageMovementFunctions[index];
+            for(int i=0;i<_anchorList.Length;i++)
+                yield return _anchorList[i];
+        }
         
-        if (movementIndexed == null)
+        #region Initialize
+        /// <summary>
+        /// Initializes the list of anchors so that it can spawn them during the wave
+        /// </summary>
+        /// <param name="difficultyRating">The difficulty of the wave based on how well the player did the last wave</param>
+        /// <param name="difficultySetting">The setting the player chose for difficulty.  Easy =1, Medium = 2, Hard = 3</param>
+        public void initializeWave(float difficultyRating,int difficultySetting)
         {
-            return _storageMovementFunctions[index - 1];
+
+            int anchorCount = Mathf.RoundToInt(Mathf.Log(difficultyRating, SCALECONSTANT) - 0.5f);
+            _anchorList = new Anchor[anchorCount];
+            anchorList().Reset();
+            for (int i = 0; i < anchorCount; i++)
+            {
+                _anchorList[i] = new Anchor();
+                Anchor currentAnchor=_anchorList[i].GetComponent<Anchor>();
+                //gives anchor a list of targets to spawn
+                currentAnchor.setTargetList(generateTargetList(difficultyRating / anchorCount,difficultySetting));
+                //Generate Anchor position in polar coordinates, with 0 radians being directly forward, around the player
+                float angleOfPlay = Mathf.Deg2Rad * 180;
+                float distanceScale = 10;
+                float angle = Random.value * angleOfPlay - (angleOfPlay / 2);
+                float distance = (anchorCount + Random.value) * distanceScale - (distanceScale / 2);
+                //convert polar coordinates to cartesian
+                Vector3 position = new Vector3(distance * Mathf.Cos(Mathf.Deg2Rad * angle), distance * Mathf.Sin(Mathf.Deg2Rad * angle));
+                //Randomize initial Movement Vector
+                Vector3 initialMovement = new Vector3(Random.value, Random.value, Random.value).normalized;
+                currentAnchor.setInitial(position, 
+                    initialMovement, 
+                    //Generate Movement Delegate
+                    temp.generateAnchorMovement(currentAnchor.transform, 
+                        anchorCount, 
+                        difficultySetting, 
+                        difficultySetting / 6));
+            }
+        }
+        /// <summary>
+        /// Generate list of Targets based on difficulty level
+        /// </summary>
+        /// <param name="difficulty"></param>
+        /// <param name="difficultySetting"></param>
+        /// <returns></returns>
+        private Target[] generateTargetList(float difficulty,int difficultySetting)
+        {
+            int targetCount = Mathf.RoundToInt(Mathf.Log(difficulty, SCALECONSTANT) - 0.5f);
+            Target[] tList = new Target[targetCount];
+            for (int i = 0; i < targetCount; i++) 
+            {
+                tList[i] = generateTarget(difficulty / targetCount,difficultySetting);
+            }
+            return tList;
         }
 
-        return movementIndexed;
-    }
-
-
-    public int totalAmountSpawnedAtATime
-    {
-        get { return _totalAmountSpawnedAtATime;
+        /// <summary>
+        /// Generate Target based on Difficulty rating
+        /// </summary>
+        /// <param name="difficulty"></param>
+        /// <param name="difficultySetting"></param>
+        /// <returns></returns>
+        private Target generateTarget(float difficulty,int difficultySetting)
+        {
+            Target gen=new Target();
+            float maxDistance = Mathf.Log(difficulty, SCALECONSTANT);
+            float minDistance = Mathf.Log(difficulty, SCALECONSTANT * 5);
+            //randomize Position and initial movement vector
+            Vector3 position = new Vector3(Random.value * maxDistance - maxDistance / 2,
+                Random.value * maxDistance - maxDistance / 2, 
+                Random.value * maxDistance - maxDistance / 2);
+            Vector3 movement = new Vector3(Random.value, 
+                Random.value, 
+                Random.value);
+            movement = movement.normalized;
+            gen.setInitial(position, 
+                movement, 
+                temp.generateTargetMovement(minDistance, 
+                    maxDistance, 
+                    difficultySetting, 
+                    difficultySetting / 6));
+            return gen;
         }
-        set { _totalAmountSpawnedAtATime = value; }
-    }
 
-   
-    
-    public void callSpawner(string spawnType, int amountToSpawn = 0, bool obstacle = false)
-    {
-                switch (spawnType)
+        #endregion
+
+        void Update()
+        {
+            if (activeAnchors < 5)
+            {
+                anchorList().MoveNext();
+                for(int i = 0; i < 5; i++)
                 {
-                    case "point":
-                        StartCoroutine(spawnPointTarget(amountToSpawn));
-                        break;
-                    case "time":
-                        StartCoroutine(spawnTimeTarget(obstacle));
-                        break;
+                    if(_activeAnchor[i]== null)
+                    {
+                        GameObject t = Instantiate(anchorPrefab);
+                        _activeAnchor[i] = t;
+                        Anchor curr = t.GetComponent<Anchor>();
+                        curr.setInitial(anchorList().Current);
+
+                    }
                 }
-    }
-    private IEnumerator spawnPointTarget(int amountToSpawn)
-    {
-        yield return new WaitForSeconds(0.1f);
-        for (int i = 0; i < amountToSpawn; i++)
-        {
-           
-            GameObject target = _targetPool.getObject();
-            //Sets position to spawn point
-            //This will be initial spawn point, then local position relative to parent anchor will change on the PointTarget script attached to 
-            //target object.
-            float lowerRange = 0.1f;
-            float endRange = 5.7f;
-            target.transform.localPosition = new Vector3(0, 0, 0);
-            target.AddComponent<PointTarget>();
-            target.SetActive(true);
-           
-        
+
+            }
         }
-        
-    }
-   
-    private IEnumerator spawnTimeTarget(bool obstacle)
-    {
-        //This seperate thread so spawn time target will auto kill the spawned timetarget after a given certain amount of time
-        //Or unless it is shot, which will be handled on TimeTarget script attached to timeTarget Object
-        GameObject target;
 
-        if (obstacle)
+        int activeAnchors
         {
-            //So if obstacle == true then the the target will be the anchor
-            GameObject anchorPrefab = Resources.Load("Prefabs/TargetPrefabs/Anchor") as GameObject;
-            target = Instantiate(anchorPrefab);
-            target.tag = "Obstacle";
-
-
+            get
+            {
+                int i = 0;
+                foreach (GameObject a in _activeAnchor)
+                {
+                    if (a!=null?(a.GetComponent < Anchor >() is Anchor):false) i++;
+                }
+                return i;
+            }
         }
-        else
-        {
-            target = _targetPool.getObject();
-        }
-        target.transform.localPosition = new Vector3(0, 0, 0);
-        target.AddComponent<TimeTarget>();
-
-        //   target.GetComponent<TimeTarget>().timeGainedFromTarget = timeTillDeath;
-        target.SetActive(true);
-        yield return new WaitForSeconds(_timeTillDeath);
-        TimeTarget component = target.GetComponent<TimeTarget>();
-        Destroy(component);
-        target.SetActive(false);
 
     }
-    
-
-    private void Awake()
-    {
-        _storageMovementFunctions = new List<moveFunction>();
-        _targetPool = gameObject.GetComponentInChildren<TargetPool>();
-    }
-
- 
-	private void Start()
-    {
-        
-        _timeTillDeath = 5.0f;
-        initializeMovementFunctions();
-        _targetPool.initialize(totalAmountSpawnedAtATime);
-        StartCoroutine(spawnPointTarget(totalAmountSpawnedAtATime/2));
-      
-    }
-
-
-
-}
 }
