@@ -64,10 +64,14 @@ namespace Hydrogen
         }
 
 
-        public void setInitial(Transform initialPosition, Vector3 initialMovement, Movement movementPattern)
+        public void setInitial(Vector3 initialPosition, Vector3 initialMovement, Movement movementPattern)
         {
 
         }
 
+        public void setInitial(Target copy)
+        {
+
+        }
     }
 }
