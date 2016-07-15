@@ -15,12 +15,28 @@ namespace Hydrogen
         private AnchorPool _anchorPool;
         private TargetPool _targetPool;
         private int _totalAmountSpawnedAtATime;
-       
+
 
         #endregion
 
 
         //When round is over GameManager will call this to despawn all of the enemies
+        public void StartGame()
+        {
+            //All of this is only temporarily on start will be on initialize function that GameManager will call during actual game because need to wait for player input for
+            //totalAmountSpawnedAtATime
+
+            //It should be set up so that it waits for UI input
+            totalAmountSpawnedAtATime = 5;
+            //This initializes pool to hold 6 anchors inactive, 6th is the anchor that is a timed target.
+            _anchorPool.initialize(totalAmountSpawnedAtATime + 1);
+            spawnAnchor(totalAmountSpawnedAtATime);
+            //This initializes pool to hold the amount of total anchors on at once * 6 because 6 will be max per anchor, maybe more
+            //But if less then can take less, but this makes it so atleast 6 each will be possible.
+            _targetPool.initialize(totalAmountSpawnedAtATime * 6);
+
+        }
+
         public void despawnAllAnchors()
         {
             _anchorPool.despawnAllObjects();
@@ -44,11 +60,22 @@ namespace Hydrogen
         /// </summary>
         /// <param name="endPoint">What will be passed in is radius and - and postive versions will be end points of the Random.Range</param>
         /// <returns></returns>
-        public Vector3 getSpawnPoint(float endPoint)
+        public Vector3 getSpawnPoint(float minDistance, float maxDistance)
         {
             //Thought about having two arguments, so it's more general but really only need for spawn points and within radius is best so this is fine
-            Vector3 spawnPoint = new Vector3(Random.Range(-endPoint, endPoint), Random.Range(-endPoint, endPoint), Random.Range(-endPoint, endPoint));
+            float randomRange = 0.0f;
+         
+            if (Random.Range(0, 100) % 2 == 0)
+            {
+                maxDistance *= -1;
+                minDistance *= -1;
+            }
+            
 
+            float xPoint = Random.Range(minDistance, maxDistance);
+            float yPoint = Random.Range(minDistance, maxDistance);
+            float zPoint = Random.Range(minDistance, maxDistance);
+            Vector3 spawnPoint = new Vector3(xPoint, yPoint, zPoint);
             return spawnPoint;
         }
      
@@ -61,7 +88,6 @@ namespace Hydrogen
             GameObject targetAnchor = _anchorPool.getObject();
             targetAnchor.tag = "Target";
             Anchor component = targetAnchor.GetComponent<Anchor>();
-          //Destroy(component);
             targetAnchor.SetActive(true);
             targetAnchor.AddComponent<TimeTarget>();
         }
@@ -72,6 +98,7 @@ namespace Hydrogen
         /// </summary>
         public void spawnTimeTarget()
         {
+            Debug.Log("spawned Time");
             GameObject target = _targetPool.getObject();
         
             //This returns all anchors in the scene into an array
@@ -83,7 +110,7 @@ namespace Hydrogen
                 target.transform.parent = allAnchors[randomIndex].transform;
             //This gets the radius of the anchor.
             float anchorRadius = allAnchors[randomIndex].GetComponent<SphereCollider>().radius;
-            target.transform.localPosition = getSpawnPoint(anchorRadius);
+            target.transform.localPosition = getSpawnPoint(anchorRadius/2, anchorRadius);
         
             //This adds the TimeTarget script to the target.
             target.AddComponent<TimeTarget>();
@@ -115,22 +142,6 @@ namespace Hydrogen
             _targetPool = gameObject.GetComponentInChildren<TargetPool>();
             _anchorPool = gameObject.GetComponentInChildren<AnchorPool>();
         }
-
-        private void Start()
-        {
-            //All of this is only temporarily on start will be on initialize function that GameManager will call during actual game because need to wait for player input for
-            //totalAmountSpawnedAtATime
-
-            //It should be set up so that it waits for UI input
-            totalAmountSpawnedAtATime = 5;
-            //This initializes pool to hold 6 anchors inactive, 6th is the anchor that is a timed target.
-            _anchorPool.initialize(totalAmountSpawnedAtATime+1);
-            spawnAnchor(totalAmountSpawnedAtATime);
-            //This initializes pool to hold the amount of total anchors on at once * 6 because 6 will be max per anchor, maybe more
-            //But if less then can take less, but this makes it so atleast 6 each will be possible.
-            _targetPool.initialize(totalAmountSpawnedAtATime * 6);
-
-        }
-
+      
     }
 }

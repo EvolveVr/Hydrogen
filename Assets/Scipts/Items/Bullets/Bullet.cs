@@ -14,6 +14,7 @@ public class Bullet : MonoBehaviour , Projectile
     //All bullets need to add there own force
     public void initialize()
     {
+        
         GetComponent<Rigidbody>().AddForce(transform.forward * bulletForce, ForceMode.Impulse);
         _penetration = 5;
         if (gameObject.activeSelf)

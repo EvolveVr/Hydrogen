@@ -7,43 +7,7 @@ namespace Hydrogen {
     /// </summary>
     public class Anchor : MonoBehaviour
     {
-       /* private static Movement[] _movementList = new Movement[]
-        {
-            //So for handling deciding on movements for anchors, it will not be random but selected based on conditions of difficulty and current position
-            //So for beginner difficulty this will be the function that's called.     
-            () =>
-            {
-                Vector3 nextMovement = new Vector3();
-                if (cp.x >= ip.x + md)
-                {
-                    nextMovement = Vector3.left;
-                }
-                if (cp.x <= ip.x - md)
-                {
-                    nextMovement = Vector3.right;
-                }
-
-                if (cp.y >= ip.y + md)
-                {
-                    nextMovement = Vector3.down;
-                }
-                if (cp.y <= ip.y - md)
-                {
-                    nextMovement = Vector3.up;
-                }
-
-                if (cp.z >= ip.z + md)
-                {
-                    nextMovement = Vector3.back;
-                }
-                if (cp.z <= ip.z - md)
-                {
-                    nextMovement = Vector3.forward;
-                }
-
-                return nextMovement;
-            }
-        };*/
+      
 
         private GameManager _gameManager;
         //Reference to targetManager to spawn new anchor to replace when this one dies, and is also used to get random spawn point for targets
@@ -52,58 +16,109 @@ namespace Hydrogen {
         //Variables for handling anchor movement
         private NavMeshAgent _navAgent;
         private Vector3 _initPosition;
-        private int chosenMovementIndex;
-        /// <summary>
-        /// This is list of functions for anchor movement and arguments they take in are:
-        /// ip : initial position cp : current position md : max distance s : speed
-        /// </summary>
+        private float _anchorSpeed;
         
         //List of targets to spawn
         private TargetPool _targetPool;
         //Amount of targets to spawn
-        private int _amountToSpawn = 3;
-        //difficulty level of the anchor
-        private int _difficulty;
-        private Difficulty currentDifficulty;
+        private int amountToSpawn;
+        float minDistance;
+        float maxDistance;
+       
         //The vicinity the targets have to reside in relatitve to parent anchor
         private SphereCollider vicinity;
 
 
-        //Gets needed references  
-        private void Awake() 
+        
+
+        /// <summary>
+        /// This is for spawning point target.
+        /// </summary>
+        /// <param name="amountToSpawn">The amount of targets to get from pool and set active</param>
+        private IEnumerator spawnPointTarget(int amountToSpawn)
         {
+            for (int i = 0; i < amountToSpawn; i++)
+            {
+                
+                GameObject target = _targetPool.getObject();
+                //Sets the anchor to parent of target.
+
+                //This assigns the spawned target to this anchor object that this script is attached to, might randomize this like the way timeTarget is, but not sure yet
+                target.transform.parent = transform;
+                //Parent doesn't matter since all have same vicinity, but incase decide to have it dynamically change then need to do this
+
+                float anchorRadius = vicinity.radius;
+
+
+                target.transform.localPosition = Vector3.zero;
+                //Randomizes it's initial position within the radius of the vicinity of the anchor
+                target.transform.localPosition += _spawnNewAnchor.getSpawnPoint(minDistance * Time.deltaTime, maxDistance * Time.deltaTime);
+                //Adds the Target component script to it, since it's not time target it only needs base.
+                target.AddComponent<Target>();
+                target.AddComponent<OrbitTarget>();
+                Target setStats = target.GetComponent<Target>();
+                if (_gameManager.currentDifficulty == "easy")
+
+                    //If easy then do this specific pattern, I have to do things a bit differently, But basically I want 2 of the targets to go up and to of the targets to move left and right, and some else depending on location of their anchor
+                    setStats.setPatternVars(10.0f, 20.0f);
+                if (_gameManager.currentDifficulty == "medium")
+                    setStats.setPatternVars(3.5f, 2.5f);
+                if (_gameManager.currentDifficulty == "hard")
+                    setStats.setPatternVars(anchorRadius, 3.5f);
+                target.SetActive(true);
+                //Time interval between each spawn to make sur eincase they random to same spot, they won't ever be on top of each other.
+                yield return new WaitForSeconds(0.5f);
+            }
+        }
+        //Gets needed references  
+        private void Awake()
+        {
+            _gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
             vicinity = GameObject.FindGameObjectWithTag("Vicinity").GetComponent<SphereCollider>();
             _spawnNewAnchor = GameObject.Find("GameManager").GetComponent<TargetManager>();
             _targetPool = GameObject.Find("TargetManager").GetComponent<TargetPool>();
-            _navAgent = GetComponent<NavMeshAgent>();
         }
 
         //Spawns targets for anchor, and changes their properties depending if this anchor is timetarget one or not
         private void Start()
         {
-            _initPosition = transform.position;
-            spawnPointTarget(_amountToSpawn);
+            minDistance = 3.0f;
+            maxDistance = 4.5f;
+            //numbers set not perm.
+            if (_gameManager.currentDifficulty == "easy")
+                amountToSpawn = 3;
+            if (_gameManager.currentDifficulty == "medium")
+                amountToSpawn = 5;
+            if (_gameManager.currentDifficulty == "hard")
+                amountToSpawn = 6;
+
+            StartCoroutine(spawnPointTarget(amountToSpawn));
+            //If the anchor being spawned is time target anchor.
             if (gameObject.tag == "Target")
             {
+                //I kinda want to spawn this one more often.
                 //Gets all the children of the anchor
                 Transform[] obstacles = new Transform[transform.childCount];
                 for (int i = 0; i < transform.childCount; i++)
                 {
                     obstacles[i] = transform.GetChild(i);
                 }
-                
+
                 //Adds orbitTarget script to all the obstacles around our TimeTarget anchor, and spawns them in random point within the vicinity
                 foreach (var x in obstacles)
                 {
-                    x.gameObject.AddComponent<OrbitTarget>();
+                    if (x.tag != "Vicinity")
+                    {
+                        x.gameObject.AddComponent<OrbitTarget>();
 
-                    x.localPosition = _spawnNewAnchor.getSpawnPoint(vicinity.radius);
-                    x.tag = "Obstacle";
+                        x.localPosition = _spawnNewAnchor.getSpawnPoint(vicinity.radius / 2, vicinity.radius);
+                        x.tag = "Obstacle";
+                    }
                 }
             }
         }
 
-        
+
         private void Update()
         {
             //When it no longer has targets around it it will die and then we spawn a new one to replace it, the remainging child is the vicinity
@@ -112,60 +127,27 @@ namespace Hydrogen {
                 _spawnNewAnchor.spawnAnchor(1);
                 gameObject.SetActive(false);
             }
-            if (transform.childCount < _amountToSpawn)
+            if (transform.childCount < amountToSpawn)
             {
-                //As it loses targets going around it, it will change how it moves.   
-                //This will be saved for harder difficulties but it should be easy, if do list way I was doing it could get index of targets current movement that died, and replace anchors
-                //movement with that.
-            }
-        }
-
-        /// <summary>
-        /// This is for spawning point target.
-        /// </summary>
-        /// <param name="amountToSpawn">The amount of targets to get from pool and set active</param>
-        private void spawnPointTarget(int amountToSpawn)
-        {
-            for (int i = 0; i < amountToSpawn; i++)
-            {
-                GameObject target = _targetPool.getObject();
-                //Sets the anchor to parent of target.
-
-                //This assigns the spawned target to this anchor object that this script is attached to, might randomize this like the way timeTarget is, but not sure yet
-                target.transform.parent = transform;
-                float anchorRadius = 0.2f;
-                //Parent doesn't matter since all have same vicinity, but incase decide to have it dynamically change then need to do this
-                if (vicinity.transform.parent == this.gameObject)
+                if (transform.childCount - amountToSpawn == amountToSpawn / 2)
                 {
-                    anchorRadius = vicinity.radius;  
+                    _anchorSpeed *= 2;
+                    //Might change vicinity size too and then have them start to orbit.
                 }
-                target.transform.localPosition = Vector3.zero;
-                //Randomizes it's initial position within the radius of the vicinity of the anchor
-                target.transform.localPosition = _spawnNewAnchor.getSpawnPoint(anchorRadius);
-                //Adds the Target component script to it, since it's not time target it only needs base.
-                target.AddComponent<Target>();
-                target.SetActive(true);
+
+
             }
         }
-       
 
+        private void OnTriggerEnter(Collider other)
+        {
+            if (other.tag == "Target")
+            {
+                
+            }
 
-        // public void spawnTimeTarget()
-        //  {
+        }
 
-
-        /*<Option1>Right now I could do two things, either put an if statement to check if any of the current targets/anchors are contain TimeTarget Componenet, or I could just spawn time targets inside the targetmanager instead, because the problem with this is, if I get reference round timer here it'll work but it will spawn a time target for each anchor.</Option1>
-        <Option2>And doing in game or target manager that has reference to anchor wont work cause anchor script only exists after being spawned, which doesn't happen until player chooses amount of anchors to spawn and GameManager is active on start of game.</Option2> */
-
-
-        /* GameObject target = _targetPool.getObject();
-
-         target.transform.localPosition = new Vector3(0, 0, 0);
-         target.AddComponent<TimeTarget>();
-         target.SetActive(true);
-         */
-
-        // }
     }
        
 }

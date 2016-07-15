@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 /// <summary>
 /// This script handles amount of enemies to spawn depending on currentWave which is updated
 /// by TargetManager, might switch that around since think should actually be other way around
@@ -23,21 +24,22 @@ namespace Hydrogen
 
         #endregion
 
+        private RectTransform _endGamePanel;
+        private Text _displayPoints;
         #region Variables managing the round
         private Difficulty _currentDifficulty;
-        private string _curentDifficulty;
+        
         private float _roundTimer = 40.0f;
         public float _timeLeftInRound;
         private bool roundOver;
         #endregion
 
-        private int _playerPoints;
+        public int _playerPoints;
 
         //  public abstract IEnumerator spawnPointTarget(int amountToSpawn);
         public string currentDifficulty
         {
-            set { if (value == "Easy") _currentDifficulty = Difficulty.Easy; }
-            get { return currentDifficulty; }
+            get; set;
         }
         public float timeLeftInRound
         {
@@ -61,6 +63,11 @@ namespace Hydrogen
 
         }
 
+        private void endRound()
+        {
+            _displayPoints.text = playerPoints.ToString();
+            _endGamePanel.gameObject.SetActive(true);
+        }
         private void Awake()
         {
             if (gameManager == null)
@@ -73,32 +80,47 @@ namespace Hydrogen
             }
             _manageAnchors = GetComponent<TargetManager>();
             _manageTargets = GetComponent<Anchor>();
+
+            _endGamePanel = GameObject.Find("EndGamePanel").GetComponent<RectTransform>();
+            _displayPoints = _endGamePanel.gameObject.GetComponentInChildren<Text>();
+            _timeLeftInRound = -1.0f;
         }
-        //Instead of doing it on start, it will do when player clicks start button, just start for now
+
         private void Start()
+        {
+
+            _endGamePanel.gameObject.SetActive(false);
+        }
+
+        //Instead of doing it on start, it will do when player clicks start button, just start for now
+        public void startRound()
         {
             _timeLeftInRound = _roundTimer;
         }
         private void Update()
         {
-            if (timeLeftInRound > 0)
+            if (timeLeftInRound != -1.0f)
             {
-                timeLeftInRound = Time.deltaTime;
-            }
-            if (timeLeftInRound == 0)
-            {
-                _manageAnchors.despawnAllAnchors();       
-            }
-            
-            if (timeLeftInRound <= _roundTimer / 2 && !halfTimeSpawnTarget)
-            {
-                halfTimeSpawnTarget = true;
-                _manageAnchors.spawnTimeTarget();
-            }
-            if (timeLeftInRound <= _roundTimer / 4 && !quarterTimeSpawnTarget)
-            {
-                quarterTimeSpawnTarget = true;
-                _manageAnchors.spawnTimeTargetAnchor();
+                if (timeLeftInRound > 0)
+                {
+                    timeLeftInRound = Time.deltaTime;
+                }
+                if (timeLeftInRound <= 0)
+                {
+                    _manageAnchors.despawnAllAnchors();
+                    endRound();
+                }
+
+                if (timeLeftInRound <= _roundTimer / 2 && !halfTimeSpawnTarget)
+                {
+                    halfTimeSpawnTarget = true;
+                    _manageAnchors.spawnTimeTarget();
+                }
+                if (timeLeftInRound <= _roundTimer / 4 && !quarterTimeSpawnTarget)
+                {
+                    quarterTimeSpawnTarget = true;
+                    _manageAnchors.spawnTimeTargetAnchor();
+                }
             }
         }
     }

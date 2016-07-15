@@ -4,17 +4,16 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - TargetSpawnPoint
   - Target
   - Magazine
   - Handgun
   - ControllerRight
   - ControllerLeft
   - Obstacle
-  - anchor2
-  - anchor3
-  - anchor1
   - Bullet
+  - AnchorSpawnPoint
+  - Anchor
+  - Vicinity
   layers:
   - Default
   - TransparentFX

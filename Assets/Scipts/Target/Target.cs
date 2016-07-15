@@ -9,69 +9,110 @@ namespace Hydrogen
         //For point targets, it will add to player points, for Time targets it will add to current time left in round
         protected GameManager _gainedFromTarget;
         protected TargetManager _manageTargets;
-        protected MovementManager _setMovement;
+        protected MovementManager _setMovementAndPatterns;
         protected float _penetrationThreshHold;
+        //Direction the target will move, decided in algorithim at targetMovementManager
         protected Vector3 _directionMovement;
-        int speed = 2;
-        float step;
-        protected static int[] sfsdf = { 34, 34, 34 };
-        protected static Movement[] targetMovementList = new Movement[] {
+        protected int _indexPatternMovement;
+        protected float maxDistance;
+        protected float minDistance;
+        protected float speed = 10.0f;
+        protected float _amplitude;
+        protected float _frequency;
 
-      /*      (Vector3 d, Vector3 a, float m, float ws) =>
-            {
-                Vector3 movement = new Vector3();
-                movement.y = Mathf.Sin(Time.time * ws) * m;
-             return movement;
-            },
-
-            (Vector3 a,Vector3 b, float m ,float ws) =>
-            {
-                Vector3 movement = new Vector3();
-                movement.y = m * Mathf.Sin(Time.time * ws) + m;
-                return a + b + movement;
-
+        //Probably moving this into TargetMovementManager or slap somewhere else.
+        protected static Dictionary<string,Pattern> _patternList = new Dictionary<string,Pattern>()
+        {
+            //Sin wave higher 3rd paramter, the more narrow the wave
+            {"Sinwave", (float amp, float frequency, float narrowness) =>
+             {
+                float newPattern = amp * Mathf.Sin(Time.time * frequency);// * narrowness;
+                return newPattern;
+             }
             }
 
+            //Infinity Symbol higher 3rd paramter the thicker the wave
+           
 
-    */
         };
-            
-        protected Vector3 _initialPosition;
-
-
-        //I can still use my method but just slapping it into anchor so setting spawn point is same time actually spawning it.
-        //Pattern will be equation itself like pass in resulting number of sin wave.
-        public void setInitial(Vector3 initPosition, Vector3 initDirection, float pattern)
+        char _chosenAxisForPattern;
+        protected float _currentPattern;
+    
+        public void setPatternVars(float amp, float freq)
         {
-
-
+            _amplitude = amp;
+            _frequency = freq;
         }
+
 
         protected virtual void Awake()
         {
-            _setMovement = new MovementManager();
+            _setMovementAndPatterns = new MovementManager();
             _manageTargets = GameObject.Find("GameManager").GetComponent<TargetManager>();
             _gainedFromTarget = GameObject.Find("GameManager").GetComponent<GameManager>();
             
         }
         protected virtual void Start()
         {
+            maxDistance = GameObject.FindGameObjectWithTag("Vicinity").GetComponent<SphereCollider>().radius;
             _penetrationThreshHold = 5.0f;
-           
+            string axes = "xyz";
+            _chosenAxisForPattern = axes[Random.Range(0, 2)];
+
+            Vector3[] allDirections = new Vector3[] { transform.right, transform.up, transform.forward };
+            _directionMovement = transform.right;
+
+        //    _indexPatternMovement = Random.Range(0, _patternList.Length);
         }
-        
-      
+        //Might change this up a bit, and prob transferring this function into TargetMovementManager.
+        protected Vector3 repeatPattern(char axis)
+        {
+            float varX = 1.0f;
+            float varY = 1.0f;
+            float varZ = 1.0f;
+
+          //  _currentPattern = _patternList[0](_amplitude, _frequency, 10.0f);
+
+            if (axis == 'x')
+            {
+                varX *= _currentPattern;
+                varZ *= 0;
+            }
+            if (axis == 'y')
+            {
+                varY *= _currentPattern;
+                varZ *= 0;
+            }
+            if (axis == 'z')
+            {
+                varZ *= _currentPattern;
+                varX *= 0;
+            }
+            Vector3 nextPatternMovement = new Vector3(3.0f * varX, 3.0f * varY, 3.0f * varZ);
+            //It apparently goes to fucking infinity
+            
+            
+            return nextPatternMovement;
+
+        }
+
         protected virtual void Update()
         {
-           // _initialPosition += _directionMovement * Time.deltaTime * speed;
-            transform.Translate(Vector3.right * speed * Time.deltaTime);
-         //   transform.position = targetMovementList[0](_initialPosition, transform.u, 0.5f, 2.5f);
-        }
+           
+            if ((transform.position + transform.parent.position).magnitude < transform.parent.position.magnitude + maxDistance)
+            {
+              transform.rotation = Quaternion.identity;
+            }
+
+
+       //     transform.RotateAround(transform.parent.position, transform.parent.position + new Vector3(0, Mathf.Sin(Time.time * 5.0f) * 3.0f, 2.0f), 90.0f * Time.deltaTime);
+       }
 
         protected virtual void OnTriggerEnter(Collider hit)
         {
             if (hit.gameObject.tag == "Bullet")
             {
+                Debug.Log("sfds");
                 //Adds to player points
                 _gainedFromTarget.playerPoints = 5;
                 //Puts it back into inactive list of targets.
@@ -81,15 +122,19 @@ namespace Hydrogen
                 Destroy(this);
                 //Sets target active to false for reuse
                 gameObject.SetActive(false);
+                
             }
         }
         protected void OnTriggerExit(Collider other)
         {
             if (other.tag == "Vicinity")
             {
-                int speed = 4;
-                _directionMovement = _setMovement.generateTargetMovement(0.2f, 0.7f, speed, 45.0f)(transform, other.transform, _directionMovement);
-            
+                
+       
+                speed *= -1;
+                
+
+                //  transform.Translate(_directionMovement);
                 //When it hits viciinity it wont just bounce back, but it will instead curve in opposite direction
                 //So this will call function inside movementmanager to generate target movement based on last movement, so I know it hit vicinity because of trigger
                 //and I'll know from movement passed in, what direction it was coming from, my way did this but  needed if statements and I'm all for alternatives.

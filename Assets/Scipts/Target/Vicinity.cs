@@ -15,7 +15,8 @@ public class Vicinity : MonoBehaviour {
     {
         if (left.tag == "Target")
         {//When target leaves vicinity move it towards anchor by a tiny amount and let the movement reversal on target script do rest.
-            left.transform.position = Vector3.MoveTowards(left.transform.position, left.transform.parent.position, Time.fixedDeltaTime * 2);
+            left.transform.position = Vector3.MoveTowards(left.transform.position, transform.position, Time.deltaTime * 2);
+
         }
     }
 }

@@ -10,10 +10,21 @@ namespace Hydrogen
         public Transform poolHolder;
         protected GameObject _objectPrefab;
         protected List<GameObject> _objectPool;
-      
+
 
         //Could create a delegate, and have that take the T generic, then have functions that do things according to type, each lambda
         //Containing an if statement for if _objectPrefab is type;
+
+        public virtual void initialize(int amountReadyToSpawn)
+        {
+            //This adds all of the objects into the array
+            for (int i = 0; i < amountReadyToSpawn; i++)
+            {
+                _objectPool.Add(Instantiate(_objectPrefab));
+                _objectPool[i].SetActive(false);
+                _objectPool[i].transform.parent = poolHolder;
+            }
+        }
 
         public GameObject getObject()
         {
@@ -22,9 +33,7 @@ namespace Hydrogen
                 if (!x.activeInHierarchy)
                     return x;
             }
-            //This saysit returns Unity.GameObject so wtf.
 
-            //T spawned = Instantiate(_objectPrefab) as _objectPrefab.GetType();
             GameObject spawned = Instantiate(_objectPrefab);
             if (spawned == null)
             {
@@ -42,21 +51,13 @@ namespace Hydrogen
                 x.SetActive(false);
             }
         }
+    
         protected virtual void Awake()
         {
             //instantiates the list
             _objectPool = new List<GameObject>();
         }
-        public virtual void initialize(int amountReadyToSpawn)
-        {
-            //This adds all of the objects into the array
-            for (int i = 0; i < amountReadyToSpawn; i++)
-            {
-                _objectPool.Add(Instantiate(_objectPrefab));
-                _objectPool[i].SetActive(false);
-                _objectPool[i].transform.parent = poolHolder;
-            }
-        }
+     
 
 
     }
