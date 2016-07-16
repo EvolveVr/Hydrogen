@@ -81,15 +81,15 @@ namespace Hydrogen
             _manageAnchors = GetComponent<TargetManager>();
             _manageTargets = GetComponent<Anchor>();
 
-            _endGamePanel = GameObject.Find("EndGamePanel").GetComponent<RectTransform>();
-            _displayPoints = _endGamePanel.gameObject.GetComponentInChildren<Text>();
+          //  _endGamePanel = GameObject.Find("EndGamePanel").GetComponent<RectTransform>();
+           // _displayPoints = _endGamePanel.gameObject.GetComponentInChildren<Text>();
             _timeLeftInRound = -1.0f;
         }
 
         private void Start()
         {
 
-            _endGamePanel.gameObject.SetActive(false);
+     //       _endGamePanel.gameObject.SetActive(false);
         }
 
         //Instead of doing it on start, it will do when player clicks start button, just start for now
@@ -108,7 +108,7 @@ namespace Hydrogen
                 if (timeLeftInRound <= 0)
                 {
                     _manageAnchors.despawnAllAnchors();
-                    endRound();
+             //       endRound();
                 }
 
                 if (timeLeftInRound <= _roundTimer / 2 && !halfTimeSpawnTarget)

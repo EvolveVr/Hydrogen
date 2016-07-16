@@ -110,9 +110,8 @@ namespace Hydrogen
 
         protected virtual void OnTriggerEnter(Collider hit)
         {
-            if (hit.gameObject.tag == "Bullet")
+            if (hit.gameObject.tag == "bullet")
             {
-                Debug.Log("sfds");
                 //Adds to player points
                 _gainedFromTarget.playerPoints = 5;
                 //Puts it back into inactive list of targets.

@@ -13,7 +13,6 @@ GameObject:
   - 23: {fileID: 2391604}
   - 54: {fileID: 5414594}
   - 96: {fileID: 9618786}
-  - 114: {fileID: 11416948}
   m_Layer: 0
   m_Name: Bullet
   m_TagString: Bullet
@@ -128,18 +127,6 @@ TrailRenderer:
       rgba: 16777215
   m_MinVertexDistance: 0.1
   m_Autodestruct: 0
---- !u!114 &11416948
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 160380}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f72662c931350cf48a53bccc72deeef4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  bulletForce: 100
 --- !u!135 &13513502
 SphereCollider:
   m_ObjectHideFlags: 1

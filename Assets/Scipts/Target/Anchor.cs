@@ -92,7 +92,7 @@ namespace Hydrogen {
             if (_gameManager.currentDifficulty == "hard")
                 amountToSpawn = 6;
 
-            StartCoroutine(spawnPointTarget(amountToSpawn));
+            StartCoroutine(spawnPointTarget(3));
             //If the anchor being spawned is time target anchor.
             if (gameObject.tag == "Target")
             {
@@ -111,7 +111,7 @@ namespace Hydrogen {
                     {
                         x.gameObject.AddComponent<OrbitTarget>();
 
-                        x.localPosition = _spawnNewAnchor.getSpawnPoint(vicinity.radius / 2, vicinity.radius);
+             //           x.localPosition = _spawnNewAnchor.getSpawnPoint(vicinity.radius / 2, vicinity.radius);
                         x.tag = "Obstacle";
                     }
                 }

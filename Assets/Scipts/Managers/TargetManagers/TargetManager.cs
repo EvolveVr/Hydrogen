@@ -12,8 +12,10 @@ namespace Hydrogen
         private Anchor[] _anchorList;
         private GameObject[] _activeAnchor;
         [SerializeField]
+        private AnchorPool _getAnchor;
         private GameObject anchorPrefab;
         [SerializeField]
+        private TargetPool _getTarget;
         private GameObject targetPrefab;
 
         private IEnumerator<Anchor> anchorList()
@@ -22,6 +24,25 @@ namespace Hydrogen
                 yield return _anchorList[i];
         }
         
+
+
+        public void initializeAll()
+        {
+            _getAnchor.initialize(5);
+            spawnAnchor(5);
+            _getTarget.initialize(5 * 3);
+            
+        }
+
+        public void spawnAnchor(int amountToSpawn)
+        {
+            for (int i = 0; i < amountToSpawn; i++)
+            {
+                GameObject anchor = _getAnchor.getObject();
+                anchor.SetActive(true);
+            }
+
+        }
         #region Initialize
         /// <summary>
         /// Initializes the list of anchors so that it can spawn them during the wave
@@ -39,7 +60,7 @@ namespace Hydrogen
                 _anchorList[i] = new Anchor();
                 Anchor currentAnchor=_anchorList[i].GetComponent<Anchor>();
                 //gives anchor a list of targets to spawn
-                currentAnchor.setTargetList(generateTargetList(difficultyRating / anchorCount,difficultySetting));
+         //       currentAnchor.setTargetList(generateTargetList(difficultyRating / anchorCount,difficultySetting));
                 //Generate Anchor position in polar coordinates, with 0 radians being directly forward, around the player
                 float angleOfPlay = Mathf.Deg2Rad * 180;
                 float distanceScale = 10;
@@ -108,14 +129,14 @@ namespace Hydrogen
 
         void Update()
         {
-            if (activeAnchors < 5)
+            /*if (activeAnchors < 5)
             {
                 anchorList().MoveNext();
                 for(int i = 0; i < 5; i++)
                 {
                     if(_activeAnchor[i]== null)
                     {
-                        GameObject t = Instantiate(anchorPrefab);
+                        GameObject t = _getAnchor.getObject();
                         _activeAnchor[i] = t;
                         Anchor curr = t.GetComponent<Anchor>();
                         curr.setInitial(anchorList().Current);
@@ -123,10 +144,61 @@ namespace Hydrogen
                     }
                 }
 
-            }
+            }*/
         }
 
-        int activeAnchors
+
+        public Vector3 getSpawnPoint(float minDistance, float maxDistance)
+        {
+            if (Random.Range(0,100) % 2 == 0)
+            {
+                minDistance *= -1;
+                maxDistance *= -1;
+            }
+            float xPos = Random.Range(minDistance, maxDistance);
+            float yPos = Random.Range(minDistance, maxDistance);
+            float zPos = Random.Range(minDistance, maxDistance);
+
+            return new Vector3(xPos, yPos, zPos);
+
+        }
+        public void despawnAllAnchors()
+        {
+            _getAnchor.despawnAllObjects();
+        }
+        public void spawnTimeTargetAnchor()
+        {
+
+            GameObject targetAnchor = _getAnchor.getObject();
+            targetAnchor.tag = "Target";
+            Anchor component = targetAnchor.GetComponent<Anchor>();
+            //Destroy(component);
+            targetAnchor.SetActive(true);
+            targetAnchor.AddComponent<TimeTarget>();
+        }
+        public void spawnTimeTarget()
+        {
+            GameObject target = _getTarget.getObject();
+
+            //This returns all anchors in the scene into an array
+            GameObject[] allAnchors = GameObject.FindGameObjectsWithTag("Anchor");
+            //This randomizes which anchor we will parent this target to
+            int randomIndex = Random.Range(0, allAnchors.Length);
+            //Checks if anchor is active before setting the parent of this target to it,
+            if (allAnchors[randomIndex].activeInHierarchy)
+                target.transform.parent = allAnchors[randomIndex].transform;
+            //This gets the radius of the anchor.
+            float anchorRadius = allAnchors[randomIndex].GetComponent<SphereCollider>().radius;
+         //   target.transform.localPosition = getSpawnPoint(anchorRadius);
+
+            //This adds the TimeTarget script to the target.
+            target.AddComponent<TimeTarget>();
+            //This sets the target to active.
+            target.SetActive(true);
+
+
+        }
+        /*int activeAnchors
         {
             get
             {
@@ -137,8 +209,12 @@ namespace Hydrogen
                 }
                 return i;
             }
+        }*/
+
+        private void Awake()
+        {
+            _getAnchor = GameObject.Find("TargetManager").GetComponent<AnchorPool>();
+            _getTarget = GameObject.Find("TargetManager").GetComponent<TargetPool>();
         }
-
-
     }
 }

@@ -35,7 +35,7 @@ public class OrbitTarget : MonoBehaviour
         }
         else
             _axisOfOrbit = _targetOfOrbit.up;
-            _speedOfOrbit = 45.0f;
+        _speedOfOrbit = 180.0f;
     }
 	private void Update ()
     {
