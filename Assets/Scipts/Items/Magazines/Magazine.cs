@@ -54,7 +54,11 @@ namespace Hydrogen
 
         protected override void Start()
         {
+
             base.Start();
+            Debug.Log("loading bullet");
+            GameObject bulletPrefab = Resources.Load("Prefabs/BulletPrefabs/Bullet") as GameObject;
+          bullet = bulletPrefab.GetComponent<Bullet>();
             if (myGun != null)
             {
                 isEquipped = true;
@@ -71,7 +75,7 @@ namespace Hydrogen
                 myGun = gun.GetComponent<Gun>();
                 if (myGun.isLoaded || !myGun.IsAttached) { return; }
 
-                if (myGun.weaponName + GameConstants.MAGAZINE == MagazineName)
+                if (myGun.WeaponName + GameConstants.MAGAZINE == MagazineName)
                 {
                     //TODO: ADD IN A CHECK TO SEE IF IT'S THE PROPER MAGAZINE FOR THE CURRENT GUN                
                     isEquipped = true;

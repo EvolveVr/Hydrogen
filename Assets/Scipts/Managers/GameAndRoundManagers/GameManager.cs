@@ -1,80 +1,132 @@
 using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 /// <summary>
 /// This script handles amount of enemies to spawn depending on currentWave which is updated
 /// by TargetManager, might switch that around since think should actually be other way around
 /// </summary>
-public class GameManager : MonoBehaviour {
-    public static GameManager gameManager;
-    //This variable will be used to set amount to spawn and call the spawnTarget function
-    private TargetManager _manageTargets;
-
-    private int _playerPoints;
-    private int _currentWave;
-    
-    //This function changes spawn count depending on wave
-    private void changeSpawnCount()
+namespace Hydrogen
+{
+    public class GameManager : MonoBehaviour
     {
-        switch (_currentWave)
+       
+        #region All of the managers
+        public static GameManager gameManager;
+        public Text playerPointText;
+        private TargetManager _manageAnchors;
+        private Anchor _manageTargets;
+        #endregion
+
+        #region Bools that check whether time target at certain time points have already been spawned
+
+        bool halfTimeSpawnTarget;
+        bool quarterTimeSpawnTarget;
+        bool quarterTimeLeftSpawnTarget;
+
+        #endregion
+
+        private RectTransform _endGamePanel;
+        private Text _displayPoints;
+        #region Variables managing the round
+      
+        
+        private float _roundTimer = 40.0f;
+        public float _timeLeftInRound;
+        private bool roundOver;
+        #endregion
+
+        public int _playerPoints;
+
+        //  public abstract IEnumerator spawnPointTarget(int amountToSpawn);
+        public string currentDifficulty
         {
-            //Set to 0 so only spawns wave 1 for now, was to test orbiting
-            case 2:
-                _manageTargets.amountToSpawn = 1;
-                break;
-            case 3:
-                _manageTargets.amountToSpawn = 1;
-                break;
-            default:
-                _manageTargets.amountToSpawn = 0;
-                break;
+            get; set;
+        }
+        public float timeLeftInRound
+        {
+            set { _timeLeftInRound -= value; }
+            //return time left to keep track of in UI
+            get { return _timeLeftInRound; }
+        }
+        /// <summary>
+        /// This adds to player points and returns the tallied up score when round is over.
+        /// </summary>
+        public int playerPoints
+        {
+            set
+            {
+                _playerPoints += value;
+                playerPointText.text = "Player Points: " + _playerPoints.ToString();
+            }
+            get { return _playerPoints; }//Returning for UI
+        }
+
+        //Adds time left in round when player kills TimeTarget
+        public float addTimeLeftInRound
+        {
+            set { _timeLeftInRound += value; }
+
+        }
+
+        private void endRound()
+        {
+            _displayPoints.text = playerPoints.ToString();
+            _endGamePanel.gameObject.SetActive(true);
+        }
+        private void Awake()
+        {
+            if (gameManager == null)
+            {
+                gameManager = this;
+            }
+            else
+            {
+                Destroy(this);
+            }
+            _manageAnchors = GetComponent<TargetManager>();
+            _manageTargets = GetComponent<Anchor>();
+
+          //  _endGamePanel = GameObject.Find("EndGamePanel").GetComponent<RectTransform>();
+           // _displayPoints = _endGamePanel.gameObject.GetComponentInChildren<Text>();
+            _timeLeftInRound = -1.0f;
+        }
+
+        private void Start()
+        {
+
+     //       _endGamePanel.gameObject.SetActive(false);
+        }
+
+        //Instead of doing it on start, it will do when player clicks start button, just start for now
+        public void startRound()
+        {
+            _timeLeftInRound = _roundTimer;
+        }
+        private void Update()
+        {
+            if (timeLeftInRound != -1.0f)
+            {
+                if (timeLeftInRound > 0)
+                {
+                    timeLeftInRound = Time.deltaTime;
+                }
+                if (timeLeftInRound <= 0)
+                {
+                    _manageAnchors.despawnAllAnchors();
+             //       endRound();
+                }
+
+                if (timeLeftInRound <= _roundTimer / 2 && !halfTimeSpawnTarget)
+                {
+                    halfTimeSpawnTarget = true;
+                    _manageAnchors.spawnTimeTarget();
+                }
+                if (timeLeftInRound <= _roundTimer / 4 && !quarterTimeSpawnTarget)
+                {
+                    quarterTimeSpawnTarget = true;
+           //       _manageAnchors.spawnTimeTargetAnchor();
+                }
+            }
         }
     }
-
-    /// <summary>
-    /// This adds to player points and returns the tallied up score when round is over.
-    /// </summary>
-    public int playerPoints
-    {
-        set { _playerPoints += value; }
-        get { return _playerPoints; }//Returning for UI
-    }
-
-    /// <summary>
-    /// This gets updates to current wave and calls the
-    /// changeSpawnCount() function to set amount to spawn then calls
-    /// spawnTarget() function to spawn the targets
-    /// </summary>
-    public int currentWave
-    {
-        set
-        {
-            _currentWave += value;
-            changeSpawnCount();
-            StartCoroutine(_manageTargets.spawnTarget());
-        }
-    }
-
-    private void Awake()
-    {
-        if(gameManager == null)
-        {
-            gameManager = this;
-        }
-        else
-        {
-            Destroy(this);
-        }
-        _manageTargets = gameObject.GetComponent<TargetManager>();
-    }
- 
-    private void Start()
-    {
-        //waves in this case, isn't end of round, just next wave of enemies spawned in time intervals
-        _currentWave = 1;
-        _manageTargets.amountToSpawn = 1;
-        StartCoroutine(_manageTargets.spawnTarget());
-    }
-    
-
-
 }
