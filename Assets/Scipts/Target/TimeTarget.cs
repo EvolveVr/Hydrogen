@@ -5,51 +5,50 @@ namespace Hydrogen
 {
     public class TimeTarget : Target
     {
-        //Okay there are going to be two type of timetargets, so my structure is going to change a bit,
-        //Brian is doing the time and numbers and when they'll spawn so I'll worry about functionality of targets, not when they'll spawn.
+        private float timeTillLeave = 20.0f;
+        private Renderer rend;
         protected override void Awake()
         {
             base.Awake();
+            rend = gameObject.GetComponent<Renderer>();
+            
         }
-
-
         protected override void Start()
         {
             base.Start();
-            //This start is straight up not being called wtf.
-            //These will be increased over time for all targets, but for time targets it will always be double the everything of
-            //point targets, magnitude, speed target, and speed of completing the wave.
-            //WHY IS THIS NOT WORKING WTF.
-
-
-            _movementVariables *= 2;
-            bool obstacle = gameObject.CompareTag("Obstacle");
-            if (obstacle)
-            {
-
-                GameObject obstaclePrefab = Resources.Load("Prefabs/TargetPrefabs/orbTarget") as GameObject;
-
-                for (int i = 0; i < 3; i++)
-                {
-
-                    GameObject obstacleObject = Instantiate(obstaclePrefab);
-                    obstacleObject.tag = "Obstacle";
-                    obstacleObject.transform.parent = transform;
-                    obstacleObject.AddComponent<OrbitTarget>();
-                    obstacleObject.SetActive(true);
-
-                }
-            }
+            //Changes color of object so that players can tell it's a time target
+            rend.material.shader = Shader.Find("Specular");
+            rend.material.SetColor("_SpecColor", Color.cyan);
+            _penetrationThreshHold = 30.0f;
         }
 
+        protected override void Update()
+        {
+            base.Update();
+
+            timeTillLeave -= Time.deltaTime;
+            //If time to despawn hits 0 or below, remove this script form this object, and send time targets back to pooled targets and anchor just inactive
+            //and all of their colors will be reset to standard.
+            if (timeTillLeave <= 0)
+            {
+                Destroy(this);
+                if (gameObject.name != "Anchor(Clone)")
+                    transform.parent = GameObject.Find("PooledTargets").transform;
+                    //Reverts back to normal target color, so we can reuse this object as a point target or normal anchor
+                rend.material.shader = Shader.Find("Standard");
+                
+                gameObject.SetActive(false);
+            }
+        }
         protected override void OnTriggerEnter(Collider hit)
         {
             base.OnTriggerEnter(hit);
             //For time targets that have anchor as target, they will get tagged with obstacle.
-            if (hit.gameObject.name == "bullet" && gameObject.tag != "obstacle")
+            if (hit.gameObject.tag == "Bullet")
             {
-                _gainedFromTarget.addTimeLeftInRound = 5;
+                _gainedFromTarget.addTimeLeftInRound = 5.0f;
             }
+           
         }
     }
 }

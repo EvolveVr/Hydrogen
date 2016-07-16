@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 /// <summary>
 /// This script handles amount of enemies to spawn depending on currentWave which is updated
 /// by TargetManager, might switch that around since think should actually be other way around
@@ -8,29 +9,38 @@ namespace Hydrogen
 {
     public class GameManager : MonoBehaviour
     {
-        public static GameManager gameManager;
-        private TargetManager _manageTargets;
        
-        #region These variables will be bools to see if it's spawned the timeTarget at specfic time, that way it won't continously do it. It'll still check and checks are expensive, but fuck.
+        #region All of the managers
+        public static GameManager gameManager;
+        private TargetManager _manageAnchors;
+        private Anchor _manageTargets;
+        #endregion
+
+        #region Bools that check whether time target at certain time points have already been spawned
 
         bool halfTimeSpawnTarget;
         bool quarterTimeSpawnTarget;
         bool quarterTimeLeftSpawnTarget;
-        
-        #endregion
-            
-        protected Vector3 spawnPosition;
-        protected int _maxSpawnAtATime;
 
+        #endregion
+
+        private RectTransform _endGamePanel;
+        private Text _displayPoints;
         #region Variables managing the round
-        private float _roundTimer = 30.0f;
+        private Difficulty _currentDifficulty;
+        
+        private float _roundTimer = 40.0f;
         public float _timeLeftInRound;
         private bool roundOver;
         #endregion
 
-        private int _playerPoints;
+        public int _playerPoints;
 
         //  public abstract IEnumerator spawnPointTarget(int amountToSpawn);
+        public string currentDifficulty
+        {
+            get; set;
+        }
         public float timeLeftInRound
         {
             set { _timeLeftInRound -= value; }
@@ -53,6 +63,11 @@ namespace Hydrogen
 
         }
 
+        private void endRound()
+        {
+            _displayPoints.text = playerPoints.ToString();
+            _endGamePanel.gameObject.SetActive(true);
+        }
         private void Awake()
         {
             if (gameManager == null)
@@ -63,35 +78,50 @@ namespace Hydrogen
             {
                 Destroy(this);
             }
-            _manageTargets = GetComponent<TargetManager>();
+            _manageAnchors = GetComponent<TargetManager>();
+            _manageTargets = GetComponent<Anchor>();
+
+            _endGamePanel = GameObject.Find("EndGamePanel").GetComponent<RectTransform>();
+            _displayPoints = _endGamePanel.gameObject.GetComponentInChildren<Text>();
+            _timeLeftInRound = -1.0f;
         }
-        //Instead of doing it on start, it will do when player clicks start button, just start for now
+
         private void Start()
         {
-     
-  
+
+            _endGamePanel.gameObject.SetActive(false);
+        }
+
+        //Instead of doing it on start, it will do when player clicks start button, just start for now
+        public void startRound()
+        {
             _timeLeftInRound = _roundTimer;
-        
         }
         private void Update()
         {
+            if (timeLeftInRound != -1.0f)
+            {
+                if (timeLeftInRound > 0)
+                {
+                    timeLeftInRound = Time.deltaTime;
+                }
+                if (timeLeftInRound <= 0)
+                {
+                    _manageAnchors.despawnAllAnchors();
+                    endRound();
+                }
 
-            if (timeLeftInRound > 0)
-            {
-                timeLeftInRound = Time.deltaTime;
+                if (timeLeftInRound <= _roundTimer / 2 && !halfTimeSpawnTarget)
+                {
+                    halfTimeSpawnTarget = true;
+                    _manageAnchors.spawnTimeTarget();
+                }
+                if (timeLeftInRound <= _roundTimer / 4 && !quarterTimeSpawnTarget)
+                {
+                    quarterTimeSpawnTarget = true;
+                    _manageAnchors.spawnTimeTargetAnchor();
+                }
             }
-            if (timeLeftInRound <= _roundTimer / 2 && !halfTimeSpawnTarget)
-            {
-                halfTimeSpawnTarget = true;
-                _manageTargets.callSpawner("time");
-            }
-            if (timeLeftInRound <= _roundTimer / 4 && !quarterTimeSpawnTarget)
-            {
-                quarterTimeSpawnTarget = true;
-                _manageTargets.callSpawner("time", 0, true);
-            }
-       
         }
-
     }
 }

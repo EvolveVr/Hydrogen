@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using Hydrogen;
 /// <summary>
 /// THROW AWAY
 /// This class was for me to practice shooting the targets
@@ -9,38 +10,43 @@ public class Player : MonoBehaviour
 {
     public GameObject bulletPrefab;
     public Transform firePoint;
+    Target sfsd;
     Bullet shoot;
     // Use this for initialization
+
+    void Awake()
+    {
+    }
     void Start()
     {
-    
+     
     
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetAxis("Mouse X") < 0)
+        if (Input.GetAxis("Mouse X") < 0 && Input.GetAxis("Mouse Y") == 0)
         {
-            gameObject.transform.Rotate(Vector3.down, 45.0f * Time.deltaTime);
+            gameObject.transform.Rotate(Vector3.down, 180.0f * Time.deltaTime);
         }
-        if (Input.GetAxis("Mouse X") > 0)
+        if (Input.GetAxis("Mouse X") > 0 && Input.GetAxis("Mouse Y") == 0)
         {
-            gameObject.transform.Rotate( Vector3.up, 45.0f * Time.deltaTime);
+            gameObject.transform.Rotate( Vector3.up, 180.0f * Time.deltaTime);
         }
-        if (Input.GetAxis("Mouse Y") > 0)
+        if (Input.GetAxis("Mouse Y") > 0 && Input.GetAxis("Mouse X") == 0)
         {
-            gameObject.transform.Rotate(Vector3.left, 45.0f * Time.deltaTime);
+            gameObject.transform.Rotate(Vector3.left, 180.0f * Time.deltaTime);
         }
-        if (Input.GetAxis("Mouse Y") < 0)
+        if (Input.GetAxis("Mouse Y") < 0 && Input.GetAxis("Mouse X") == 0)
         {
-            gameObject.transform.Rotate(Vector3.right, 45.0f * Time.deltaTime);
+            gameObject.transform.Rotate(Vector3.right, 180.0f * Time.deltaTime);
         }
         if (Input.GetButtonDown("Fire1"))
         {
          
 
-            StartCoroutine(shootBullet());
+            shootBullet();
            
 
         }
@@ -65,15 +71,13 @@ public class Player : MonoBehaviour
     {
         
     }
-    IEnumerator shootBullet()
+    void shootBullet()
     {
-        GameObject bullet = Instantiate(bulletPrefab) as GameObject;
+        GameObject bullet = Instantiate(bulletPrefab); 
         bullet.transform.position = firePoint.position;
-        yield return new WaitForSeconds(0.2f);
+       
         bullet.GetComponent<Rigidbody>().AddForce(transform.forward * 20.0f, ForceMode.Impulse);
 
-        yield return new WaitForSeconds(3.0f);
-        Destroy(bullet);
-
+      
     }
 }
