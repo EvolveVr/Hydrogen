@@ -125,34 +125,14 @@ namespace Hydrogen
                 
             }
         }
-<<<<<<< HEAD
-
 
         public void setInitial(Vector3 initialPosition, Vector3 initialMovement, Movement movementPattern)
-=======
-        protected void OnTriggerExit(Collider other)
->>>>>>> target
-        {
-            if (other.tag == "Vicinity")
-            {
-                
-       
-                speed *= -1;
-                
-
-                //  transform.Translate(_directionMovement);
-                //When it hits viciinity it wont just bounce back, but it will instead curve in opposite direction
-                //So this will call function inside movementmanager to generate target movement based on last movement, so I know it hit vicinity because of trigger
-                //and I'll know from movement passed in, what direction it was coming from, my way did this but  needed if statements and I'm all for alternatives.
-            }
-        }
-<<<<<<< HEAD
+        { }
 
         public void setInitial(Target copy)
         {
 
         }
-=======
->>>>>>> target
+
     }
 }

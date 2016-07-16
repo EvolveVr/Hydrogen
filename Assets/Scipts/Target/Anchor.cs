@@ -118,12 +118,12 @@ namespace Hydrogen {
             }
         }
 
-<<<<<<< HEAD
         public void setInitial(Vector3 initialPosition, Vector3 initialMovement,Movement movementPattern)
-=======
+        { }
+
 
         private void Update()
->>>>>>> target
+
         {
             //When it no longer has targets around it it will die and then we spawn a new one to replace it, the remainging child is the vicinity
             if (transform.childCount == 1)
