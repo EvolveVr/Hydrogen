@@ -54,7 +54,11 @@ namespace Hydrogen
 
         protected override void Start()
         {
+
             base.Start();
+            Debug.Log("loading bullet");
+            GameObject bulletPrefab = Resources.Load("Prefabs/BulletPrefabs/Bullet") as GameObject;
+          bullet = bulletPrefab.GetComponent<Bullet>();
             if (myGun != null)
             {
                 isEquipped = true;

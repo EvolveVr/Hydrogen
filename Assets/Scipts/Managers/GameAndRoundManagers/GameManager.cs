@@ -12,6 +12,7 @@ namespace Hydrogen
        
         #region All of the managers
         public static GameManager gameManager;
+        public Text playerPointText;
         private TargetManager _manageAnchors;
         private Anchor _manageTargets;
         #endregion
@@ -27,7 +28,7 @@ namespace Hydrogen
         private RectTransform _endGamePanel;
         private Text _displayPoints;
         #region Variables managing the round
-        private Difficulty _currentDifficulty;
+      
         
         private float _roundTimer = 40.0f;
         public float _timeLeftInRound;
@@ -52,7 +53,11 @@ namespace Hydrogen
         /// </summary>
         public int playerPoints
         {
-            set { _playerPoints += value; }
+            set
+            {
+                _playerPoints += value;
+                playerPointText.text = "Player Points: " + _playerPoints.ToString();
+            }
             get { return _playerPoints; }//Returning for UI
         }
 
@@ -119,7 +124,7 @@ namespace Hydrogen
                 if (timeLeftInRound <= _roundTimer / 4 && !quarterTimeSpawnTarget)
                 {
                     quarterTimeSpawnTarget = true;
-                    _manageAnchors.spawnTimeTargetAnchor();
+           //       _manageAnchors.spawnTimeTargetAnchor();
                 }
             }
         }

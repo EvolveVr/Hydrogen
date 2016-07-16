@@ -18,6 +18,7 @@ namespace Hydrogen
 
         private WeaponPanel[] _weaponPanels;
         private Weapon[] _weapons;
+      
 
         #region Public Properties
 
@@ -95,6 +96,12 @@ namespace Hydrogen
                     panel.chooseWeaponButton.interactable = false;
                 }
             }
+        }
+        //Sets panels to inactive
+        public void setPanelInactive()
+        {
+            gameObject.SetActive(false);
+
         }
         #endregion
 

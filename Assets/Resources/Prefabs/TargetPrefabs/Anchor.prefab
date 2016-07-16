@@ -12,7 +12,7 @@ GameObject:
   - 23: {fileID: 2395978}
   - 54: {fileID: 5487926}
   - 135: {fileID: 13562040}
-  - 114: {fileID: 11475152}
+  - 114: {fileID: 11456672}
   m_Layer: 0
   m_Name: Anchor
   m_TagString: Anchor
@@ -45,6 +45,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -0.000000023842, y: 0, z: -0.000000047684}
   m_LocalScale: {x: 0.054094207, y: 0.19684318, z: 0.19684318}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 451468}
   m_RootOrder: 0
@@ -57,6 +58,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 4.96168, y: 377.946, z: 10.256234}
   m_LocalScale: {x: 20, y: 20, z: 20}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 406914}
   m_Father: {fileID: 0}
@@ -109,7 +111,7 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &11475152
+--- !u!114 &11456672
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -117,7 +119,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 151230}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b6af0274ff2e8114ea1e3519c9ae9fdd, type: 3}
+  m_Script: {fileID: 11500000, guid: c7f980b13249e434fbf064865d05e8e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!135 &13534888

@@ -99,11 +99,7 @@ namespace Hydrogen
         protected virtual void Update()
         {
            
-            if ((transform.position + transform.parent.position).magnitude < transform.parent.position.magnitude + maxDistance)
-            {
-              transform.rotation = Quaternion.identity;
-            }
-
+            
 
        //     transform.RotateAround(transform.parent.position, transform.parent.position + new Vector3(0, Mathf.Sin(Time.time * 5.0f) * 3.0f, 2.0f), 90.0f * Time.deltaTime);
        }
