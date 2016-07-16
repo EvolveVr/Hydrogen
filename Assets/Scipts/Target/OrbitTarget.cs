@@ -23,7 +23,7 @@ public class OrbitTarget : MonoBehaviour
         _axisOfOrbit = new Vector3();
 	}
 
-    private void Start ()
+    private void Start()
     {
         //Setting to 0 first so I can initialize axis to correct position at start.
         _currentTimeLeftToSwitch = 0;
@@ -37,7 +37,6 @@ public class OrbitTarget : MonoBehaviour
             _axisOfOrbit = _targetOfOrbit.up;
         _speedOfOrbit = 180.0f;
     }
-	
 	private void Update ()
     {
         if (_currentTimeLeftToSwitch > 0)
@@ -54,7 +53,7 @@ public class OrbitTarget : MonoBehaviour
             _currentTimeLeftToSwitch = _timeSwitchAxis;
         }
 
-        transform.RotateAround(_targetOfOrbit.position, _axisOfOrbit, Time.deltaTime * _speedOfOrbit);
+        transform.RotateAround(_targetOfOrbit.position, _axisOfOrbit + new Vector3(0, Mathf.Sin(Time.time * 5.0f)), Time.deltaTime * _speedOfOrbit);
 	
 	}
 }

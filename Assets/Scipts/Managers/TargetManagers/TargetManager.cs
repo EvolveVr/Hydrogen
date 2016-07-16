@@ -1,122 +1,220 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-public class TargetManager : MonoBehaviour
+
+namespace Hydrogen
 {
-    #region Variables managing the round
-    private float _roundTimer = 30.0f;
-    private float _leftOnRound;
-    private bool roundOver;
-    #endregion
 
-    #region Variables managing spawn of enemies in round
-
-    private GameManager _manageSpawnCount;
-    private TargetPool _targetPool;
-    private float _timeTillNextWaveSpawns = 5.0f;
-    private float _leftTillWaveSpawns;
-    private int _amountToSpawn;
-    private float _spawnTimeInterval;
-    #endregion
-
-    /// <summary>
-    /// Sets the amount of targets to spawn
-    /// Returns the amount set
-    /// </summary>
-    public int amountToSpawn
+    public class TargetManager : MonoBehaviour
     {
-        get { return _amountToSpawn; }
-        set { _amountToSpawn = value; }
-    }
-   
-    /// <summary>
-    /// This spawns the targets and handles
-    /// all of their properties before setting them to active
-    /// </summary>
-    /// <returns>A short timer between each individual spawn</returns>
-    public IEnumerator spawnTarget()
-    {
-        //Grabs object from pool
-        for (int i = 0; i < _amountToSpawn; i++)
+        MovementManager temp = new MovementManager();
+        private float SCALECONSTANT = 5;
+        private Anchor[] _anchorList;
+        private GameObject[] _activeAnchor;
+        [SerializeField]
+        private AnchorPool _getAnchor;
+        private GameObject anchorPrefab;
+        [SerializeField]
+        private TargetPool _getTarget;
+        private GameObject targetPrefab;
+
+        private IEnumerator<Anchor> anchorList()
         {
-            //Gets pooled object
-            GameObject target = _targetPool.getTarget();
-            //Sets position to spawn point
-            target.transform.position = GameObject.FindGameObjectWithTag("TargetSpawnPoint").GetComponent<Transform>().position;
-            target.transform.localScale = new Vector3(2, 2, 2);
-            target.SetActive(true);
-            //waits for spawnTimeInterval
-            yield return new WaitForSeconds(_spawnTimeInterval);
+            for(int i=0;i<_anchorList.Length;i++)
+                yield return _anchorList[i];
         }
-    }
-
-    private void Awake()
-    { 
         
-        _manageSpawnCount = gameObject.GetComponent<GameManager>();
-        _targetPool = gameObject.GetComponentInChildren<TargetPool>();
-    }
 
-    /// <summary>
-    /// Sets the round being over to false.
-    /// Sets all of the timers.
-    /// </summary>
-	private void Start()
-    {
-         roundOver = false;
 
-        _leftOnRound = _roundTimer;
-        _leftTillWaveSpawns = _timeTillNextWaveSpawns;
-        _spawnTimeInterval = 0.3f;
-    }
-    
-    /// <summary>
-    /// This function just decreases all of the timers
-    /// and executes what they need to depending on total timer interval
-    /// differentiating what the timer is for.
-    /// </summary>
-    /// <param name="currentTime">The timer that will be decrementing</param>
-    /// <param name="maxTime">The total time it starts from and will reset to</param>
-    private void decreaseTimer(ref float currentTime, float maxTime)
-    {
-        if (currentTime > 0)
+        public void initializeAll()
         {
-            currentTime -= Time.deltaTime;
+            _getAnchor.initialize(5);
+            spawnAnchor(5);
+            _getTarget.initialize(5 * 3);
+            
         }
-        else if (currentTime <= 0)
+
+        public void spawnAnchor(int amountToSpawn)
         {
-            if (maxTime == _timeTillNextWaveSpawns)
+            for (int i = 0; i < amountToSpawn; i++)
             {
-                _manageSpawnCount.currentWave = 1;
-
-                currentTime = maxTime;
+                GameObject anchor = _getAnchor.getObject();
+                anchor.SetActive(true);
             }
-            else if (maxTime == _roundTimer)
+
+        }
+        #region Initialize
+        /// <summary>
+        /// Initializes the list of anchors so that it can spawn them during the wave
+        /// </summary>
+        /// <param name="difficultyRating">The difficulty of the wave based on how well the player did the last wave</param>
+        /// <param name="difficultySetting">The setting the player chose for difficulty.  Easy =1, Medium = 2, Hard = 3</param>
+        public void initializeWave(float difficultyRating,int difficultySetting)
+        {
+
+            int anchorCount = Mathf.RoundToInt(Mathf.Log(difficultyRating, SCALECONSTANT) - 0.5f);
+            _anchorList = new Anchor[anchorCount];
+            anchorList().Reset();
+            for (int i = 0; i < anchorCount; i++)
             {
-                _targetPool.despawnAllTargets();
-                Debug.Log("You've earned " + _manageSpawnCount.playerPoints + " points");
-
-                roundOver = true;
+                _anchorList[i] = new Anchor();
+                Anchor currentAnchor=_anchorList[i].GetComponent<Anchor>();
+                //gives anchor a list of targets to spawn
+         //       currentAnchor.setTargetList(generateTargetList(difficultyRating / anchorCount,difficultySetting));
+                //Generate Anchor position in polar coordinates, with 0 radians being directly forward, around the player
+                float angleOfPlay = Mathf.Deg2Rad * 180;
+                float distanceScale = 10;
+                float angle = Random.value * angleOfPlay - (angleOfPlay / 2);
+                float distance = (anchorCount + Random.value) * distanceScale - (distanceScale / 2);
+                //convert polar coordinates to cartesian
+                Vector3 position = new Vector3(distance * Mathf.Cos(Mathf.Deg2Rad * angle), distance * Mathf.Sin(Mathf.Deg2Rad * angle));
+                //Randomize initial Movement Vector
+                Vector3 initialMovement = new Vector3(Random.value, Random.value, Random.value).normalized;
+                currentAnchor.setInitial(position, 
+                    initialMovement, 
+                    //Generate Movement Delegate
+                    temp.generateAnchorMovement(currentAnchor.transform, 
+                        anchorCount, 
+                        difficultySetting, 
+                        difficultySetting / 6));
             }
         }
-
-    } 
-
-    private void Update()
-    {
-        //Debugging purposes
-        if (Input.GetKeyDown(KeyCode.A))
+        /// <summary>
+        /// Generate list of Targets based on difficulty level
+        /// </summary>
+        /// <param name="difficulty"></param>
+        /// <param name="difficultySetting"></param>
+        /// <returns></returns>
+        private Target[] generateTargetList(float difficulty,int difficultySetting)
         {
-
-            _manageSpawnCount.currentWave = 1;
-
+            int targetCount = Mathf.RoundToInt(Mathf.Log(difficulty, SCALECONSTANT) - 0.5f);
+            Target[] tList = new Target[targetCount];
+            for (int i = 0; i < targetCount; i++) 
+            {
+                tList[i] = generateTarget(difficulty / targetCount,difficultySetting);
+            }
+            return tList;
         }
 
-        if (!roundOver)
+        /// <summary>
+        /// Generate Target based on Difficulty rating
+        /// </summary>
+        /// <param name="difficulty"></param>
+        /// <param name="difficultySetting"></param>
+        /// <returns></returns>
+        private Target generateTarget(float difficulty,int difficultySetting)
         {
-            //decreaseTimer(ref _leftOnRound, _roundTimer);
-            decreaseTimer(ref _leftTillWaveSpawns, _timeTillNextWaveSpawns);
+            Target gen=new Target();
+            float maxDistance = Mathf.Log(difficulty, SCALECONSTANT);
+            float minDistance = Mathf.Log(difficulty, SCALECONSTANT * 5);
+            //randomize Position and initial movement vector
+            Vector3 position = new Vector3(Random.value * maxDistance - maxDistance / 2,
+                Random.value * maxDistance - maxDistance / 2, 
+                Random.value * maxDistance - maxDistance / 2);
+            Vector3 movement = new Vector3(Random.value, 
+                Random.value, 
+                Random.value);
+            movement = movement.normalized;
+            gen.setInitial(position, 
+                movement, 
+                temp.generateTargetMovement(minDistance, 
+                    maxDistance, 
+                    difficultySetting, 
+                    difficultySetting / 6));
+            return gen;
+        }
+
+
+        #endregion
+
+        void Update()
+        {
+            /*if (activeAnchors < 5)
+            {
+                anchorList().MoveNext();
+                for(int i = 0; i < 5; i++)
+                {
+                    if(_activeAnchor[i]== null)
+                    {
+                        GameObject t = _getAnchor.getObject();
+                        _activeAnchor[i] = t;
+                        Anchor curr = t.GetComponent<Anchor>();
+                        curr.setInitial(anchorList().Current);
+
+                    }
+                }
+
+            }*/
+        }
+
+
+        public Vector3 getSpawnPoint(float minDistance, float maxDistance)
+        {
+            if (Random.Range(0,100) % 2 == 0)
+            {
+                minDistance *= -1;
+                maxDistance *= -1;
+            }
+            float xPos = Random.Range(minDistance, maxDistance);
+            float yPos = Random.Range(minDistance, maxDistance);
+            float zPos = Random.Range(minDistance, maxDistance);
+
+            return new Vector3(xPos, yPos, zPos);
+
+        }
+        public void despawnAllAnchors()
+        {
+            _getAnchor.despawnAllObjects();
+        }
+        public void spawnTimeTargetAnchor()
+        {
+
+            GameObject targetAnchor = _getAnchor.getObject();
+            targetAnchor.tag = "Target";
+            Anchor component = targetAnchor.GetComponent<Anchor>();
+            //Destroy(component);
+            targetAnchor.SetActive(true);
+            targetAnchor.AddComponent<TimeTarget>();
+        }
+        public void spawnTimeTarget()
+        {
+            GameObject target = _getTarget.getObject();
+
+            //This returns all anchors in the scene into an array
+            GameObject[] allAnchors = GameObject.FindGameObjectsWithTag("Anchor");
+            //This randomizes which anchor we will parent this target to
+            int randomIndex = Random.Range(0, allAnchors.Length);
+            //Checks if anchor is active before setting the parent of this target to it,
+            if (allAnchors[randomIndex].activeInHierarchy)
+                target.transform.parent = allAnchors[randomIndex].transform;
+            //This gets the radius of the anchor.
+            float anchorRadius = allAnchors[randomIndex].GetComponent<SphereCollider>().radius;
+         //   target.transform.localPosition = getSpawnPoint(anchorRadius);
+
+            //This adds the TimeTarget script to the target.
+            target.AddComponent<TimeTarget>();
+            //This sets the target to active.
+            target.SetActive(true);
+
+
+        }
+        /*int activeAnchors
+        {
+            get
+            {
+                int i = 0;
+                foreach (GameObject a in _activeAnchor)
+                {
+                    if (a!=null?(a.GetComponent < Anchor >() is Anchor):false) i++;
+                }
+                return i;
+            }
+        }*/
+
+        private void Awake()
+        {
+            _getAnchor = GameObject.Find("TargetManager").GetComponent<AnchorPool>();
+            _getTarget = GameObject.Find("TargetManager").GetComponent<TargetPool>();
         }
     }
-   
 }
