@@ -182,9 +182,10 @@ public class SteamVR_Settings : EditorWindow
 	}
 
 	Vector2 scrollPosition;
-	bool toggleState;
 
-	string GetResourcePath()
+    bool toggleState;
+
+    string GetResourcePath()
 	{
 		var ms = MonoScript.FromScriptableObject(this);
 		var path = AssetDatabase.GetAssetPath(ms);

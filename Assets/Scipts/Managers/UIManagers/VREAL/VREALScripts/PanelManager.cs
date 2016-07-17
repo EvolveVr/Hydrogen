@@ -89,7 +89,8 @@ public class PanelManager : MonoBehaviour {
 			anim.gameObject.SetActive(false);
 	}
 
-	private void SetSelected(GameObject go)
+#pragma warning disable 0618
+    private void SetSelected(GameObject go)
 	{
 		EventSystem.current.SetSelectedGameObject(go);
 
@@ -99,4 +100,5 @@ public class PanelManager : MonoBehaviour {
 
 		EventSystem.current.SetSelectedGameObject(null);
 	}
+#pragma warning restore 0618
 }

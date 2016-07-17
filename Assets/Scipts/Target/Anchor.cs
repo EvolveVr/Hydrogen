@@ -14,6 +14,7 @@ namespace Hydrogen {
         private TargetManager _spawnNewAnchor;
 
         //Variables for handling anchor movement
+
         private NavMeshAgent _navAgent;
         private Vector3 _initPosition;
         private float _anchorSpeed;

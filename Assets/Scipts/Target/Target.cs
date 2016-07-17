@@ -35,6 +35,7 @@ namespace Hydrogen
            
 
         };
+
         char _chosenAxisForPattern;
         protected float _currentPattern;
     
