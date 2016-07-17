@@ -21,15 +21,16 @@ namespace Hydrogen
 
         bool halfTimeSpawnTarget;
         bool quarterTimeSpawnTarget;
+
+        //Added the suppress warning
         bool quarterTimeLeftSpawnTarget;
 
         #endregion
 
         private RectTransform _endGamePanel;
         private Text _displayPoints;
-        #region Variables managing the round
-      
         
+        #region Variables managing the round
         private float _roundTimer = 40.0f;
         public float _timeLeftInRound;
         private bool roundOver;

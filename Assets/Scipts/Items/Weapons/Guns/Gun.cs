@@ -10,22 +10,28 @@ namespace Hydrogen
     /// Abstract class Gun will hold all the methods, properties and Fields that 
     /// are general to ALL guns in the game
     /// </summary>
+    // Because all guns will have to have a sprite to accompany the weapon for UI purposes
     [RequireComponent(typeof(Image))]
-    public class Gun : ProjectileWeapon
+    public class Gun : Weapon
     {
-        #region GUN
+        #region GUN Flags
 
         [Header("Fields below from Gun class")]
         [Space(15)]
         //can continuously shoot bullets without reload
-        public bool isInfinite = true;
+        [HideInInspector]
+        private bool _isInfinite = true;
         //whether the gun needs to be engaged AFTER reloading only
+        [HideInInspector]
         public bool needsEngagment = false;
         //true if the gun is automatic false if the gun is semi automatic
+        [HideInInspector]
         public bool isAutomatic;
         // is the gun a charge type weapon
+        [HideInInspector]
         public bool isCharge = false;
         //true if the gun needs to re-engage after every shot false otherwise
+        [HideInInspector]
         public bool isRepeater = false;
         #endregion
 
@@ -74,11 +80,20 @@ namespace Hydrogen
             }
         }
 
+        public bool IsInfinite
+        {
+            get { return _isInfinite; }
+            set { _isInfinite = value; }
+        }
+
         #endregion
 
-        #region Methods
+        #region Unity Methods
         protected override void Start()
         {
+            //before doing anything, we should initialize the flag values for the gun or next statement will not work
+            initWeaponFlags(GameConstants.gunTypeInitValues[weaponType]);
+
             base.Start();
             if (needsEngagment)
             {
@@ -87,13 +102,8 @@ namespace Hydrogen
                     SlideEngage.setEngage(engageGun);
             }
 
+            //We need to initialize the image
             initWeaponImage();
-        }
-
-        //Temporary
-        private void engageGun()
-        {
-            isEngaged = true;
         }
 
 
@@ -106,7 +116,7 @@ namespace Hydrogen
             {
                 if (rightPadButtonDown)
                 {
-                    if (!isInfinite)
+                    if (!IsInfinite)
                     {
                         dropCurrentMagazine();
                     }
@@ -125,7 +135,52 @@ namespace Hydrogen
                 }
             }        
         }
-        
+        #endregion
+
+        #region NVR Overrides
+        public override void UseButtonDown()
+        {
+            // do not do this if the gun uses a charging mechanism instead
+            if (!isCharge)
+            {
+                gunMechanics();
+            }
+        }
+
+        //UseButtonPressed is when the button is being held down
+        // thus, this only works if your na automatic weapon
+        public override void UseButtonPressed()
+        {
+            if (isAutomatic) autoGunMechanics();
+        }
+
+        //When an autonmatic is shooting, we need to reset the time because 
+        // if they release the trigger being mid shot, we dont want it to shoot early next time they shoot
+        public override void UseButtonUp()
+        {
+            if (isAutomatic)
+            {
+                timeSinceLastShot = 0;
+            }
+        }
+        #endregion
+
+        #region Methods
+        void initWeaponFlags(GunTypeInitValues _gunInitValues)
+        {
+            IsInfinite = _gunInitValues.isInfinite;
+            isAutomatic = _gunInitValues.isAutomatic;
+            isCharge = _gunInitValues.isCharge;
+            needsEngagment = _gunInitValues.needsEngagment;
+            isRepeater = _gunInitValues.isRepeater;
+        }
+
+        //Temporary
+        private void engageGun()
+        {
+            isEngaged = true;
+        }
+
         protected void dropCurrentMagazine()
         {
             if (isLoaded)
@@ -136,29 +191,6 @@ namespace Hydrogen
             }
 
             isEngaged = false;
-        }
-
-
-        public override void UseButtonDown()
-        {
-            // do not do this if the gun uses a charging mechanism instead
-            if (!isCharge)
-            {
-                gunMechanics();
-            }
-        }
-
-        public override void UseButtonPressed()
-        {
-            if (isAutomatic) autoGunMechanics();
-        }
-
-        public override void UseButtonUp()
-        {
-            if (isAutomatic)
-            {
-                timeSinceLastShot = 0;
-            }
         }
 
         virtual protected void shootGun()
@@ -186,8 +218,8 @@ namespace Hydrogen
             magazinePosition.gameObject.GetComponent<BoxCollider>().enabled = true;
             StopCoroutine(disableMagazineCollider());
         }
-        #endregion
 
+        
         // the mechanics for the automatic guns
         void autoGunMechanics()
         {
@@ -237,7 +269,31 @@ namespace Hydrogen
                 }
             }
         }// gun gun mechanics
+        #endregion
 
 
     } // End of gun class
+
+
+    //this will allow us to automate the flag value assigning for each diff. type of weapon
+    public struct GunTypeInitValues
+    {
+        public bool isInfinite;
+        public bool isAutomatic;
+        public bool isCharge;
+        public bool isRepeater;
+        public bool needsEngagment;
+
+        // constructor
+        public GunTypeInitValues
+            (bool _isInfinite = false, bool _isAutomatic = false, bool _isRepeater = false, bool _needsEnagement = false, bool _isCharge = false)
+        {
+            this.isInfinite = _isInfinite;
+            this.isAutomatic = _isAutomatic;
+            this.isRepeater = _isRepeater;
+            this.needsEngagment = _needsEnagement;
+            this.isCharge = _isCharge;
+        }
+    }
+
 }

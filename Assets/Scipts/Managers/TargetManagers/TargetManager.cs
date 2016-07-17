@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 
 namespace Hydrogen
@@ -11,9 +10,11 @@ namespace Hydrogen
         private float SCALECONSTANT = 5;
         private Anchor[] _anchorList;
         private GameObject[] _activeAnchor;
+
         [SerializeField]
         private AnchorPool _getAnchor;
         private GameObject anchorPrefab;
+
         [SerializeField]
         private TargetPool _getTarget;
         private GameObject targetPrefab;
@@ -162,10 +163,12 @@ namespace Hydrogen
             return new Vector3(xPos, yPos, zPos);
 
         }
+
         public void despawnAllAnchors()
         {
             _getAnchor.despawnAllObjects();
         }
+
         public void spawnTimeTargetAnchor()
         {
 
@@ -176,6 +179,7 @@ namespace Hydrogen
             targetAnchor.SetActive(true);
             targetAnchor.AddComponent<TimeTarget>();
         }
+
         public void spawnTimeTarget()
         {
             GameObject target = _getTarget.getObject();
@@ -188,7 +192,8 @@ namespace Hydrogen
             if (allAnchors[randomIndex].activeInHierarchy)
                 target.transform.parent = allAnchors[randomIndex].transform;
             //This gets the radius of the anchor.
-            float anchorRadius = allAnchors[randomIndex].GetComponent<SphereCollider>().radius;
+
+            //float anchorRadius = allAnchors[randomIndex].GetComponent<SphereCollider>().radius;
          //   target.transform.localPosition = getSpawnPoint(anchorRadius);
 
             //This adds the TimeTarget script to the target.

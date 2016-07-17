@@ -52,8 +52,10 @@ namespace NewtonVR
         private Quaternion[] LastRotations;
         private float[] LastDeltas;
         private int EstimationSamples = 5;
-        private int RotationEstimationSamples = 10;
 
+#pragma warning disable 0414
+        private int RotationEstimationSamples = 10;
+#pragma warning restore 0414
         public NVRPhysicalController PhysicalController;
 
         private Collider[] GhostColliders;
@@ -63,7 +65,7 @@ namespace NewtonVR
 
         private bool RenderModelInitialized = false;
 
-        private EVRButtonId[] EVRButtonIds;
+        //private EVRButtonId[] EVRButtonIds;
 
         public bool IsHovering
         {

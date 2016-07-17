@@ -5,11 +5,13 @@ using NewtonVR;
 namespace Hydrogen
 {
     /// <summary>
-    /// BASE CLASS FOR ALL WEAPONS
+    /// BASE CLASS FOR ALL WEAPONS; It will contain basic information liek the name of the
+    /// weapon and the 
     /// </summary>
+    
     public abstract class Weapon : NVRInteractableItem
     {
-        [Header("Fields below are from Weapon Class")]
+        [Header("Weapon Class Fields")]
         [Space(15)]
         public string WeaponName;
         public string _weaponDescription;               //change to private later
@@ -29,6 +31,7 @@ namespace Hydrogen
 
         #endregion
 
+        // This is used to initialize the weapon image. Every weapon needs this function
         public void initWeaponImage()
         {
             _weaponImage = GetComponent<Image>();

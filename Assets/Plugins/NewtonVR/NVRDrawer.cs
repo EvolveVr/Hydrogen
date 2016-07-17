@@ -33,7 +33,6 @@ namespace NewtonVR
         public override void BeginInteraction(NVRHand hand)
         {
             base.BeginInteraction(hand);
-
             Vector3 closestPoint = Vector3.zero;
             float shortestDistance = float.MaxValue;
             for (int index = 0; index < Colliders.Length; index++)

@@ -45,7 +45,7 @@ namespace Hydrogen
         {
             get
             {
-                if (!myGun.isInfinite) { bulletCount--; }
+                if (!myGun.IsInfinite) { bulletCount--; }
                     
                 return Instantiate(bullet.gameObject);
             }
@@ -56,7 +56,6 @@ namespace Hydrogen
         {
 
             base.Start();
-            Debug.Log("loading bullet");
             GameObject bulletPrefab = Resources.Load("Prefabs/BulletPrefabs/Bullet") as GameObject;
           bullet = bulletPrefab.GetComponent<Bullet>();
             if (myGun != null)
@@ -92,7 +91,7 @@ namespace Hydrogen
             }
             else
             {
-                if (!myGun.isInfinite)
+                if (!myGun.IsInfinite)
                 {
                     transform.SetParent(null);
                     GetComponent<Rigidbody>().useGravity = true;

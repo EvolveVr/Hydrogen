@@ -11,7 +11,9 @@ namespace NewtonVR
         //edited; make static if broken
         private static Dictionary<NVRInteractable, Collider[]> NVRInteractableMapping;
 
+#pragma warning disable 0414
         private static bool Initialized = false;
+#pragma warning restore 0414
 
         public static void Initialize()
         {
