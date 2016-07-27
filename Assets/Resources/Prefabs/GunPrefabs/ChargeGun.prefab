@@ -143,7 +143,7 @@ GameObject:
   - 4: {fileID: 484776}
   - 54: {fileID: 5443648}
   - 65: {fileID: 6587008}
-  - 114: {fileID: 11495500}
+  - 114: {fileID: 11496634}
   m_Layer: 0
   m_Name: ChargeGun
   m_TagString: Untagged
@@ -574,9 +574,9 @@ MonoBehaviour:
   currentBulletCount: 30
   maxBulletCount: 30
   isEquipped: 1
-  myGun: {fileID: 11495500}
+  myGun: {fileID: 0}
   secondsAfterDetach: 0.1
---- !u!114 &11495500
+--- !u!114 &11496634
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -584,7 +584,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 192590}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bdc4ba7ab30fdc5458f2d9a00fc63b73, type: 3}
+  m_Script: {fileID: 11500000, guid: 44b57f57697c163419301773821a8e9b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   Rigidbody: {fileID: 0}
@@ -594,25 +594,17 @@ MonoBehaviour:
   DropDistance: 1
   EnableGravityOnDetach: 1
   AttachedHand: {fileID: 0}
-  InteractionPoint: {fileID: 489918}
-  weaponName: Charge Gun
-  weaponDescription: You have to charge it
-  projectileWeapon: 0
-  drawableGun: 0
-  isInfinite: 1
+  InteractionPoint: {fileID: 0}
+  _weaponName: 
+  _weaponDescription: 
+  weaponType: 0
   needsEngagment: 0
   isAutomatic: 0
-  isCharge: 1
+  isCharge: 0
   isRepeater: 0
-  timeBetweenShots: 0.5
-  timeSinceLastShot: 0
-  isEngaged: 0
-  SlideEngage: {fileID: 0}
   firePoint: {fileID: 420130}
-  currentMagazine: {fileID: 11486036}
-  secondsAfterDetach: 0.2
-  magazinePosition: {fileID: 440856}
-  maxChargeTime: 0.3
+  bulletPrefab: {fileID: 0}
+  maxChargeTime: 2
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

@@ -20,7 +20,6 @@ namespace NewtonVR
         protected Collider[] Colliders;
         protected Vector3 ClosestHeldPoint;
 
-        
 
         public virtual bool IsAttached
         {
@@ -116,7 +115,6 @@ namespace NewtonVR
             }
 
 
-
             //END EDIT
         }
 
@@ -160,7 +158,7 @@ namespace NewtonVR
 
         }
 
-        //EDITED: CRISTIAN
+        //EDIT
         public virtual void UseButtonPressed()
         {
 

@@ -6,7 +6,7 @@ namespace Hydrogen
     /// <summary>
     /// This is a basic class for Guns that Charge.
     /// </summary>
-    public class ChargeGun : Gun
+    public class ChargeGun : Weapon
     {
         //A gun that charges needs 1) max charge time, 2) and the current charge time
         [Header("Charge Gun Fields")]
@@ -43,7 +43,7 @@ namespace Hydrogen
             //only shoot when it is charged enough
             if (_chargeTime >= maxChargeTime)
             {
-                shootGun();
+                shootWeapon();
             }
 
             // Everytime the trigger is released, we need to reset the timer

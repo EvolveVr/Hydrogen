@@ -59,7 +59,7 @@ namespace Hydrogen
         {
             if (_weaponPanels != null && _weapons != null)
             {
-                for (int i = 0; i < _weaponPanels.Length; i++)
+                for (int i = 0; i < _weapons.Length; i++)
                 {
                     Image myGunImage = _weapons[i].GetComponent<Image>();
                     _weaponPanels[i].gunImage.sprite = myGunImage.sprite;
@@ -101,7 +101,6 @@ namespace Hydrogen
         public void setPanelInactive()
         {
             gameObject.SetActive(false);
-
         }
         #endregion
 
