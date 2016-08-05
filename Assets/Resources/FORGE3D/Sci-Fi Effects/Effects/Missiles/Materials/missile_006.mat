@@ -1,0 +1,140 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_Name: missile_006
+  m_Shader: {fileID: 4800000, guid: 98eb0d78f4c3138459b4ebd4001bbcf8, type: 3}
+  m_ShaderKeywords: 
+  m_LightmapFlags: 5
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  m_SavedProperties:
+    serializedVersion: 2
+    m_TexEnvs:
+      data:
+        first:
+          name: _MainTex
+        second:
+          m_Texture: {fileID: 2800000, guid: 2ba317615bedb6c41b278fc7960b17e4, type: 3}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _BumpMap
+        second:
+          m_Texture: {fileID: 2800000, guid: 0ce995a6c5210a94cbf1fc1c82713bb9, type: 3}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _ParallaxMap
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _Normal
+        second:
+          m_Texture: {fileID: 2800000, guid: 17d43766ca59fb74dba0294194448581, type: 3}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _Diffuse
+        second:
+          m_Texture: {fileID: 2800000, guid: 7f436a4e23d237e4d9c140b51f80d682, type: 3}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _Cubemap
+        second:
+          m_Texture: {fileID: 8900000, guid: bf8bed8b5cbfdaf46aec3ba6715f24e6, type: 3}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _Glow
+        second:
+          m_Texture: {fileID: 2800000, guid: dd733e807fffebf489355aec83360234, type: 3}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+    m_Floats:
+      data:
+        first:
+          name: _Shininess
+        second: 0.3706869
+      data:
+        first:
+          name: _Parallax
+        second: 0.005
+      data:
+        first:
+          name: _InvFade
+        second: 1
+      data:
+        first:
+          name: _DiffusePower
+        second: 1
+      data:
+        first:
+          name: _SpecularAdd
+        second: 0.1
+      data:
+        first:
+          name: _SpecularMult
+        second: 8.74
+      data:
+        first:
+          name: _SpecularA
+        second: 500
+      data:
+        first:
+          name: _SpecularB
+        second: 11.4
+      data:
+        first:
+          name: _SpecularRatio
+        second: 3.73
+      data:
+        first:
+          name: _FresnelPower
+        second: 5
+      data:
+        first:
+          name: _FresnelMult
+        second: 0.5
+      data:
+        first:
+          name: _ReflectionMult
+        second: 0.1
+      data:
+        first:
+          name: _ReflectionDesaturation
+        second: 0
+      data:
+        first:
+          name: _GlowMult
+        second: 30
+    m_Colors:
+      data:
+        first:
+          name: _Color
+        second: {r: 1, g: 1, b: 1, a: 1}
+      data:
+        first:
+          name: _SpecColor
+        second: {r: 0.75735295, g: 0.75735295, b: 0.75735295, a: 1}
+      data:
+        first:
+          name: _TintColor
+        second: {r: 0.5, g: 0.5, b: 0.5, a: 0.5}
+      data:
+        first:
+          name: _node_1308
+        second: {r: 1, g: 1, b: 1, a: 1}
