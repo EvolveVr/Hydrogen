@@ -31,13 +31,6 @@ Material:
           m_Offset: {x: 0, y: 0}
       data:
         first:
-          name: _ParallaxMap
-        second:
-          m_Texture: {fileID: 0}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-      data:
-        first:
           name: _Normal
         second:
           m_Texture: {fileID: 2800000, guid: 086307b36984fec4fad4937ead3ab5ff, type: 3}
@@ -64,15 +57,18 @@ Material:
           m_Texture: {fileID: 2800000, guid: 1a819e9c158ea3c4395afba3287af2ea, type: 3}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _ParallaxMap
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
     m_Floats:
       data:
         first:
           name: _Shininess
         second: 0.3706869
-      data:
-        first:
-          name: _Parallax
-        second: 0.005
       data:
         first:
           name: _InvFade
@@ -103,14 +99,6 @@ Material:
         second: 0.83
       data:
         first:
-          name: _FresnelPower
-        second: 5
-      data:
-        first:
-          name: _FresnelMult
-        second: 0.5
-      data:
-        first:
           name: _ReflectionMult
         second: 0.1
       data:
@@ -119,8 +107,20 @@ Material:
         second: 0
       data:
         first:
+          name: _FresnelPower
+        second: 5
+      data:
+        first:
+          name: _FresnelMult
+        second: 0.5
+      data:
+        first:
           name: _GlowMult
         second: 30
+      data:
+        first:
+          name: _Parallax
+        second: 0.005
     m_Colors:
       data:
         first:

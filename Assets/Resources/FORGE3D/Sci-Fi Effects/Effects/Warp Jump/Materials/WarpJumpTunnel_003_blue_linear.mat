@@ -25,16 +25,12 @@ Material:
     m_Floats:
       data:
         first:
-          name: _InvFade
-        second: 3
-      data:
-        first:
-          name: _Alpha
-        second: 1
-      data:
-        first:
           name: _Mult
         second: 1.82
+      data:
+        first:
+          name: _InvFade
+        second: 3
       data:
         first:
           name: _Twist
@@ -47,11 +43,11 @@ Material:
         first:
           name: _EdgeFadeMult
         second: 1.91
-    m_Colors:
       data:
         first:
-          name: _TintColor
-        second: {r: 0, g: 0, b: 0, a: 0}
+          name: _Alpha
+        second: 1
+    m_Colors:
       data:
         first:
           name: _TintColorA
@@ -60,3 +56,7 @@ Material:
         first:
           name: _TintColorB
         second: {r: 0.25, g: 0.6896552, b: 1, a: 1}
+      data:
+        first:
+          name: _TintColor
+        second: {r: 0, g: 0, b: 0, a: 0}

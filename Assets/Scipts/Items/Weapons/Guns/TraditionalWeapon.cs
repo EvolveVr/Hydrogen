@@ -3,8 +3,10 @@ using System.Collections;
 namespace Hydrogen
 {
     /// <summary>
-    /// 
+    /// This basically encompasses all weapons in the game
     /// </summary>
+    /// 
+    // NOTE: dont forget to add Spread!!!!!!!!!!!!!!!!!!!!!
     public class TraditionalWeapon : Weapon
     {
         // these variables are needed for shot timing
@@ -17,13 +19,13 @@ namespace Hydrogen
         private int bulletsShotSinceLastEngage = 0;
         #endregion
 
+        #region Unity Methods
         protected override void Awake()
         {
             base.Awake();
             initWeapon();
         }
 
-        #region Unity Methods
         protected override void Update()
         {
             base.Update();

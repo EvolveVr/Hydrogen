@@ -43,10 +43,6 @@ Material:
         second: 0.5
       data:
         first:
-          name: _InvFade
-        second: 1
-      data:
-        first:
           name: _NoiseFactor
         second: 0.71428573
       data:
@@ -67,6 +63,10 @@ Material:
         second: 0.9285714
       data:
         first:
+          name: _InvFade
+        second: 1
+      data:
+        first:
           name: _Multiply
         second: 58.571423
       data:
@@ -80,9 +80,9 @@ Material:
         second: {r: 1, g: 1, b: 1, a: 1}
       data:
         first:
-          name: _TintColor
-        second: {r: 1, g: 1, b: 1, a: 1}
-      data:
-        first:
           name: _Tint
         second: {r: 0.89452356, g: 0.8088235, b: 1, a: 1}
+      data:
+        first:
+          name: _TintColor
+        second: {r: 1, g: 1, b: 1, a: 1}

@@ -4,22 +4,13 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - TargetSpawnPoint
-  - target
-  - Magazine
-  - bullet
+  - Bullet
   - Handgun
   - ControllerRight
   - ControllerLeft
-  - MainCanvasElement
-  - GunCanvasElement
-  - OptionsCanvasElement
   - Weapon
-  - WeaponImage
-  - WeaponTitle
-  - WeaponDescription
-  - WeaponChooseButton
-  - WeaponPanel
+  - Target
+  - Anchor
   layers:
   - Default
   - TransparentFX

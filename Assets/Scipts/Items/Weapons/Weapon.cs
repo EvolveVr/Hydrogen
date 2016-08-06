@@ -17,7 +17,7 @@ namespace Hydrogen
         [Space(15)]
         public string _weaponName;
         public string _weaponDescription;
-        private Image _weaponImage;
+        
 
         //we want to set this in inspector
         public GameConstants.WeaponType weaponType;
@@ -40,9 +40,10 @@ namespace Hydrogen
         public bool isRepeater = false;
         #endregion
 
-        // every weapon has a fire point; and a prefab for the bullet
+        // every weapon has a fire point; and a prefab for the bullet; audio source and particle effect
         public Transform firePoint;
         public GameObject bulletPrefab;
+        private AudioSource _weaponAudioSource;
 
         // every weapon has haptic feedback
         #region HAPTIC FEEDBACK VARS
@@ -52,11 +53,7 @@ namespace Hydrogen
 
         #region Properties
         public string weaponDescription { get { return _weaponDescription; } }
-        public Image weaponImage
-        {
-            get { return _weaponImage; }
-            set { _weaponImage = value; }
-        }
+        
         public string weaponName { get { return _weaponName; } }
 
         // Below are propertie for returning whether pad button is being pressed; for engagement
@@ -92,14 +89,11 @@ namespace Hydrogen
         protected void initWeapon()
         {
             initWeaponFlags(GameConstants.gunTypeInitValues[weaponType]);
-            _weaponImage = GetComponent<Image>();
             firePoint = transform.FindChild("FirePoint");
-        }
 
-        //depending on the type, every weapon needs to call this method in Awake()
-        protected void initBulletPrefab(string bulletPrefabPath)
-        {
-            bulletPrefab = Resources.Load(bulletPrefabPath) as GameObject;
+            _weaponAudioSource = GetComponent<AudioSource>();
+            debuggingFast("Didnt find audio source on the gun", _weaponAudioSource);
+
         }
 
         //every weapon needs to fire
@@ -114,6 +108,7 @@ namespace Hydrogen
             //instantiate the bullet particle effect
 
             //Play sound
+            _weaponAudioSource.Play();
 
             AttachedHand.LongHapticPulse(VibrationLength, VibrationIntensity);
         }
@@ -128,6 +123,16 @@ namespace Hydrogen
             isRepeater = _gunInitValues.isRepeater;
         }
         #endregion
+
+
+        //Delete Later; only for debugging purposes
+        void debuggingFast(string debugMessage, object obj)
+        {
+            if(obj == null)
+            {
+                Debug.Log(debugMessage);
+            }
+        }
     }
 
     //this will allow us to automate the flag value assigning for each diff. type of weapon

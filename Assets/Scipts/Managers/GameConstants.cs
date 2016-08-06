@@ -3,16 +3,12 @@
 namespace Hydrogen
 {
     /// <summary>
-    /// This class is for storing enums were we can find them easily in the Hydrogen namesace
+    /// This class is for storing enums and int/float constants were 
+    /// we can find them easily in the Hydrogen namespace
     /// </summary>
     public static class GameConstants
     {
         public const string MAGAZINE = "Magazine";
-
-        public enum GameType
-        {
-            WaveGame
-        }
 
         public enum Difficulty
         {
@@ -39,6 +35,8 @@ namespace Hydrogen
             { WeaponType.Charge, new GunTypeInitValues( _isCharge:true)},
             { WeaponType.Repeater, new GunTypeInitValues( _isRepeater:true, _needsEnagement:true)}
         };
+
+        public enum TargetPart { Inner, Middle, Outer };
     }
 
 }

@@ -95,20 +95,20 @@ Material:
         second: 0.1
       data:
         first:
-          name: _FresnelPower
-        second: 7.5
-      data:
-        first:
-          name: _FresnelMult
-        second: 0.38
-      data:
-        first:
           name: _ReflectionMult
         second: 0.05
       data:
         first:
           name: _ReflectionDesaturation
         second: 1
+      data:
+        first:
+          name: _FresnelPower
+        second: 7.5
+      data:
+        first:
+          name: _FresnelMult
+        second: 0.38
       data:
         first:
           name: _GlowMult
