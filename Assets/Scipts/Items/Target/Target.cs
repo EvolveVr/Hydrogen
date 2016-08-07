@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System;
+using System.Collections.Generic;
 
 namespace Hydrogen
 {
@@ -11,7 +12,10 @@ namespace Hydrogen
     public class Target : MonoBehaviour
     {
         public AudioClip targetAudioClip;
-        public GameObject particleEffect;
+
+        private Dictionary<GameConstants.TargetPart, GameObject> particleEffects = new Dictionary<GameConstants.TargetPart, GameObject>();
+        private const string _pathToParticlePrefabs = "Prefabs/ParticleEffects";
+
         protected AudioSource targetAudioSource;
 
         //How much points to give based on where they hit; play with values then make private const
@@ -33,22 +37,35 @@ namespace Hydrogen
             if (targetAudioSource == null)
                 Debug.LogError("The targets audio source was not found");
 
-            InitMagnitudes();
+            InitMagnitudesOnTarget();
+            GetParticleEffects(particleEffects);
+
         }
 
         void OnCollisionEnter(Collision other)
         {
             if (other.gameObject.tag == "Bullet")
             {
-                InitParticleEffect(GameConstants.TargetPart.Inner);
-
                 ContactPoint collision = other.contacts[0];
                 Vector3 pos = collision.point;
                 Vector3 fromParentToContactVector = (pos - this.transform.position);
+                //Need to fix!!!!!!!!!! Not instantiated in the correct place
+                Vector3 worldSpaceContactVector = transform.TransformVector(fromParentToContactVector);
 
                 int pointsToGive = CalcPointsByHitVector(fromParentToContactVector, _innerSqrMagnitude, _outerSqrMagnitude);
-                
-                if(pointsToGive != 1)
+
+                if(pointsToGive == centerHitPoints)
+                {
+                    InitParticleEffect(GameConstants.TargetPart.Inner, worldSpaceContactVector);
+                } else if(pointsToGive == middleHitPoints)
+                {
+                    InitParticleEffect(GameConstants.TargetPart.Middle, worldSpaceContactVector);
+                } else
+                {
+                    InitParticleEffect(GameConstants.TargetPart.Outer, worldSpaceContactVector);
+                }
+
+                if (pointsToGive != 1)
                 {
                     GameManager.gameManager.AddPoints(pointsToGive);
                 }
@@ -66,25 +83,47 @@ namespace Hydrogen
         }
 
         // this is for spawnign the particle effect
-        public void InitParticleEffect(GameConstants.TargetPart targetPart)
+        public void InitParticleEffect(GameConstants.TargetPart targetPart, Vector3 position)
         {
-            switch(targetPart)
+            GameObject particleEffect;
+
+            switch (targetPart)
             {
                 case GameConstants.TargetPart.Inner:
-                    Instantiate(particleEffect, this.transform.position, Quaternion.identity);
-                    Debug.Log("Inner part");
+                    particleEffects.TryGetValue(GameConstants.TargetPart.Inner, out particleEffect);
+                    if(particleEffect != null)
+                        Instantiate(particleEffect, position, Quaternion.identity);
                     break;
                 case GameConstants.TargetPart.Middle:
-                    Debug.Log("Middle part");
+                    particleEffects.TryGetValue(GameConstants.TargetPart.Middle, out particleEffect);
+                    if (particleEffect != null)
+                        Instantiate(particleEffect, position, Quaternion.identity);
+                    Debug.Log("Middle");
                     break;
                 case GameConstants.TargetPart.Outer:
-                    Debug.Log("Outer part");
+                    particleEffects.TryGetValue(GameConstants.TargetPart.Outer, out particleEffect);
+                    if (particleEffect != null)
+                        Instantiate(particleEffect, position, Quaternion.identity);
+                    Debug.Log("Outer");
                     break;
             }
         }
 
+        private void GetParticleEffects(Dictionary<GameConstants.TargetPart, GameObject> particleEffectDict)
+        {
+            if(particleEffectDict == null) {
+                particleEffectDict = new Dictionary<GameConstants.TargetPart, GameObject>();
+            }
+            GameObject centerParticleEffect = Resources.Load(_pathToParticlePrefabs+ "/Explosion_Center") as GameObject;
+            GameObject middleParticleEffect = Resources.Load(_pathToParticlePrefabs + "/Explosion_Middle") as GameObject;
+            GameObject outerParticleEffect = Resources.Load(_pathToParticlePrefabs + "/Explosion_Outer") as GameObject;
+
+            particleEffectDict.Add(GameConstants.TargetPart.Inner, centerParticleEffect);
+            particleEffectDict.Add(GameConstants.TargetPart.Middle, middleParticleEffect);
+            particleEffectDict.Add(GameConstants.TargetPart.Outer, outerParticleEffect);
+        }
         // used to see if inner middle or outer parts of targets were hit; More efficient to not calculate every hit
-        void InitMagnitudes()
+        void InitMagnitudesOnTarget()
         {
             foreach(Transform child in transform.parent)
             {

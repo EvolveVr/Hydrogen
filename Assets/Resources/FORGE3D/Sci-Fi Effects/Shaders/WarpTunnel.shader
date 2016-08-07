@@ -1,4 +1,6 @@
-﻿Shader "FORGE3D/Warp Tunnel" {
+﻿// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
+
+Shader "FORGE3D/Warp Tunnel" {
 Properties {
 	_TintColor ("Tint Color", Color) = (0.5,0.5,0.5,0.5)
 	_MainTex ("Particle Texture", 2D) = "white" {}
@@ -53,7 +55,7 @@ Category {
 			v2f vert (appdata_t v)
 			{
 				v2f o;
-				 o.posWorld = mul(_Object2World, v.vertex);
+				 o.posWorld = mul(unity_ObjectToWorld, v.vertex);
 				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);	
 				o.vertex.x += sin(_Time.y * _WiggleX) * _WiggleDist;	
 				o.vertex.y -= sin(_Time.y * _WiggleY) * _WiggleDist;		

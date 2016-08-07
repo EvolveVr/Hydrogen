@@ -7,6 +7,7 @@ namespace Hydrogen
     /// this is a basic utility class used for destrying any Gameobject
     /// this script is attached to
     /// </summary>
+   
     public class DestroyAfterSeconds : MonoBehaviour
     {
         public float secondsToDestroy = 0f;

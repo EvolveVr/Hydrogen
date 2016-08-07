@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
+
 Shader "FORGE3D/Billboard Additive" {
 Properties {
 	_Color ("Tint Color", Color) = (0.5,0.5,0.5,0.5)
@@ -48,8 +50,8 @@ Category {
 
 	            float4 ori = mul(UNITY_MATRIX_MV,float4(0,0,0,1));
 	            float4 vt = v.vertex;	            
-	            float2 r1 = float2(_Object2World[0][0],_Object2World[0][2]);
-	            float2 r2 = float2(_Object2World[2][0],_Object2World[2][2]);
+	            float2 r1 = float2(unity_ObjectToWorld[0][0],unity_ObjectToWorld[0][2]);
+	            float2 r2 = float2(unity_ObjectToWorld[2][0],unity_ObjectToWorld[2][2]);
 	            float2 vt0 = vt.x*r1;
 	            vt0 += vt.z*r2;
 	            vt.xy = vt0;

@@ -1,4 +1,6 @@
-﻿Shader "FORGE3D/Holographic" {
+﻿// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
+
+Shader "FORGE3D/Holographic" {
 Properties {
 	_MainTex ("Interlace Mask", 2D) = "white" {}
 	_bLayerColorA ("Tint Color A", Color) = (0.5,0.5,0.5,0.5)
@@ -83,8 +85,8 @@ Category {
 
 				o.color = v.color;
 				o.texcoord = TRANSFORM_TEX(v.texcoord,_MainTex);
-				o.normalDir = normalize(mul(_Object2World, float4(v.normal.xyz,0)).xyz);
-				o.posWorld = mul(_Object2World, v.vertex);				
+				o.normalDir = normalize(mul(unity_ObjectToWorld, float4(v.normal.xyz,0)).xyz);
+				o.posWorld = mul(unity_ObjectToWorld, v.vertex);				
 				o.screenPos = ComputeScreenPos(o.vertex);
 
 				return o;
@@ -101,7 +103,7 @@ Category {
 				
 		    	float3 viewDirection = normalize(_WorldSpaceCameraPos.xyz - i.posWorld.xyz);           	 
              	
-		    	float4 objectOrigin = mul(_Object2World, float4(0.0,0.0,0.0,1.0) );
+		    	float4 objectOrigin = mul(unity_ObjectToWorld, float4(0.0,0.0,0.0,1.0) );
 
              	float dist = distance(_WorldSpaceCameraPos.xyz, objectOrigin.xyz);
 
