@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
 namespace Hydrogen
@@ -17,7 +18,8 @@ namespace Hydrogen
 
         // during the game, every player will accumulate points
         private int _playersPoints;
-
+        public Canvas _pointCanvas;
+        private Text _pointText;
 
 
         #region Properties
@@ -32,6 +34,10 @@ namespace Hydrogen
         void Awake()
         {
             InitGameManager();
+
+            _pointText = _pointCanvas.GetComponentInChildren<Text>();
+            if (_pointCanvas == null)
+                Debug.LogError("Text on Point canvas was not found");
         }
         #endregion
 
@@ -55,6 +61,7 @@ namespace Hydrogen
         public void AddPoints(int points)
         {
             _playersPoints += points;
+            _pointText.text = _playersPoints.ToString();
         }
         #endregion
     }
