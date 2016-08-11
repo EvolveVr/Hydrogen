@@ -12,6 +12,7 @@ TagManager:
   - Target
   - Anchor
   - PointCanvas
+  - TargetNavigation
   layers:
   - Default
   - TransparentFX

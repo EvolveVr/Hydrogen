@@ -586,6 +586,7 @@ namespace NewtonVR
             CurrentVisibility = visibility;
         }
 
+#pragma warning disable
         private void RenderModelLoaded(params object[] args)
         {
             SteamVR_RenderModel renderModel = (SteamVR_RenderModel)args[0];
@@ -594,6 +595,7 @@ namespace NewtonVR
             if ((int)renderModel.index == DeviceIndex)
                 RenderModelInitialized = true;
         }
+#pragma warning restore
 
         private IEnumerator DoInitialize()
         {

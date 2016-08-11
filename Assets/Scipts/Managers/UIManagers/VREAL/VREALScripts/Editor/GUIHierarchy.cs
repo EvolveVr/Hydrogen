@@ -2,7 +2,9 @@ using UnityEditor;
 using UnityEngine;
 using System.Collections;
 
+#pragma warning disable
 public class GUIHierarchy : BaseHierarchySort
 {
 	//public override bool ShouldDisplay(GameObject obj) { return obj.layer == LayerMask.NameToLayer("UI"); }
 }
+#pragma warning restore

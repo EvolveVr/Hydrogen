@@ -9,8 +9,9 @@ namespace NewtonVR
         private NVRHand Hand;
         public bool State = false;
         private Rigidbody Rigidbody;
-
+#pragma warning disable
         private Collider[] Colliders;
+#pragma warning restore
         private GameObject PhysicalController;
         private Transform ModelParent;
 

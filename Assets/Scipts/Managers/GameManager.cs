@@ -61,7 +61,9 @@ namespace Hydrogen
         public void AddPoints(int points)
         {
             _playersPoints += points;
-            _pointText.text = _playersPoints.ToString();
+
+            if(_pointText != null)
+                _pointText.text = _playersPoints.ToString();
         }
         #endregion
     }
