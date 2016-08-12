@@ -20,6 +20,15 @@ namespace Hydrogen
         public int multiplierValue = 0;     // Make sure to add logic for multiplier values later
 
         private MeshRenderer[] targetMeshes;
+        private bool isActive = true;
+
+        #region Properties
+        public bool IsActive
+        {
+            get { return isActive; }
+            set { isActive = value; }
+        }
+        #endregion
 
         #region Unity Methods
         void Awake()

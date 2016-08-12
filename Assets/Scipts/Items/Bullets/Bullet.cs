@@ -31,18 +31,6 @@ public class Bullet : MonoBehaviour
     }
 
 
-    void OnTriggerEnter(Collider hit)
-    {
-        //Can't test this myself, but its simple and should work.
-        switch(hit.gameObject.tag)
-        {
-            //all tags have caps for first letter
-            case "Wall":
-                gameObject.SetActive(false);
-                break;
-        }
-    }
-
     IEnumerator destroyBullet(float _numSeconds)
     {
         yield return new WaitForSeconds(_numSeconds);

@@ -21,13 +21,14 @@ namespace Hydrogen
 
         void OnTriggerEnter(Collider other)
         {
-            if (other.tag == "Bullet")
+            if (other.tag == "Bullet" && _parentTarget.IsActive)
             {
                 //add points --> init particl effect --> play audio --> destroy
                 _parentTarget.AddPoints(pointsToGive);
                 _parentTarget.InitParticleEffect(targetPart, other.transform.position);
                 _parentTarget.PlayTargetDestroyAudio();
 
+                _parentTarget.IsActive = false;
                 StartCoroutine(_parentTarget.DestroyTarget());
             }
         }
