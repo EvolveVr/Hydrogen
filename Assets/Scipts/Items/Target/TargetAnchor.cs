@@ -12,10 +12,15 @@ namespace Hydrogen
         int[] _animHashedParameters;
 
         private NavMeshAgent _navMeshAgent;
+        public float navMeshSpeed = 2.0f;
         private GameObject _navigationPlane;
 
         private Lane _myLane;
         private int _nextPoint = 0;
+
+        #region Properties
+        public Lane GetLane { get { return _myLane; } }
+        #endregion
 
         #region Unity Mehtods
         void Awake()
@@ -34,7 +39,7 @@ namespace Hydrogen
                 Transform newPoint = GetNextPoint(_myLane, ref _nextPoint);
 
                 _navMeshAgent.SetDestination(new Vector3(newPoint.position.x, newPoint.position.y, newPoint.position.z));
-                _navMeshAgent.speed = 2.0f;
+                _navMeshAgent.speed = navMeshSpeed;
 
                 _targetAnimator.SetTrigger(_animHashedParameters[Random.Range(0, _animHashedParameters.Length)]);
                 _targetAnimator.speed = 1 + Random.Range(0, 1.0f);

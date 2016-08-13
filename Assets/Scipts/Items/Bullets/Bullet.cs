@@ -2,38 +2,42 @@
 using System.Collections;
 using System.Collections.Generic;
 
-[RequireComponent(typeof(Rigidbody))]
-public class Bullet : MonoBehaviour
+
+namespace Hydrogen
 {
-    //public BulletType bulletType;
-    public float bulletForce = 100.0f;
-
-    private float _secondsUntilDestroy = 5.0f;
-
-    //All bullets need to add there own force
-    public void initialize()
+    [RequireComponent(typeof(Rigidbody))]
+    public class Bullet : MonoBehaviour
     {
-        
-        GetComponent<Rigidbody>().AddForce(transform.forward * bulletForce, ForceMode.Impulse);
-        if (gameObject.activeSelf)
+        //public BulletType bulletType;
+        public float bulletForce = 100.0f;
+
+        private float _secondsUntilDestroy = 5.0f;
+
+        //All bullets need to add there own force
+        public void initialize()
         {
-            StartCoroutine(destroyBullet(_secondsUntilDestroy));
+
+            GetComponent<Rigidbody>().AddForce(transform.forward * bulletForce, ForceMode.Impulse);
+            if (gameObject.activeSelf)
+            {
+                StartCoroutine(destroyBullet(_secondsUntilDestroy));
+            }
         }
-    }
 
 
-    public Vector3 position
-    {
-        get
+        public Vector3 position
         {
-            return transform.position;
+            get
+            {
+                return transform.position;
+            }
         }
-    }
 
 
-    IEnumerator destroyBullet(float _numSeconds)
-    {
-        yield return new WaitForSeconds(_numSeconds);
-        Destroy(gameObject);
+        IEnumerator destroyBullet(float _numSeconds)
+        {
+            yield return new WaitForSeconds(_numSeconds);
+            Destroy(gameObject);
+        }
     }
 }

@@ -10,6 +10,9 @@ namespace Hydrogen
     /// </summary>
     public class Target : MonoBehaviour
     {
+        private TargetAnchor _myTargetAnchor;
+        private WaveManager _waveManager;
+
         protected AudioSource targetAudioSource;
 
         private Dictionary<GameConstants.TargetPart, GameObject> particleEffects = new Dictionary<GameConstants.TargetPart, GameObject>();
@@ -33,6 +36,9 @@ namespace Hydrogen
         #region Unity Methods
         void Awake()
         {
+            _myTargetAnchor = GetComponentInParent<TargetAnchor>();
+            _waveManager = GameObject.FindObjectOfType<WaveManager>();
+
             targetAudioSource = GetComponent<AudioSource>();
             if (targetAudioSource == null)
                 Debug.LogError("The targets audio source was not found");
@@ -106,8 +112,14 @@ namespace Hydrogen
             foreach(var mesh in targetMeshes) {
                 mesh.enabled = false;
             }
+
+            // now target needs to diable the Lane
+            _myTargetAnchor.GetLane.IsActive = false;
+            _waveManager.IncrementNumberOfDestroyedTargets();
+            _waveManager.UpdateTargetsLeftText();
+
             yield return new WaitForSeconds(targetAudioSource.clip.length);
-            Destroy(this.gameObject);
+            Destroy(transform.parent.gameObject);
         }
         #endregion
     }

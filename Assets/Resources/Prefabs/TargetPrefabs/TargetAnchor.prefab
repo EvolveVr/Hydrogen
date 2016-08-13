@@ -474,7 +474,7 @@ AudioSource:
   Loop: 0
   Mute: 0
   Spatialize: 0
-  Priority: 54
+  Priority: 139
   DopplerLevel: 1
   MinDistance: 3.726873
   MaxDistance: 500
@@ -503,7 +503,7 @@ AudioSource:
     serializedVersion: 2
     m_Curve:
     - time: 0
-      value: 1
+      value: 0.659
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -560,6 +560,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b8346a7e69101cb43aa8fcd68ec77799, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  navMeshSpeed: 4
 --- !u!114 &114000010735607924
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -10,17 +10,18 @@ namespace Hydrogen
     public class Lane : MonoBehaviour
     {
         private Transform[] _pointsInSpace;
-        private bool _isOccupied;
+
+        private bool _isActive = false;
 
         #region Properties
         public Transform[] PointsInSpace { get { return _pointsInSpace; } }
 
         public int NumberOfPoints { get { return _pointsInSpace.Length; } }
 
-        public bool IsOccupied
+        public bool IsActive
         {
-            get { return _isOccupied; }
-            set { _isOccupied = value; }
+            get { return _isActive; }
+            set { _isActive = value; }
         }
 
         // need to return a point from a lane
@@ -34,7 +35,6 @@ namespace Hydrogen
         void Awake()
         {
             _pointsInSpace = GetComponentsInChildren<Transform>();
-            _isOccupied = false;
         }
         #endregion
 
@@ -48,6 +48,7 @@ namespace Hydrogen
             if(targetAnchor != null)
             {
                 targetAnchor.SetLane(this);
+                _isActive = true;
                 return true;
             }
             else
@@ -57,6 +58,7 @@ namespace Hydrogen
 
             return false;
         }
+
         #endregion
 
     }

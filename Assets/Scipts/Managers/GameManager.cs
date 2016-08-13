@@ -9,7 +9,7 @@ namespace Hydrogen
     /// this includes, 1) entering the game when player hits button
     /// 2) loading a session, 3) keeping track of points
     /// 4) ending game messages and displaying points, 5) loading start game menu's
-    /// 
+    /// 6) Displaying player information such as number of targets left on field
     /// There should only ever be one instance of ths object at any given time; hance singleton
     /// </summary>
     public class GameManager : MonoBehaviour
@@ -18,6 +18,7 @@ namespace Hydrogen
 
         // during the game, every player will accumulate points
         private int _playersPoints;
+        private int _totalTargetsDestroyed;
         public Canvas _pointCanvas;
         private Text _pointText;
 
@@ -27,6 +28,12 @@ namespace Hydrogen
         {
             get { return _playersPoints; }
         }
+
+        public int TotalTargetsDestroyed
+        {
+            get { return _totalTargetsDestroyed; }
+            set { _totalTargetsDestroyed = value; }
+        }
         #endregion
 
         #region Unity Mehtods
@@ -35,6 +42,8 @@ namespace Hydrogen
         {
             InitGameManager();
 
+            GameObject canvas = GameObject.FindGameObjectWithTag("PointCanvas");
+            _pointCanvas = canvas.GetComponent<Canvas>();
             _pointText = _pointCanvas.GetComponentInChildren<Text>();
             if (_pointCanvas == null)
                 Debug.LogError("Text on Point canvas was not found");
@@ -64,6 +73,15 @@ namespace Hydrogen
 
             if(_pointText != null)
                 _pointText.text = _playersPoints.ToString();
+        }
+
+        private void InitCanvasElements()
+        {
+            GameObject canvas = GameObject.FindGameObjectWithTag("PointCanvas");
+            _pointCanvas = canvas.GetComponent<Canvas>();
+            _pointText = _pointCanvas.GetComponentInChildren<Text>();
+            if (_pointCanvas == null)
+                Debug.LogError("Text on Point canvas was not found");
         }
         #endregion
     }
