@@ -117,6 +117,7 @@ namespace Hydrogen
             _myTargetAnchor.GetLane.IsActive = false;
             _waveManager.IncrementNumberOfDestroyedTargets();
             _waveManager.UpdateTargetsLeftText();
+            _waveManager.TargetsLeftForWave -= 1;
 
             yield return new WaitForSeconds(targetAudioSource.clip.length);
             Destroy(transform.parent.gameObject);

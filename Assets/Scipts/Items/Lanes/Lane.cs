@@ -10,8 +10,8 @@ namespace Hydrogen
     public class Lane : MonoBehaviour
     {
         private Transform[] _pointsInSpace;
-
         private bool _isActive = false;
+
 
         #region Properties
         public Transform[] PointsInSpace { get { return _pointsInSpace; } }
@@ -60,6 +60,5 @@ namespace Hydrogen
         }
 
         #endregion
-
     }
 }
