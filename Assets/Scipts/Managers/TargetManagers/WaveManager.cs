@@ -26,11 +26,13 @@ namespace Hydrogen
         #endregion
 
         private Lane[] _lanes;
+        private GameManager _gameManager;
         
         private GameObject _targetPrefab;
         private const string _targetPrefabPath = "Prefabs/TargetPrefabs/TargetAnchor";
 
         private Text _targetsLeftText;
+        private Button _nextSessionButton;
 
         #region Properties
         public static int CurrentNumberOfTarget
@@ -65,24 +67,23 @@ namespace Hydrogen
         {
             _targetPrefab = Resources.Load(_targetPrefabPath) as GameObject;
             _lanes = FindObjectsOfType<Lane>();
+            Utility.InitGameObjectComponent("GameManager", out _gameManager);
 
-            InitializeTargetsLeftText();
+            InitializePointCanvasElements();
         }
 
         void Start()
         {
-            _numberOfTargetsSpawned = 0;
-            _numberOfDestroyedTargets = 0;
-            currentNumberOfTarget = 0;
-            _targetsLeftForWave = _numberOfTargetsPerWave;
-            _totalTargetsToSpawn = _numberOfWaves * _numberOfTargetsPerWave; // this is acually false; because the number of targets varies between waves for final game
+            InitNextSessionValues();
 
             SpawnInitialWave(); // may have to delete soom
             UpdateTargetsLeftText();
         }
 
+        // basic game logic
         void Update()
         {
+            // Finish the Wave
             if (_targetsLeftForWave > 0)
             {
                 //wait to spawn new Targets if it is the end of the round
@@ -98,6 +99,7 @@ namespace Hydrogen
 
                 SpawnTarget(_numberOfTargetsSpawned, _numberOfTargetsPerWave);
             }
+            // when the Wave is complete
             else if(_currentWave < _numberOfWaves - 1)
             {
                 EndOfWave();
@@ -110,10 +112,22 @@ namespace Hydrogen
         #endregion
 
         #region Methods
-        void InitializeTargetsLeftText()
+        public void InitNextSessionValues()
+        {
+            _numberOfTargetsSpawned = 0;
+            _numberOfDestroyedTargets = 0;
+            currentNumberOfTarget = 0;
+            _targetsLeftForWave = _numberOfTargetsPerWave;
+
+            // need to access GameManager for knowing what the previous state of the Game Was;
+            // The GameManager will know the Previous State such as how many targets there were in the last wave of the match
+            // for now, this will do
+            _totalTargetsToSpawn = _numberOfWaves * _numberOfTargetsPerWave; // this is acually false; because the number of targets varies between waves for final game
+        }
+
+        void InitializePointCanvasElements()
         {
             Text[] textObjects = FindObjectsOfType<Text>();
-
             foreach(Text text in textObjects)
             {
                 if(text.name == "TargetsLeftText")
@@ -121,6 +135,8 @@ namespace Hydrogen
                     _targetsLeftText = text;
                 }
             }
+
+            Utility.InitGameObjectComponent("NextSessionButton", out _nextSessionButton, byName:true);
         }
 
         // Method returning an inactive lane
@@ -190,6 +206,14 @@ namespace Hydrogen
         private void EndOfSession()
         {
             Debug.Log("Session end");
+            _gameManager.NumberOfSessionsPlayed += 1;
+
+            _nextSessionButton.interactable = true;
+
+            // Give the  GameManager the Current state of the game so that this info is not lost
+            // for the next session; Add this Later
+
+            enabled = false;
         }
         #endregion
     }

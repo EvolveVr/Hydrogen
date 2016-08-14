@@ -15,13 +15,22 @@ namespace Hydrogen
     public class GameManager : MonoBehaviour
     {
         public static GameManager gameManager;
+        private WaveManager _waveManager;
 
+        #region Player Info Variables
         // during the game, every player will accumulate points
         private int _playersPoints;
         private int _totalTargetsDestroyed;
+        private int _numberOfSessionsPlayed = 0;
+        #endregion
+
+        #region Previous State Variables
+        // Add here
+        #endregion
+
         public Canvas _pointCanvas;
         private Text _pointText;
-
+        private Button _nextSessionButton;
 
         #region Properties
         public int PlayersPoints
@@ -34,6 +43,16 @@ namespace Hydrogen
             get { return _totalTargetsDestroyed; }
             set { _totalTargetsDestroyed = value; }
         }
+
+        public int NumberOfSessionsPlayed
+        {
+            get { return _numberOfSessionsPlayed; }
+            set
+            {
+                if(value == _numberOfSessionsPlayed + 1)
+                    _numberOfSessionsPlayed = value;
+            }
+        }
         #endregion
 
         #region Unity Mehtods
@@ -41,12 +60,13 @@ namespace Hydrogen
         void Awake()
         {
             InitGameManager();
+            InitCanvasElements();
+            _waveManager = GetComponent<WaveManager>();
+        }
 
-            GameObject canvas = GameObject.FindGameObjectWithTag("PointCanvas");
-            _pointCanvas = canvas.GetComponent<Canvas>();
-            _pointText = _pointCanvas.GetComponentInChildren<Text>();
-            if (_pointCanvas == null)
-                Debug.LogError("Text on Point canvas was not found");
+        void Start()
+        {
+            _waveManager.enabled = true;
         }
         #endregion
 
@@ -80,8 +100,20 @@ namespace Hydrogen
             GameObject canvas = GameObject.FindGameObjectWithTag("PointCanvas");
             _pointCanvas = canvas.GetComponent<Canvas>();
             _pointText = _pointCanvas.GetComponentInChildren<Text>();
-            if (_pointCanvas == null)
-                Debug.LogError("Text on Point canvas was not found");
+            _nextSessionButton = _pointCanvas.GetComponentInChildren<Button>();
+
+            if (_pointCanvas == null || _pointText == null || _nextSessionButton == null)
+            {
+                Debug.LogError("Point canvas element not found");
+            }
+
+        }
+
+        public void EnableNextSessionButton()
+        {
+            _waveManager.enabled = true;
+            _nextSessionButton.interactable = false;
+            _waveManager.InitNextSessionValues();
         }
         #endregion
     }
