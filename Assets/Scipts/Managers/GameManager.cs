@@ -25,11 +25,15 @@ namespace Hydrogen
         #endregion
 
         #region Previous State Variables
-        // Add here
+        public int lastSessionTotalTargets = 0;
+        public int lastSessionTotalRounds = 3;
+        private const int _increaseWaveCount = 1;
+        private const int _increaseTargetCount = 1;
         #endregion
 
         public Canvas _pointCanvas;
         private Text _pointText;
+        private Text _gameOverText;
         private Button _nextSessionButton;
 
         #region Properties
@@ -52,6 +56,28 @@ namespace Hydrogen
                 if(value == _numberOfSessionsPlayed + 1)
                     _numberOfSessionsPlayed = value;
             }
+        }
+
+        public int TotalNumberOfTargets
+        {
+            get { return lastSessionTotalTargets; }
+            set { lastSessionTotalTargets = value; }
+        }
+
+        public int LastSessionTotalRounds
+        {
+            get { return lastSessionTotalRounds; }
+            set { lastSessionTotalRounds = value; }
+        }
+
+        public static int IncreaseWaveCount
+        {
+            get { return _increaseWaveCount; }
+        }
+
+        public static int IncreaseTargetCount
+        {
+            get { return _increaseTargetCount; }
         }
         #endregion
 
@@ -99,21 +125,46 @@ namespace Hydrogen
         {
             GameObject canvas = GameObject.FindGameObjectWithTag("PointCanvas");
             _pointCanvas = canvas.GetComponent<Canvas>();
-            _pointText = _pointCanvas.GetComponentInChildren<Text>();
+            //_pointText = _pointCanvas.GetComponentInChildren<Text>();
+            _pointText = GameObject.Find("PointText").GetComponent<Text>();
+            _gameOverText = GameObject.Find("GameOverText").GetComponent<Text>();
+            _gameOverText.enabled = false;
+
+            // Need to change this, 
             _nextSessionButton = _pointCanvas.GetComponentInChildren<Button>();
 
             if (_pointCanvas == null || _pointText == null || _nextSessionButton == null)
             {
                 Debug.LogError("Point canvas element not found");
             }
-
         }
 
-        public void EnableNextSessionButton()
+        // Intsead of a UI button doing this, I am going to use an Object with trigger Collider; for later
+        public void EnableNextSession()
         {
             _waveManager.enabled = true;
+
+            // Instead of Disabling a Button, I will disble the Trigger on object
+            // then the end of Session
+            _nextSessionButton.gameObject.SetActive(true);
             _nextSessionButton.interactable = false;
             _waveManager.InitNextSessionValues();
+        }
+
+        public void EndOfGame(WaveManager waveManager)
+        {
+            Debug.Log("Game end, Time has ran out");
+            waveManager.DestroyAllTargetsOnField();
+
+            _numberOfSessionsPlayed++;
+
+            waveManager.enabled = false;
+            _nextSessionButton.gameObject.SetActive(false);
+            _nextSessionButton.interactable = false;
+
+            //disable the targets left Text --> enable the Game Over text --> enable the Game Menu
+            _gameOverText.enabled = true;
+            _pointText.enabled = false;
         }
         #endregion
     }

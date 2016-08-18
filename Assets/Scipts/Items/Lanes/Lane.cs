@@ -42,7 +42,8 @@ namespace Hydrogen
         // Spawn prefab, set it at one of the endpoints, and set TargetAcnhors Lane and set isPccupioed to true
         public bool SpawnTargetAnchor(GameObject targetPrefab)
         {
-            GameObject target = Instantiate(targetPrefab, _pointsInSpace[0].position, Quaternion.identity) as GameObject;
+            int randomSpawn = Random.Range(0, _pointsInSpace.Length);
+            GameObject target = Instantiate(targetPrefab, _pointsInSpace[randomSpawn].position, Quaternion.identity) as GameObject;
             TargetAnchor targetAnchor = target.GetComponent<TargetAnchor>();
             
             if(targetAnchor != null)
@@ -55,7 +56,6 @@ namespace Hydrogen
             {
                 Debug.LogError("Target anchor was not found");
             }
-
             return false;
         }
 

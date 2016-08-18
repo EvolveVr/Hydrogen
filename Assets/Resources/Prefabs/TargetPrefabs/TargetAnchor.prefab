@@ -560,7 +560,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b8346a7e69101cb43aa8fcd68ec77799, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  navMeshSpeed: 4
+  navMeshSpeed: 8
 --- !u!114 &114000010735607924
 MonoBehaviour:
   m_ObjectHideFlags: 1

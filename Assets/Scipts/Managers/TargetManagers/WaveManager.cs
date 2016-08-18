@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using System.Collections;
+using System;
 
 namespace Hydrogen
 {
@@ -16,13 +16,16 @@ namespace Hydrogen
         private int _numberOfWaves = 3;             // this will be changed by proceeding wavemanager
         private int _currentWave = 0;
         private int _targetsLeftForWave;
+        private int[] _numberOfTargetsForEachRound;
         
         #region Timer Variables
-        private float _timeBetweenWaves = 2.0f;
+        private float _timeBetweenWaves = 3.0f;
         private float _currentTimeBetweenWaves = 0.0f;
-        private float _timeBetweenEnemySpawns = 2.0f;
+        private float _timeBetweenEnemySpawns = 0.4f;
         private float _currentTimeBetweenEnemySpawns = 0.0f;
         private bool _endOfWave = false;
+        public float _maxTimeForSession = 40.0f;       //in seconds right now
+        private float _currentSessionTime = 0.0f;
         #endregion
 
         private Lane[] _lanes;
@@ -32,6 +35,7 @@ namespace Hydrogen
         private const string _targetPrefabPath = "Prefabs/TargetPrefabs/TargetAnchor";
 
         private Text _targetsLeftText;
+        private Text _timerText;
         private Button _nextSessionButton;
 
         #region Properties
@@ -68,6 +72,7 @@ namespace Hydrogen
             _targetPrefab = Resources.Load(_targetPrefabPath) as GameObject;
             _lanes = FindObjectsOfType<Lane>();
             Utility.InitGameObjectComponent("GameManager", out _gameManager);
+            Utility.InitGameObjectComponent("TimerText", out _timerText, byName:true);
 
             InitializePointCanvasElements();
         }
@@ -75,14 +80,22 @@ namespace Hydrogen
         void Start()
         {
             InitNextSessionValues();
-
-            SpawnInitialWave(); // may have to delete soom
+            SpawnInitialWave(); // may have to delete soon
             UpdateTargetsLeftText();
         }
 
         // basic game logic
         void Update()
         {
+            // if there time runs out
+            _currentSessionTime += Time.deltaTime;
+            UpdateTimerText(_currentSessionTime);
+            if (_currentSessionTime >= _maxTimeForSession)
+            {
+                //EndOfSession();
+                _gameManager.EndOfGame(this);
+            }
+
             // Finish the Wave
             if (_targetsLeftForWave > 0)
             {
@@ -97,10 +110,11 @@ namespace Hydrogen
                     return;
                 }
 
-                SpawnTarget(_numberOfTargetsSpawned, _numberOfTargetsPerWave);
+                //NOTE!!!
+                SpawnTarget(_numberOfTargetsSpawned, _numberOfTargetsForEachRound[_currentWave]);
             }
             // when the Wave is complete
-            else if(_currentWave < _numberOfWaves - 1)
+            else if(_currentWave < _numberOfTargetsForEachRound.Length - 1)
             {
                 EndOfWave();
             }
@@ -114,15 +128,19 @@ namespace Hydrogen
         #region Methods
         public void InitNextSessionValues()
         {
+            //DetermineNumberOfTargets(ref _gameManager.lastSessionTotalTargets, ref _gameManager.lastSessionTotalRounds, out _numberOfTargetsForEachRound);
+            DetermineNumberOfTargets(_gameManager.TotalNumberOfTargets, _gameManager.LastSessionTotalRounds, out _numberOfTargetsForEachRound);
             _numberOfTargetsSpawned = 0;
             _numberOfDestroyedTargets = 0;
             currentNumberOfTarget = 0;
-            _targetsLeftForWave = _numberOfTargetsPerWave;
+            _currentWave = 0;
+            _targetsLeftForWave = _numberOfTargetsForEachRound[_currentWave];
 
             // need to access GameManager for knowing what the previous state of the Game Was;
             // The GameManager will know the Previous State such as how many targets there were in the last wave of the match
             // for now, this will do
-            _totalTargetsToSpawn = _numberOfWaves * _numberOfTargetsPerWave; // this is acually false; because the number of targets varies between waves for final game
+            _totalTargetsToSpawn = _gameManager.TotalNumberOfTargets;
+            UpdateTargetsLeftText();
         }
 
         void InitializePointCanvasElements()
@@ -163,6 +181,11 @@ namespace Hydrogen
             _targetsLeftText.text = string.Format("Targets Left for Session: {0}", _totalTargetsToSpawn - _numberOfDestroyedTargets);
         }
 
+        public void UpdateTimerText(float time)
+        {
+            _timerText.text = Math.Round(_maxTimeForSession - time, 1).ToString();
+        }
+
         private void SpawnInitialWave()
         {
             // spawn target in each lane off start, change later
@@ -199,21 +222,76 @@ namespace Hydrogen
             currentNumberOfTarget = 0;
             _currentWave++;
             _numberOfTargetsSpawned = 0;
-            _targetsLeftForWave = _numberOfTargetsPerWave;      //must change later to include varied number of targets per wave
+            _targetsLeftForWave = _numberOfTargetsForEachRound[_currentWave];
             _endOfWave = true;
         }
 
         private void EndOfSession()
         {
-            Debug.Log("Session end");
+            //kill all targets if there are some
+            DestroyAllTargetsOnField();
+
+            Debug.Log("Session end, Time has NOT ran out");
             _gameManager.NumberOfSessionsPlayed += 1;
 
+            // will need to change this to enable the trigger collider on GameObject
+            // enable animations aas well
+            _nextSessionButton.gameObject.SetActive(true);
             _nextSessionButton.interactable = true;
 
             // Give the  GameManager the Current state of the game so that this info is not lost
             // for the next session; Add this Later
 
             enabled = false;
+        }
+
+        public void DestroyAllTargetsOnField()
+        {
+            TargetAnchor[] targets = FindObjectsOfType<TargetAnchor>();
+
+            foreach(TargetAnchor target in targets)
+            {
+                Destroy(target.gameObject);
+            }
+        }
+
+        //Algorithm for determinging targets for each wave
+        public void DetermineNumberOfTargets(ref int previousTargetCount, ref int previousNumberOfRounds, out int[] eachRoundTargetNumber)
+        {
+            previousNumberOfRounds += GameManager.IncreaseWaveCount;
+            eachRoundTargetNumber = new int[previousNumberOfRounds];
+            int totalTargetsForNextSession = previousTargetCount;
+
+            for(int i = 0; i < eachRoundTargetNumber.Length; i++)
+            {
+                totalTargetsForNextSession += GameManager.IncreaseTargetCount;
+                eachRoundTargetNumber[i] = totalTargetsForNextSession;
+            }
+            Debug.Log(totalTargetsForNextSession);
+            previousTargetCount = totalTargetsForNextSession;
+        }
+
+        public void DetermineNumberOfTargets(int previousTargetCount, int previousNumberOfRounds, out int[] eachRoundTargetNumber)
+        {
+            int currentSessionRoundNumber = previousNumberOfRounds + GameManager.IncreaseWaveCount;
+            _gameManager.LastSessionTotalRounds = currentSessionRoundNumber;
+
+            eachRoundTargetNumber = new int[currentSessionRoundNumber];
+            
+            int totalTargetsForRound = previousTargetCount;
+            for (int i = 0; i < eachRoundTargetNumber.Length; i++)
+            {
+                totalTargetsForRound = totalTargetsForRound + GameManager.IncreaseTargetCount;
+                eachRoundTargetNumber[i] = totalTargetsForRound;
+            }
+
+            int totalTargets = 0;
+            foreach (int num in eachRoundTargetNumber)
+            {
+                totalTargets += num;
+            }
+
+            _gameManager.lastSessionTotalTargets = totalTargets;
         }
         #endregion
     }
