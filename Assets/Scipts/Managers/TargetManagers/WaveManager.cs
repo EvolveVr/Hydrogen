@@ -129,7 +129,7 @@ namespace Hydrogen
         public void InitNextSessionValues()
         {
             //DetermineNumberOfTargets(ref _gameManager.lastSessionTotalTargets, ref _gameManager.lastSessionTotalRounds, out _numberOfTargetsForEachRound);
-            DetermineNumberOfTargets(_gameManager.TotalNumberOfTargets, _gameManager.LastSessionTotalRounds, out _numberOfTargetsForEachRound);
+            DetermineNumberOfTargets(_gameManager.lastSessionTotalTargets, _gameManager.LastSessionTotalRounds, out _numberOfTargetsForEachRound);
             _numberOfTargetsSpawned = 0;
             _numberOfDestroyedTargets = 0;
             currentNumberOfTarget = 0;
@@ -256,21 +256,6 @@ namespace Hydrogen
         }
 
         //Algorithm for determinging targets for each wave
-        public void DetermineNumberOfTargets(ref int previousTargetCount, ref int previousNumberOfRounds, out int[] eachRoundTargetNumber)
-        {
-            previousNumberOfRounds += GameManager.IncreaseWaveCount;
-            eachRoundTargetNumber = new int[previousNumberOfRounds];
-            int totalTargetsForNextSession = previousTargetCount;
-
-            for(int i = 0; i < eachRoundTargetNumber.Length; i++)
-            {
-                totalTargetsForNextSession += GameManager.IncreaseTargetCount;
-                eachRoundTargetNumber[i] = totalTargetsForNextSession;
-            }
-            Debug.Log(totalTargetsForNextSession);
-            previousTargetCount = totalTargetsForNextSession;
-        }
-
         public void DetermineNumberOfTargets(int previousTargetCount, int previousNumberOfRounds, out int[] eachRoundTargetNumber)
         {
             int currentSessionRoundNumber = previousNumberOfRounds + GameManager.IncreaseWaveCount;
@@ -278,7 +263,8 @@ namespace Hydrogen
 
             eachRoundTargetNumber = new int[currentSessionRoundNumber];
             
-            int totalTargetsForRound = previousTargetCount;
+            //the baseline, where the summation starts, is dependant on below equation
+            int totalTargetsForRound = Mathf.FloorToInt((1/500) * Mathf.Pow(previousTargetCount, (3/2))) + 1;
             for (int i = 0; i < eachRoundTargetNumber.Length; i++)
             {
                 totalTargetsForRound = totalTargetsForRound + GameManager.IncreaseTargetCount;
