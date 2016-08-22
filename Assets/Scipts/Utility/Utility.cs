@@ -76,6 +76,50 @@ namespace Hydrogen
                     Debug.LogError(string.Format("The component for GameObject {0} was not found...", objectStringID));
             }    
         }
+
+        // modifying mathf.pingpong so I can get negative values as well
+        public class PingPong
+        {
+            float _limit = 1f;
+            bool justChanged = false;
+            int modValue = 0;
+
+            public PingPong(float limit)
+            {
+                _limit = limit;
+            }
+
+            // we pass in Time.time because its a constantly changing value
+            public float PingPongMod(float time)
+            {
+                float value = Mathf.PingPong(time, _limit);
+                if (Mathf.Abs(value) <= 0.1f && !justChanged) {
+                    modValue++;
+                    justChanged = true;
+                }
+                else if(Mathf.Abs(value) <= 0.1f && justChanged)
+                {
+                    if(value < 0) {
+                        value -= 0.15f;
+                    }
+                    else {
+                        value += 0.15f;
+                    }
+
+                    justChanged = false;
+                }
+
+
+                if(modValue % 2 == 0)
+                {
+                    return value;
+                }
+                else
+                {
+                    return -value;
+                }
+            }
+        }
     }
 
 }

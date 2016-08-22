@@ -26,7 +26,6 @@ namespace Hydrogen
         #region Previous State Variables
         public int lastSessionTotalTargets = 0;
         public int lastSessionTotalRounds = 3;
-        private int lastSessionBaseline = 1;
         private const int _increaseWaveCount = 1;
         private const int _increaseTargetCount = 1;
         #endregion
@@ -78,12 +77,6 @@ namespace Hydrogen
         public static int IncreaseTargetCount
         {
             get { return _increaseTargetCount; }
-        }
-
-        public int LastSessionBaseline
-        {
-            get { return lastSessionBaseline; }
-            set { lastSessionBaseline = value; }
         }
         #endregion
 

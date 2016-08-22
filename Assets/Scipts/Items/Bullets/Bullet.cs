@@ -10,13 +10,11 @@ namespace Hydrogen
     {
         //public BulletType bulletType;
         public float bulletForce = 100.0f;
-
         private float _secondsUntilDestroy = 5.0f;
 
         //All bullets need to add there own force
         public void initialize()
         {
-
             GetComponent<Rigidbody>().AddForce(transform.forward * bulletForce, ForceMode.Impulse);
             if (gameObject.activeSelf)
             {

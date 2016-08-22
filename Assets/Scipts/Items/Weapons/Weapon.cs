@@ -106,6 +106,8 @@ namespace Hydrogen
             bullet.initialize();
 
             //instantiate the bullet particle effect
+            //GameObject flash = Instantiate(muzzleFlash, firePoint.position, firePoint.rotation) as GameObject;
+            
 
             //Play sound
             _weaponAudioSource.Play();
