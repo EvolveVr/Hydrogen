@@ -539,6 +539,7 @@ PlayerSettings:
   SamsungTV::VR::enabledDevices: []
   Standalone::VR::enabledDevices:
   - OpenVR
+  - None
   Tizen::VR::enabledDevices: []
   WebGL::VR::enabledDevices: []
   WebPlayer::VR::enabledDevices: []
