@@ -242,7 +242,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 185602}
   m_LocalRotation: {x: 0.011309303, y: 0.07360253, z: 0.15145022, w: 0.98565596}
-  m_LocalPosition: {x: -33.610577, y: 3, z: -10.511661}
+  m_LocalPosition: {x: 14.99305, y: 3.0000005, z: 3.3070357}
   m_LocalScale: {x: 0.016839243, y: 0.01683924, z: 0.016839245}
   m_LocalEulerAnglesHint: {x: 0, y: 8.5411, z: 17.4708}
   m_Children:
@@ -396,7 +396,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e5db0c7102e286241815eb566aff91c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bulletForce: 160
+  bulletForce: 250
 --- !u!198 &19825758
 ParticleSystem:
   m_ObjectHideFlags: 1

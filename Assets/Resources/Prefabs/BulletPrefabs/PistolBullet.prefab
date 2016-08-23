@@ -403,7 +403,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e5db0c7102e286241815eb566aff91c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bulletForce: 250
+  bulletForce: 200
 --- !u!135 &135000013830947438
 SphereCollider:
   m_ObjectHideFlags: 1

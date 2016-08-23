@@ -71,7 +71,7 @@ GameObject:
   - 65: {fileID: 65000011950578648}
   - 82: {fileID: 82000012512474098}
   m_Layer: 0
-  m_Name: SciFiRifle
+  m_Name: SciFiAutomaticRifle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

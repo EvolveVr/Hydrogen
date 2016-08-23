@@ -13,7 +13,6 @@ namespace Hydrogen
         private int _totalTargetsToSpawn;
         public int _numberOfTargetsPerWave = 5;
         private int _numberOfTargetsSpawned = 0;
-        private int _numberOfWaves = 3;             // this will be changed by proceeding wavemanager
         private int _currentWave = 0;
         private int _targetsLeftForWave;
         private int[] _numberOfTargetsForEachRound;
@@ -24,15 +23,20 @@ namespace Hydrogen
         private float _timeBetweenEnemySpawns = 0.4f;
         private float _currentTimeBetweenEnemySpawns = 0.0f;
         private bool _endOfWave = false;
-        public float _maxTimeForSession = 40.0f;       //in seconds right now
+        public float _maxTimeForSession = 900.0f;
         private float _currentSessionTime = 0.0f;
+        public float maxTimeForTimeTarget = 10.0f;          //make longer later
+        private float _timeOfLastTimeTargetSpawn = 0f;
         #endregion
 
         private Lane[] _lanes;
+        private Transform[] _timeTargetSpawns;
         private GameManager _gameManager;
         
         private GameObject _targetPrefab;
         private const string _targetPrefabPath = "Prefabs/TargetPrefabs/TargetAnchor";
+        private GameObject _timeTargetPrefab;
+        private const string _timeTargetPrefabPath = "Prefabs/TargetPrefabs/TimeTarget";
 
         private Text _targetsLeftText;
         private Text _timerText;
@@ -64,16 +68,24 @@ namespace Hydrogen
                     _targetsLeftForWave = value;
             }
         }
+
+        public float CurrentSessionTime
+        {
+            get { return _currentSessionTime; }
+            set { _currentSessionTime = value; }
+        }
         #endregion
 
         #region Unity Methods
         void Awake()
         {
             _targetPrefab = Resources.Load(_targetPrefabPath) as GameObject;
+            _timeTargetPrefab = Resources.Load(_timeTargetPrefabPath) as GameObject;
             _lanes = FindObjectsOfType<Lane>();
             Utility.InitGameObjectComponent("GameManager", out _gameManager);
             Utility.InitGameObjectComponent("TimerText", out _timerText, byName:true);
 
+            InitTimeTargetSpawns(out _timeTargetSpawns);
             InitializePointCanvasElements();
         }
 
@@ -87,12 +99,12 @@ namespace Hydrogen
         // basic game logic
         void Update()
         {
-            // if there time runs out
+            // if there time runs out; update timers
             _currentSessionTime += Time.deltaTime;
+            _timeOfLastTimeTargetSpawn += Time.deltaTime;
             UpdateTimerText(_currentSessionTime);
             if (_currentSessionTime >= _maxTimeForSession)
             {
-                //EndOfSession();
                 _gameManager.EndOfGame(this);
             }
 
@@ -112,6 +124,10 @@ namespace Hydrogen
 
                 //NOTE!!!
                 SpawnTarget(_numberOfTargetsSpawned, _numberOfTargetsForEachRound[_currentWave]);
+                if(_timeOfLastTimeTargetSpawn >= maxTimeForTimeTarget)
+                {
+                    SpawnTimeTarget();
+                }
             }
             // when the Wave is complete
             else if(_currentWave < _numberOfTargetsForEachRound.Length - 1)
@@ -155,6 +171,12 @@ namespace Hydrogen
             }
 
             Utility.InitGameObjectComponent("NextSessionButton", out _nextSessionButton, byName:true);
+        }
+
+        void InitTimeTargetSpawns(out Transform[] timeTargetSpawns)
+        {
+            GameObject parentTransform = GameObject.Find("TimeTargetSpawns");
+            timeTargetSpawns = parentTransform.GetComponentsInChildren<Transform>();
         }
 
         // Method returning an inactive lane
@@ -217,6 +239,18 @@ namespace Hydrogen
             }
         }
 
+        //just added; Test--------
+        private void SpawnTimeTarget()
+        {
+            int randNum = UnityEngine.Random.Range(0, _timeTargetSpawns.Length);
+
+            GameObject timeTarget = Instantiate(_timeTargetPrefab);
+            timeTarget.transform.position = _timeTargetSpawns[randNum].position;
+            timeTarget.transform.LookAt(GameObject.Find("AntigravityPlatform").GetComponent<Transform>().position);
+
+            _timeOfLastTimeTargetSpawn = 0f;
+        } 
+        
         private void EndOfWave()
         {
             currentNumberOfTarget = 0;
@@ -248,11 +282,14 @@ namespace Hydrogen
         public void DestroyAllTargetsOnField()
         {
             TargetAnchor[] targets = FindObjectsOfType<TargetAnchor>();
+            TimeTarget[] timeTargets = FindObjectsOfType<TimeTarget>();
 
-            foreach(TargetAnchor target in targets)
-            {
+            foreach(TargetAnchor target in targets) {
                 Destroy(target.gameObject);
             }
+
+            foreach (TimeTarget timeTarget in timeTargets)
+                Destroy(timeTarget.transform.parent.gameObject);
         }
 
         //Algorithm for determinging targets for each wave
