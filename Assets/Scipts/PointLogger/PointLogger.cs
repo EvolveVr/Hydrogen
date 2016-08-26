@@ -18,6 +18,7 @@ namespace Hydrogen
 
 		/* NOTE Delete */
 		private string _enteredPlayerName;
+		[Tooltip("Delete this. We will be using the score that is Located on the GameManger when Merged")]
 		public int score = 2217;
 
 		WWW response;
