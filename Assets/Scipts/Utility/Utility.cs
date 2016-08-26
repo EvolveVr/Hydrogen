@@ -120,6 +120,18 @@ namespace Hydrogen
                 }
             }
         }
+
+		// Basic Utility method for Debugging messages More quickly
+		// instead of constantly having to write if statements;
+		// this will normally be preceeded by statement for finding objects
+		public static void DubugMessage<T>(T someObj)
+		{
+			if (someObj != null) {
+				Debug.Log ("Object WAS found");
+			} else {
+				Debug.Log ("Object Was NOT found");
+			}
+		}
     }
 
 }
