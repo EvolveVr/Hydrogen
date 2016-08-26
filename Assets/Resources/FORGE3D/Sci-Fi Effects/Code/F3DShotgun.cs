@@ -3,6 +3,7 @@ using System.Collections;
 
 public class F3DShotgun : MonoBehaviour 
 {
+	#pragma warning disable
     #if UNITY_5_0   
     private ParticleCollisionEvent[] collisionEvents = new ParticleCollisionEvent[16];
     private ParticleSystem ps;
@@ -72,4 +73,5 @@ public class F3DShotgun : MonoBehaviour
         }
     }  
     #endif
+	#pragma warning restore
 }
